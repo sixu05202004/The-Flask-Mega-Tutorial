@@ -115,13 +115,45 @@ Windows 上的用户需要多做一步。如果你有良好的观察能力的话
 	mkdir tmp
 
 
+我们的应用程序包是放置于 *app* 文件夹中。子文件夹 *static* 是我们存放静态文件像图片，JS文件以及样式文件。子文件夹 *templates* 显然存放模板文件。
+
+让我们开始为我们的 *app* 包(文件 *app/__init__.py* )创建一个简单的初始化脚本::
+
+	from flask import Flask
+
+	app = Flask(__name__)
+	from app import views
+
+上面的脚本简单地创建应用对象，接着导入视图模块，该模块我们暂未编写。
+
+视图是响应来自网页浏览器的请求的处理器。在 Flask 中，视图是编写成 Python 函数。每一个视图函数是映射到一个或多个请求的 URL。
+
+让我们编写第一个视图函数(文件 *app/views.py* )::
+
+	from app import app
+
+	@app.route('/')
+	@app.route('/index')
+	def index():
+    	return "Hello, World!"
+
+其实这个视图是非常简单，它只是返回一个字符串，在客户端的网页浏览器上显示。两个 *route* 装饰器创建了从网址 */* 以及 */index* 到这个函数的映射。
+
+能够完整工作的 Web 应用程序的最后一步是创建一个脚本，启动我们的应用程序的开发 Web 服务器。让我们称这个脚本为 *run.py*，并把它置于根目录::
+
+	#!flask/bin/python
+	from app import app
+	app.run(debug = True)
+
+这个脚本简单地从我们的 app 包中导入 *app* 变量并且调用它的 *run* 方法来启动服务器。请记住 *app* 变量中持有我们在之前创建的 *Flask* 实例。
+
 
 
 
 下一步？
 --------
 
-下一章我们将会小小修改下我们的应用，使用 HTML 模板。我希望在下一章见到大家！
+下一章我们将会小小修改下我们的应用，使用 HTML 模板。我希望在下一章再见到大家！
 
 
 
