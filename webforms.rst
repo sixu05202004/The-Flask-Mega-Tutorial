@@ -149,7 +149,37 @@ Flask-WTF 使得工作变得简单的另外一点就是处理提交的数据。�
 
 如果至少一个字段验证失败的话，它将会返回 *False*，接着表单会重新呈现给用户，这也将给用户一次机会去修改错误。我们将会看到当验证失败后如何显示错误信息。
 
-当 *validate_on_submit* 
+当 *validate_on_submit* 返回 True，我们的登录视图函数调用了两个新的函数，导入自 Flask。*flash* 函数是一种快速的方式下在呈现给用户的页面上显示一个消息。在我们的例子中，我将会使用它来调试，因为我们目前还不具备用户登录的必备的基础设施，相反我们将会用它来显示提交的数据。*flash* 函数在生产服务器上也是十分有作用的，用来提供反馈给用户有关的行动。
+
+闪现的消息将不会自动地出现在我们的页面上，我们的模板需要加入展示消息的内容。我们将添加这些消息到我们的基础模板中，这样所有的模板都能继承这个函数。这是更新后的基础模板(文件 *app/templates/base.html*)::
+
+	<html>
+	  <head>
+	    {% if title %}
+	    <title>{{title}} - microblog</title>
+	    {% else %}
+	    <title>microblog</title>
+	    {% endif %}
+	  </head>
+	  <body>
+	    <div>Microblog: <a href="/index">Home</a></div>
+	    <hr>
+	    {% with messages = get_flashed_messages() %}
+	    {% if messages %}
+	    <ul>
+	    {% for message in messages %}
+	        <li>{{ message }} </li>
+	    {% endfor %}
+	    </ul>
+	    {% endif %}
+	    {% endwith %}
+	    {% block content %}{% endblock %}
+	  </body>
+	</html>
+
+显示闪现消息的技术希望是不言自明的。
+
+
 
 加强数据验证
 --------------
