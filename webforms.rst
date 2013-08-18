@@ -60,3 +60,96 @@ OpenID 登录仅仅需要一个字符串，被称为 OpenID。我们将在表单
 	    openid = TextField('openid', validators = [Required()])
 	    remember_me = BooleanField('remember_me', default = False)
 
+我相信这个类不言而明。我们导入 *Form* 类，接着导入两个我们需要的字段类，*TextField* 和 *BooleanField*。
+
+*Required* 是一个验证器，一个函数，它能够作用于一个域，用于对用户提交的数据进行验证。 *Required* 验证器只是简单地检查相应域提交的数据是否是空。在 Flask-WTF 中有许多的验证器，我们将会在以后看到它们。
+
+
+表单模板
+--------
+
+我们同样需要一个包含生成表单的 HTML 的模板。好消息是我们刚刚创建的 *LoginForm* 类知道如何呈现为HTML表单字段，所以我们只需要集中精力在布局上。这里就是我们登录的模板(文件 *app/templates/login.html*)::
+
+	<!-- extend from base layout -->
+	{% extends "base.html" %}
+
+	{% block content %}
+	<h1>Sign In</h1>
+	<form action="" method="post" name="login">
+	    {{form.hidden_tag()}}
+	    <p>
+	        Please enter your OpenID:<br>
+	        {{form.openid(size=80)}}<br>
+	    </p>
+	    <p>{{form.remember_me}} Remember Me</p>
+	    <p><input type="submit" value="Sign In"></p>
+	</form>
+	{% endblock %}
+
+请注意，此模板中，我们重用了 *base.html* 模板通过 *extends* 模板继承声明语句。实际上，我们将在所有我们的模板中做到这一点，以确保所有网页的布局一致性。
+
+在我们的模板与常规的 HTML 表单之间存在一些有意思的不同处。模板期望一个实例化自我们刚才创建地表单类的表单对象储存成一个模板参数，称为 *form*。当我们编写渲染这个模板的视图函数的时候，我们将会特别注意传送这个模板参数到模板中。
+
+*form.hidden_tag()* 模板参数将被替换为一个隐藏字段，用来是实现在配置中激活的 CSRF 保护。如果你已经激活了 CSRF，这个字段需要出现在你所有的表单中。
+
+我们表单中实际的字段也将会被表单对象渲染，你只必须在字段应该被插入的地方指明一个 *{{form.field_name}}* 模板参数。某些字段是可以带参数的。在我们的例子中，我们要求表单生成一个80个字符宽度的 *openid* 字段。
+
+因为我们并没有在表单中定义提交按钮，我们必须按照普通的字段来定义。提交字段实际并不携带数据因此没有必要在表单类中定义。
+
+
+表单视图
+---------
+
+在我们看到我们表单前的最后一步就是编写渲染模板的视图函数的代码。
+
+实际上这是十分简单因为我们只需要把一个表单对象传入模板中。这就是我们新的视图函数(文件 *app/views.py*)::
+
+	from flask import render_template, flash, redirect
+	from app import app
+	from forms import LoginForm
+
+	# index view function suppressed for brevity
+
+	@app.route('/login', methods = ['GET', 'POST'])
+	def login():
+	    form = LoginForm()
+	    return render_template('login.html', 
+	        title = 'Sign In',
+	        form = form)
+
+所以基本上，我们已经导入 *LoginForm* 类，从这个类实例化一个对象，接着把它传入到模板中。这就是我们渲染表单所有要做的。
+
+让我们先忽略 *flash* 以及 *redirect* 的导入。我们会在后面介绍。
+
+这里唯一的新的知识点就是路由装饰器的 *methods* 参数。参数告诉 Flask 这个视图函数接受 GET 和 POST 请求。如果不带参数的话，视图只接受 GET 请求。
+
+这个时候你可以尝试运行应用程序，在浏览器上看看表单。在你运行应用程序后，你需要在浏览器上打开 *http://localhost:5000/login* 。
+
+我们暂时还没有编写接收数据的代码，因此此时按提交按钮不会有任何作用。
+
+
+接收表单数据
+-------------
+
+Flask-WTF 使得工作变得简单的另外一点就是处理提交的数据。这里是我们登录视图函数更新的版本，它验证并且存储表单数据 (文件 *app/views.py*)::
+
+	@app.route('/login', methods = ['GET', 'POST'])
+	def login():
+	    form = LoginForm()
+	    if form.validate_on_submit():
+	        flash('Login requested for OpenID="' + form.openid.data + '", remember_me=' + str(form.remember_me.data))
+	        return redirect('/index')
+	    return render_template('login.html', 
+	        title = 'Sign In',
+	        form = form)
+
+*validate_on_submit* 方法做了所有表单处理工作。当表单正在展示给用户的时候调用它，它会返回 *False*.
+
+如果 *validate_on_submit* 在表单提交请求中被调用，它将会收集所有的数据，对字段进行验证，如果所有的事情都通过的话，它将会返回 *True*，表示数据都是合法的。这就是说明数据是安全的，并且被应用程序给接受了。
+
+如果至少一个字段验证失败的话，它将会返回 *False*，接着表单会重新呈现给用户，这也将给用户一次机会去修改错误。我们将会看到当验证失败后如何显示错误信息。
+
+当 *validate_on_submit* 
+
+加强数据验证
+--------------
