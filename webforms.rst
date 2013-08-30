@@ -305,4 +305,3 @@ Flask-WTF 使得工作变得简单的另外一点就是处理提交的数据。�
 如果你想要节省时间的话，你可以下载 `microblog-0.3.zip <https://github.com/miguelgrinberg/microblog/archive/v0.3.zip>`_。
 
 但是请注意的是zip文件已经不包含 flask 虚拟环境了，如果你想要运行应用程序的话，请按照第一章的步骤自己创建它。
-
