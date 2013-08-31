@@ -1,0 +1,346 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>用户登录 &mdash; flask mega-tutorial 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="flask mega-tutorial 1.0 documentation" href="index.html" />
+    <link rel="next" title="用户信息页和头像" href="profile.html" />
+    <link rel="prev" title="数据库" href="database.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="profile.html" title="用户信息页和头像"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="database.html" title="数据库"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">flask mega-tutorial 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="userlogin">
+<span id="id1"></span><h1>用户登录<a class="headerlink" href="#userlogin" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id2">
+<h2>回顾<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>在上一章中，我们已经创建了数据库以及学会了使用它来存储用户以及 blog，但是我们并没有把它融入我们的应用程序中。在两章以前，我们已经看到如何创建表单并且留下了一个完全实现的登录表单。</p>
+<p>在本章中我们将会建立 web 表单和数据库的联系，并且编写我们的登录系统。在本章结尾的时候，我们这个小型的应用程序将能够注册新用户并且能够登入和登出。</p>
+<p>我们接下来讲述的正是我们上一章离开的地方，所以你可能要确保应用程序 <em>microblog</em> 正确地安装和工作。</p>
+</div>
+<div class="section" id="id3">
+<h2>配置<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>像以前章节一样，我们从配置将会使用到的 Flask 扩展开始入手。对于登录系统，我们将会使用到两个扩展，Flask-Login 和 Flask-OpenID。配置情况如下(文件 <em>app__init__.py</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">flask.ext.login</span> <span class="kn">import</span> <span class="n">LoginManager</span>
+<span class="kn">from</span> <span class="nn">flask.ext.openid</span> <span class="kn">import</span> <span class="n">OpenID</span>
+<span class="kn">from</span> <span class="nn">config</span> <span class="kn">import</span> <span class="n">basedir</span>
+
+<span class="n">lm</span> <span class="o">=</span> <span class="n">LoginManager</span><span class="p">()</span>
+<span class="n">lm</span><span class="o">.</span><span class="n">init_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+<span class="n">oid</span> <span class="o">=</span> <span class="n">OpenID</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">basedir</span><span class="p">,</span> <span class="s">&#39;tmp&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Flask-OpenID 扩展需要一个存储文件的临时文件夹的路径。对此，我们提供了一个 <em>tmp</em> 文件夹的路径。</p>
+</div>
+<div class="section" id="id4">
+<h2>重构用户模型<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<p>Flask-Login 扩展需要在我们的 <em>User</em> 类中实现一些特定的方法。但是类如何去实现这些方法却没有什么要求。</p>
+<p>下面就是我们为  Flask-Login 实现的 <em>User</em> 类(文件 <em>app/models.py</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+    <span class="n">nickname</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">64</span><span class="p">),</span> <span class="n">unique</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+    <span class="n">email</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">120</span><span class="p">),</span> <span class="n">unique</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+    <span class="n">role</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">SmallInteger</span><span class="p">,</span> <span class="n">default</span> <span class="o">=</span> <span class="n">ROLE_USER</span><span class="p">)</span>
+    <span class="n">posts</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span><span class="s">&#39;Post&#39;</span><span class="p">,</span> <span class="n">backref</span> <span class="o">=</span> <span class="s">&#39;author&#39;</span><span class="p">,</span> <span class="n">lazy</span> <span class="o">=</span> <span class="s">&#39;dynamic&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">is_authenticated</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">True</span>
+
+    <span class="k">def</span> <span class="nf">is_active</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">True</span>
+
+    <span class="k">def</span> <span class="nf">is_anonymous</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">False</span>
+
+    <span class="k">def</span> <span class="nf">get_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">unicode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&#39;&lt;User </span><span class="si">%r</span><span class="s">&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nickname</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><em>is_authenticated</em> 方法有一个具有迷惑性的名称。一般而言，这个方法应该只返回 <em>True</em>，除非表示用户的对象因为某些原因不允许被认证。</p>
+<p><em>is_active</em> 方法应该返回 <em>True</em>，除非是用户是无效的，比如因为他们的账号是被禁止。</p>
+<p><em>is_anonymous</em> 方法应该返回 <em>True</em>，除非是伪造的用户不允许登录系统。</p>
+<p>最后，<em>get_id</em> 方法应该返回一个用户唯一的标识符，以 unicode 格式。我们使用数据库生成的唯一的 id。</p>
+</div>
+<div class="section" id="user-loader">
+<h2>user_loader 回调<a class="headerlink" href="#user-loader" title="Permalink to this headline">¶</a></h2>
+<p>现在我们已经准备好用 Flask-Login 和 Flask-OpenID 扩展来开始实现登录系统。</p>
+<p>首先，我们必须编写一个函数用于从数据库加载用户。这个函数将会被 Flask-Login 使用(文件 <em>app/views.py</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@lm.user_loader</span>
+<span class="k">def</span> <span class="nf">load_user</span><span class="p">(</span><span class="nb">id</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">id</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>请注意在 Flask-Login 中的用户 ids 永远是 unicode 字符串，因此在我们把 id 发送给 Flask-SQLAlchemy 之前，把 id 转成整型是必须的，否则会报错！</p>
+</div>
+<div class="section" id="id5">
+<h2>登录视图函数<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<p>接下来我们需要更新我们的登录视图函数(文件 <em>app/views.py</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">flash</span><span class="p">,</span> <span class="n">redirect</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">url_for</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">g</span>
+<span class="kn">from</span> <span class="nn">flask.ext.login</span> <span class="kn">import</span> <span class="n">login_user</span><span class="p">,</span> <span class="n">logout_user</span><span class="p">,</span> <span class="n">current_user</span><span class="p">,</span> <span class="n">login_required</span>
+<span class="kn">from</span> <span class="nn">app</span> <span class="kn">import</span> <span class="n">app</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="n">lm</span><span class="p">,</span> <span class="n">oid</span>
+<span class="kn">from</span> <span class="nn">forms</span> <span class="kn">import</span> <span class="n">LoginForm</span>
+<span class="kn">from</span> <span class="nn">models</span> <span class="kn">import</span> <span class="n">User</span><span class="p">,</span> <span class="n">ROLE_USER</span><span class="p">,</span> <span class="n">ROLE_ADMIN</span>
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/login&#39;</span><span class="p">,</span> <span class="n">methods</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;GET&#39;</span><span class="p">,</span> <span class="s">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@oid.loginhandler</span>
+<span class="k">def</span> <span class="nf">login</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">user</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">g</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">is_authenticated</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s">&#39;index&#39;</span><span class="p">))</span>
+    <span class="n">form</span> <span class="o">=</span> <span class="n">LoginForm</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">validate_on_submit</span><span class="p">():</span>
+        <span class="n">session</span><span class="p">[</span><span class="s">&#39;remember_me&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">remember_me</span><span class="o">.</span><span class="n">data</span>
+        <span class="k">return</span> <span class="n">oid</span><span class="o">.</span><span class="n">try_login</span><span class="p">(</span><span class="n">form</span><span class="o">.</span><span class="n">openid</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">ask_for</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;nickname&#39;</span><span class="p">,</span> <span class="s">&#39;email&#39;</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s">&#39;login.html&#39;</span><span class="p">,</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="s">&#39;Sign In&#39;</span><span class="p">,</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="n">form</span><span class="p">,</span>
+        <span class="n">providers</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;OPENID_PROVIDERS&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>注意我们这里导入了不少新的模块，一些模块我们将会在不久后使用到。</p>
+<p>跟之前的版本的改动是非常小的。我们在视图函数上添加一个新的装饰器。<em>oid.loginhandle</em> 告诉 Flask-OpenID 这是我们的登录视图函数。</p>
+<p>在函数开始的时候，我们检查 <em>g.user</em> 是否被设置成一个认证用户，如果是的话将会被重定向到首页。这里的想法是如果是一个已经登录的用户的话，就不需要二次登录了。</p>
+<p>Flask 中的 <em>g</em> 全局变量是一个在请求生命周期中用来存储和共享数据。我敢肯定你猜到了，我们将登录的用户存储在这里(<em>g</em>)。</p>
+<p>我们在 <em>redirect</em> 调用中使用的 <em>url_for</em> 函数是定义在 Flask 中，以一种干净的方式为一个给定的视图函数获取 URL。如果你想要重定向到首页你可能会经常使用 <em>redirect(&#8216;/index&#8217;)</em>，但是有很多 <a class="reference external" href="http://flask.pocoo.org/docs/quickstart/#url-building">好理由</a> 让 Flask 为你构建 URLs。</p>
+<p>当我们从登录表单获取的数据后的处理代码也是新的。这里我们做了两件事。首先，我们把 <em>remember_me</em> 布尔值存储到 flask 的会话中，这里别与 Flask-SQLAlchemy 中的 <em>db.session</em> 弄混淆。之前我们已经知道 <em>flask.g</em> 对象在请求整个生命周期中存储和共享数据。<em>flask.session</em> 提供了一个更加复杂的服务对于存储和共享数据。一旦数据存储在会话对象中，在来自同一客户端的现在和任何以后的请求都是可用的。数据保持在会话中直到会话被明确地删除。为了实现这个，Flask 为我们应用程序中每一个客户端设置不同的会话文件。</p>
+<p>在接下来的代码行中，<em>oid.try_login</em> 被调用是为了触发用户使用 Flask-OpenID 认证。该函数有两个参数，用户在 web 表单提供的 <em>openid</em> 以及我们从 OpenID 提供商得到的数据项列表。因为我们已经在用户模型类中定义了 <em>nickname</em> 和 <em>email</em>，这也是我们将要从 OpenID 提供商索取的。</p>
+<p>OpenID 认证异步发生。如果认证成功的话，Flask-OpenID 将会调用一个注册了 <em>oid.after_login</em> 装饰器的函数。如果失败的话，用户将会回到登陆页面。</p>
+</div>
+<div class="section" id="flask-openid">
+<h2>Flask-OpenID 登录回调<a class="headerlink" href="#flask-openid" title="Permalink to this headline">¶</a></h2>
+<p>这里就是我们的 <em>after_login</em> 函数的实现(文件 <em>app/views.py</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@oid.after_login</span>
+<span class="k">def</span> <span class="nf">after_login</span><span class="p">(</span><span class="n">resp</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">resp</span><span class="o">.</span><span class="n">email</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">resp</span><span class="o">.</span><span class="n">email</span> <span class="o">==</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s">&#39;Invalid login. Please try again.&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s">&#39;login&#39;</span><span class="p">))</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">email</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">email</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">user</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">nickname</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">nickname</span>
+        <span class="k">if</span> <span class="n">nickname</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">nickname</span> <span class="o">==</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">nickname</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">email</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;@&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">nickname</span> <span class="o">=</span> <span class="n">nickname</span><span class="p">,</span> <span class="n">email</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">email</span><span class="p">,</span> <span class="n">role</span> <span class="o">=</span> <span class="n">ROLE_USER</span><span class="p">)</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+    <span class="n">remember_me</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="k">if</span> <span class="s">&#39;remember_me&#39;</span> <span class="ow">in</span> <span class="n">session</span><span class="p">:</span>
+        <span class="n">remember_me</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s">&#39;remember_me&#39;</span><span class="p">]</span>
+        <span class="n">session</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;remember_me&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+    <span class="n">login_user</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">remember</span> <span class="o">=</span> <span class="n">remember_me</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;next&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">url_for</span><span class="p">(</span><span class="s">&#39;index&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p><em>resp</em> 参数传入给 after_login 函数，它包含了从 OpenID 提供商返回来的信息。</p>
+<p>第一个 <em>if</em> 只是为了验证。我们需要一个合法的邮箱地址，因此提供邮箱地址是不能登录的。</p>
+<p>接下来，我们从数据库中搜索邮箱地址。如果邮箱地址不在数据库中，我们认为是一个新用户，因为我们会添加一个新用户到数据库。注意例子中我们处理空的或者没有提供的 <em>nickname</em> 方式，因为一些 OpenID 提供商可能没有它的信息。</p>
+<p>接着，我们从 flask 会话中加载 <em>remember_me</em> 值，这是一个布尔值，我们在登录视图函数中存储的。</p>
+<p>然后，为了注册这个有效的登录，我们调用 Flask-Login 的 <em>login_user</em> 函数。</p>
+<p>最后，如果在 next 页没有提供的情况下，我们会重定向到首页，否则会重定向到 next 页。</p>
+<p>如果要让这些都起作用的话，Flask-Login 需要知道哪个视图允许用户登录。我们在应用程序模块初始化中配置(文件 <em>app/__init__.py</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">lm</span> <span class="o">=</span> <span class="n">LoginManager</span><span class="p">()</span>
+<span class="n">lm</span><span class="o">.</span><span class="n">init_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+<span class="n">lm</span><span class="o">.</span><span class="n">login_view</span> <span class="o">=</span> <span class="s">&#39;login&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="g-user">
+<h2>全局变量 <em>g.user</em><a class="headerlink" href="#g-user" title="Permalink to this headline">¶</a></h2>
+<p>如果你观察仔细的话，你会记得在登录视图函数中我们检查 <em>g.user</em> 为了决定用户是否已经登录。为了实现这个我们用 Flask 的 <em>before_request</em> 装饰器。任何使用了 <em>before_request</em> 装饰器的函数在接收请求之前都会运行。 因此这就是我们设置我们 <em>g.user</em> 的地方(文件 <em>app/views.py</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@app.before_request</span>
+<span class="k">def</span> <span class="nf">before_request</span><span class="p">():</span>
+    <span class="n">g</span><span class="o">.</span><span class="n">user</span> <span class="o">=</span> <span class="n">current_user</span>
+</pre></div>
+</div>
+<p>这就是所有需要做的。全局变量 <em>current_user</em> 是被 Flask-Login 设置的，因此我们只需要把它赋给 <em>g.user</em> ，让访问起来更方便。有了这个，所有请求将会访问到登录用户，即使在模版里。</p>
+</div>
+<div class="section" id="id7">
+<h2>首页视图<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<p>在前面的章节中，我们的 <em>index</em> 视图函数使用了伪造的对象，因为那时候我们并没有用户或者 blog。好了，现在我们有用户了，让我们使用它:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/&#39;</span><span class="p">)</span>
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/index&#39;</span><span class="p">)</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">index</span><span class="p">():</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">user</span>
+    <span class="n">posts</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s">&#39;author&#39;</span><span class="p">:</span> <span class="p">{</span> <span class="s">&#39;nickname&#39;</span><span class="p">:</span> <span class="s">&#39;John&#39;</span> <span class="p">},</span>
+            <span class="s">&#39;body&#39;</span><span class="p">:</span> <span class="s">&#39;Beautiful day in Portland!&#39;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s">&#39;author&#39;</span><span class="p">:</span> <span class="p">{</span> <span class="s">&#39;nickname&#39;</span><span class="p">:</span> <span class="s">&#39;Susan&#39;</span> <span class="p">},</span>
+            <span class="s">&#39;body&#39;</span><span class="p">:</span> <span class="s">&#39;The Avengers movie was so cool!&#39;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s">&#39;index.html&#39;</span><span class="p">,</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="s">&#39;Home&#39;</span><span class="p">,</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">user</span><span class="p">,</span>
+        <span class="n">posts</span> <span class="o">=</span> <span class="n">posts</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>上面仅仅只有两处变化。首先，我们添加了 <em>login_required</em> 装饰器。这确保了这页只被已经登录的用户看到。</p>
+<p>另外一个变化就是我们把 <em>g.user</em> 传入给模版，代替之前使用的伪造对象。</p>
+<p>这是运行应用程序最好的时候了！</p>
+</div>
+<div class="section" id="id8">
+<h2>登出<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<p>我们已经实现了登录，现在是时候增加登出的功能。</p>
+<p>登出的视图函数是相当地简单(文件 <em>app/views.py</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/logout&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">logout</span><span class="p">():</span>
+    <span class="n">logout_user</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s">&#39;index&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>但是我们还没有在模版中添加登出的链接。我们将要把这个链接放在基础层中的导航栏里(文件 <em>app/templates/base.html</em>):</p>
+<div class="highlight-python"><pre>&lt;html&gt;
+  &lt;head&gt;
+    {% if title %}
+    &lt;title&gt;{{title}} - microblog&lt;/title&gt;
+    {% else %}
+    &lt;title&gt;microblog&lt;/title&gt;
+    {% endif %}
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;div&gt;Microblog:
+        &lt;a href="{{ url_for('index') }}"&gt;Home&lt;/a&gt;
+        {% if g.user.is_authenticated() %}
+        | &lt;a href="{{ url_for('logout') }}"&gt;Logout&lt;/a&gt;
+        {% endif %}
+    &lt;/div&gt;
+    &lt;hr&gt;
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    &lt;ul&gt;
+    {% for message in messages %}
+        &lt;li&gt;{{ message }} &lt;/li&gt;
+    {% endfor %}
+    &lt;/ul&gt;
+    {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  &lt;/body&gt;
+&lt;/html&gt;</pre>
+</div>
+<p>实现起来是不是很简单？我们只需要检查有效的用户是否被设置到 <em>g.user</em> 以及是否我们已经添加了登出链接。我们也正好利用这个机会在模版中使用 <em>url_for</em>。</p>
+</div>
+<div class="section" id="id9">
+<h2>结束语<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
+<p>我们现在已经有一个完全实现的登录系统。在下一章中，我们将会创建用户信息页以及将会显示用户头像。</p>
+<p>如果你想要节省时间的话，你可以下载 <a class="reference external" href="https://github.com/miguelgrinberg/microblog/archive/v0.5.zip">microblog-0.5.zip</a>。</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">用户登录</a><ul>
+<li><a class="reference internal" href="#id2">回顾</a></li>
+<li><a class="reference internal" href="#id3">配置</a></li>
+<li><a class="reference internal" href="#id4">重构用户模型</a></li>
+<li><a class="reference internal" href="#user-loader">user_loader 回调</a></li>
+<li><a class="reference internal" href="#id5">登录视图函数</a></li>
+<li><a class="reference internal" href="#flask-openid">Flask-OpenID 登录回调</a></li>
+<li><a class="reference internal" href="#g-user">全局变量 <em>g.user</em></a></li>
+<li><a class="reference internal" href="#id7">首页视图</a></li>
+<li><a class="reference internal" href="#id8">登出</a></li>
+<li><a class="reference internal" href="#id9">结束语</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="database.html"
+                        title="previous chapter">数据库</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="profile.html"
+                        title="next chapter">用户信息页和头像</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/userlogin.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="profile.html" title="用户信息页和头像"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="database.html" title="数据库"
+             >previous</a> |</li>
+        <li><a href="index.html">flask mega-tutorial 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, miguel grinberg(chinese version by dan).
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>
