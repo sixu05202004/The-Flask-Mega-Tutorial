@@ -246,9 +246,106 @@
 
 注意的是我们是以标准的 UTC 时区写入时间。我们在之前的章节中讨论过这个问题，因此我们将会以 UTC 格式写入所有时间内容以保证它们的一致性。这种时间形式在前台显示，看起来会很别扭。我们将会在后面的章节中修正这种显示问题。
 
-
-
+要显示用户的关于我的信息，我们必须给他们输入的地方，在“编辑个人资料”页面，这是正确的地方。
 
 
 编辑用户信息
 ----------------
+
+新增一个用户资料表单是相当容易的。我们开始创建网页表单(文件 *app/forms.py*)::
+
+    from flask.ext.wtf import Form, TextField, BooleanField, TextAreaField
+    from flask.ext.wtf import Required, Length
+
+    class EditForm(Form):
+        nickname = TextField('nickname', validators = [Required()])
+        about_me = TextAreaField('about_me', validators = [Length(min = 0, max = 140)])
+
+接着视图模板(文件 *app/templates/edit.html*)::
+
+    <!-- extend base layout -->
+    {% extends "base.html" %}
+
+    {% block content %}
+    <h1>Edit Your Profile</h1>
+    <form action="" method="post" name="edit">
+        {{form.hidden_tag()}}
+        <table>
+            <tr>
+                <td>Your nickname:</td>
+                <td>{{form.nickname(size = 24)}}</td>
+            </tr>
+            <tr>
+                <td>About yourself:</td>
+                <td>{{form.about_me(cols = 32, rows = 4)}}</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><input type="submit" value="Save Changes"></td>
+            </tr>
+        </table>
+    </form>
+    {% endblock %}
+
+最后我们编写视图函数(文件 *app/views.py*)::
+
+    from forms import LoginForm, EditForm
+
+    @app.route('/edit', methods = ['GET', 'POST'])
+    @login_required
+    def edit():
+        form = EditForm()
+        if form.validate_on_submit():
+            g.user.nickname = form.nickname.data
+            g.user.about_me = form.about_me.data
+            db.session.add(g.user)
+            db.session.commit()
+            flash('Your changes have been saved.')
+            return redirect(url_for('edit'))
+        else:
+            form.nickname.data = g.user.nickname
+            form.about_me.data = g.user.about_me
+        return render_template('edit.html',
+            form = form)
+
+为了能够让这页很容易访问到，我们在用户资料上添加了一个链接(文件 *app/templates/user.html*)::
+
+    <!-- extend base layout -->
+    {% extends "base.html" %}
+
+    {% block content %}
+    <table>
+        <tr valign="top">
+            <td><img src="{{user.avatar(128)}}"></td>
+            <td>
+                <h1>User: {{user.nickname}}</h1>
+                {% if user.about_me %}<p>{{user.about_me}}</p>{% endif %}
+                {% if user.last_seen %}<p><i>Last seen on: {{user.last_seen}}</i></p>{% endif %}
+                {% if user.id == g.user.id %}<p><a href="{{url_for('edit')}}">Edit</a></p>{% endif %}
+            </td>
+        </tr>
+    </table>
+    <hr>
+    {% for post in posts %}
+        {% include 'post.html' %}
+    {% endfor %}
+    {% endblock %}
+
+编辑用户资料的链接是十分智能的，只有当用户浏览自己的用户资料页的时候才会出现，浏览其他用户的时候是不会出现的。
+
+下面用户资料页的新的截图:
+
+..image:: images/5.png
+
+
+
+结束语
+-----------
+
+最后留给大家一个问题，应用程序存在一个 bug。这个问题在前面的章节就已经存在，这一章的代码存在同样的问题。在下一章中我会解释这个 bug，并且修正它。
+
+如果你想要节省时间的话，你可以下载 `microblog-0.6.zip <https://github.com/miguelgrinberg/microblog/archive/v0.6.zip>`_。
+
+请记住数据库并不包含在上述的压缩包中，请使用 *db_upgrade.py* 升级数据库，用 *db_create.py* 创建新的数据库。
+
+我希望能在下一章继续见到各位！
