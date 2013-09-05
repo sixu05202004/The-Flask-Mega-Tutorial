@@ -1,8 +1,7 @@
 .. _ajax:
 
-
-Ajax
-========
+Ajax 
+=====
 
 这将是国际化和本地化的最后一篇文章，我们将会尽所能使得 *microblog* 应用程序对非英语用户可用和更加友好。
 
@@ -63,7 +62,7 @@ Ajax
 
 现在我们已经在数据库中有了存储 blog 内容语言种类的地方，因此让我们检测每一个 blog 语言种类::
 
-from guess_language import guessLanguage
+    from guess_language import guessLanguage
 
     @app.route('/', methods = ['GET', 'POST'])
     @app.route('/index', methods = ['GET', 'POST'])

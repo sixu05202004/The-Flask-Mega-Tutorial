@@ -29,8 +29,7 @@
    i18n
    ajax
    debugging
-   deploy1
-   deploy2
+
 
 
 
