@@ -24,7 +24,7 @@
 
 因此，相反我们让数据库处理常规数据，我们将创建一个专门的数据库，专注服务于文本搜索。
 
-现在又一些开源的全文搜索引擎。在我的知识范围内唯一一个用 Python 编写的 Flask 扩展是 `Whoosh <https://bitbucket.org/mchaput/whoosh/wiki/Home>`_。一个纯 Python 的搜索引擎的好处就是在 Python 解释器可用的任何地方安装和运行。缺点也是很显然的，性能可能比不上 C 或者 C++ 编写的。我的观点是最理想的解决方式就是开发一个连接不同搜索引擎的 Flask 扩展，以某种方式来处理搜索，就像 Flask-SQLAlchemy 一样。但是目前在 Flask 中暂时没有这类型的扩展。Django 开发者提供了一个很好的扩展，用来支持不同的全文搜索引擎，叫做 `django-haystack <http://haystacksearch.org/>`_。也许不久就会有人写一个类似的 Flask 扩展。
+现在有一些开源的全文搜索引擎。在我的知识范围内唯一一个用 Python 编写的 Flask 扩展是 `Whoosh <https://bitbucket.org/mchaput/whoosh/wiki/Home>`_。一个纯 Python 的搜索引擎的好处就是在 Python 解释器可用的任何地方能够安装和运行。缺点也是很显然的，性能可能比不上 C 或者 C++ 编写的。我的观点是最理想的解决方式就是开发一个连接不同搜索引擎的 Flask 扩展，以某种方式来处理搜索，就像 Flask-SQLAlchemy 一样。但是目前在 Flask 中暂时没有这类型的扩展。Django 开发者提供了一个很好的扩展，用来支持不同的全文搜索引擎，叫做 `django-haystack <http://haystacksearch.org/>`_。也许不久就会有人写一个类似的 Flask 扩展。
 
 如果你暂时没有在虚拟环境上安装 Flask-WhooshAlchemy，请安装它。Windows 用户应该运行这个::
 
@@ -38,7 +38,7 @@
 配置
 ---------
 
-配置 Flask-WhooshAlchemy 也是相当简单。我们只需要告诉扩展全文搜索数据的名称(文件 *config.py*)::
+配置 Flask-WhooshAlchemy 也是相当简单。我们只需要告诉扩展全文搜索数据库的名称(文件 *config.py*)::
 
     WHOOSH_BASE = os.path.join(basedir, 'search.db')
 
@@ -46,7 +46,7 @@
 模型修改
 ----------
 
-因为把 Flask-WhooshAlchemy 整合进 Flask-SQLAlchemy，我们需要在模型的类中指明哪些数据需要为搜索建立搜索(文件 *app/models.py*)::
+因为把 Flask-WhooshAlchemy 整合进 Flask-SQLAlchemy，我们需要在模型的类中指明哪些数据需要建立搜索索引(文件 *app/models.py*)::
 
     from app import app
     import flask.ext.whooshalchemy as whooshalchemy
@@ -82,7 +82,7 @@
 搜索
 -------
 
-现在我们准备开始搜索。首先让我们在数据库中添加些 blog。有两种方式去添加。我们可以运行应用程序，通过浏览器像普通用户一样添加 blog。另外一张就是在 Python 提示符下。
+现在我们准备开始搜索。首先让我们在数据库中添加些 blog。有两种方式去添加。我们可以运行应用程序，通过浏览器像普通用户一样添加 blog。另外一种就是在 Python 提示符下。
 
 在 Python 提示符下，我们可以按如下的去做::
 
@@ -118,7 +118,7 @@
 配置
 ^^^^^^^
 
-置于配置，我们需要指明搜索结果返回的最大数量(文件 *config.py*)::
+在配置文件中，我们需要指明搜索结果返回的最大数量(文件 *config.py*)::
 
     MAX_SEARCH_RESULTS = 50
 
@@ -132,7 +132,7 @@
     class SearchForm(Form):
         search = TextField('search', validators = [Required()])
 
-接着我们必须创建一个搜索表单对象并且使得它在所有模版中可用，因为我们将搜索表单放在导航栏中，导航栏是所有页面共有的。最容易地方式就是在 *before_request* 函数中创建这个表单对象，接着把它放在全局变量 *g* 中(文件 *app/views.py*)::
+接着我们必须创建一个搜索表单对象并且使得它对所有模版中可用，因为我们将搜索表单放在导航栏中，导航栏是所有页面共有的。最容易的方式就是在 *before_request* 函数中创建这个表单对象，接着把它放在全局变量 *g* 中(文件 *app/views.py*)::
 
     from forms import SearchForm
 
@@ -188,7 +188,7 @@
             query = query,
             results = results)
 
-搜索结果视图函数把查询传递给 Whoosh，并且把最大的结果数也作为参数传递给 Whoosh，因为我们暂时不需要大量的返回结果。
+搜索结果视图函数把查询传递给 Whoosh，并且把最大的结果数也作为参数传递给 Whoosh。
 
 最后一部分就是搜索结果的模版(文件 *app/templates/search_results.html*)::
 
@@ -206,6 +206,6 @@
 结束语
 ---------
 
-如果你想要节省时间的话，你可以下载 `microblog-0.4.zip <https://github.com/miguelgrinberg/microblog/archive/v0.4.zip>`_。
+如果你想要节省时间的话，你可以下载 `microblog-0.10.zip <https://github.com/miguelgrinberg/microblog/archive/v0.10.zip>`_。
 
 我希望能在下一章继续见到各位！

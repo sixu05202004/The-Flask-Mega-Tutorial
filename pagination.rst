@@ -306,7 +306,7 @@ Flask-SQLAlchemy 天生就支持分页。比如如果我们想要得到用户关
 结束语
 ------------
 
-代码中更新了本文中的一些修改，如果你想要节省时间的话，你可以下载 `microblog-0.10.zip <https://github.com/miguelgrinberg/microblog/archive/v0.10.zip>`_。
+代码中更新了本文中的一些修改，如果你想要节省时间的话，你可以下载 `microblog-0.9.zip <https://github.com/miguelgrinberg/microblog/archive/v0.9.zip>`_。
 
 我希望能在下一章继续见到各位！
 
