@@ -48,7 +48,7 @@ Flask-Babel 可以简单地通过创建 *Babel* 类的一个实例并且传入 F
     def get_locale():
         return request.accept_languages.best_match(LANGUAGES.keys())
 
-这个函数有一个 *localeselector* 装饰器，它被调用在请求之前为了当产生响应的时候给我们机会选择使用的语言。现在为止我们做的是简单的，我们只要读取浏览器发送或的 HTTP 请求中的 *Accept-Languages* 头并且从我们支持的语言列表中选择最匹配的语言。这个过程实际上也相当简单，*best_match* 方法为我们做了所有工作。
+这个函数有一个 *localeselector* 装饰器，它被调用在请求之前为了当产生响应的时候给我们机会选择使用的语言。现在为止我们做的是简单的，我们只要读取浏览器发送的 HTTP 请求中的 *Accept-Languages* 头并且从我们支持的语言列表中选择最匹配的语言。这个过程实际上也相当简单，*best_match* 方法为我们做了所有工作。
 
 *Accept-Languages* 头在大多数浏览器上被默认配置成操作系统层的所选择的语言，但是所有的浏览器给我们机会选择其它的语言。用户可以提供语言列表，每一个都有权重。作为例子，下面是复杂的 *Accept-Languages* 头::
 
@@ -68,7 +68,7 @@ Flask-Babel 可以简单地通过创建 *Babel* 类的一个实例并且传入 F
 标记翻译文本
 ----------------
 
-现在到了这个任务最繁琐的地方。我们需要检查所有的代码和模拟标记所有需要翻译的英文文本以便 Babel 能够找到它们。例如，看看从 *after_login* 函数中代码片段::
+现在到了这个任务最繁琐的地方。我们需要检查所有的代码和模版标记所有需要翻译的英文文本以便 Babel 能够找到它们。例如，看看从 *after_login* 函数中代码片段::
 
     if resp.email is None or resp.email == "":
         flash('Invalid login. Please try again.')
@@ -90,11 +90,11 @@ Flask-Babel 可以简单地通过创建 *Babel* 类的一个实例并且传入 F
 
     <li><a href="{{ url_for('index') }}">{{ _('Home') }}</a></li>
 
-不幸地是不是所有我们要翻译的文本像上面一样的简单。作为一个例子，考虑下来自我们的 *post.html* 子模板中的如下的片段::
+不幸地是，不是所有我们要翻译的文本像上面一样的简单。作为一个例子，考虑下来自我们的 *post.html* 子模板中的如下的片段::
 
     <p><a href="{{url_for('user', nickname = post.author.nickname)}}">{{post.author.nickname}}</a> said {{momentjs(post.timestamp).fromNow()}}:</p>
 
-这里我们要翻译的结构式：“*<nickname>* 说 *<when>*:”。一种尝试就是只标记翻译 “说”，因为我们不确定在这一句中姓名以及时间组合的次序在所有语言中是一样的。正确的办法是标记整个语句并且使用对姓名与时间使用占位符，这样翻译器会在必要的时候改变次序。更复杂的是，名字里面内嵌了一个超链接。
+这里我们要翻译的结构式：“*<nickname>* 说 *<when>*:”。一种尝试就是只标记翻译 “说”，因为我们不确定在这一句中姓名以及时间组合的次序在所有语言中是一样的。正确的办法是标记整个语句并且使用对姓名与时间使用占位符，这样翻译器会在必要的时候改变次序。更复的杂情况是，名称里面内嵌了一个超链接。
 
 *gettext* 函数是支持使用 *%(name)s* 语法占位符，这也是我们最好的解决办法。下面是一个类似情况的占位符的例子::
 
@@ -122,7 +122,7 @@ Flask-Babel 可以简单地通过创建 *Babel* 类的一个实例并且传入 F
 
 这里我们只是从 *nickname* 字段中移除非字母，数字，.，_ 的字符。
 
-当一个用户在页面注册，我们从 OpenID 提供商接收到他或者她的 *nickname*，因此我们必须确保转换这个 *nickname*(文件 *app/views.py*)::
+当一个用户在页面注册，我们从 OpenID 提供商接收到他或者她的 *nickname*，因此我们必须确保转换这个 *nickname* (文件 *app/views.py*)::
 
     @oid.after_login
     def after_login(resp):
@@ -132,7 +132,7 @@ Flask-Babel 可以简单地通过创建 *Babel* 类的一个实例并且传入 F
         user = User(nickname = nickname, email = resp.email, role = ROLE_USER)
         #...
 
-同样在编辑用户信息的表单中，那里可以修改 *nickname*，我们需要在这里加强验证不允许非法字符(文件 *app/forms.py*)::
+同样在编辑用户信息的表单中，那里可以修改 *nickname*，我们需要在那里加强验证不允许非法字符(文件 *app/forms.py*)::
 
     class EditForm(Form):
         #...
@@ -154,9 +154,9 @@ Flask-Babel 可以简单地通过创建 *Babel* 类的一个实例并且传入 F
 提取文本翻译
 ---------------
 
-这里我不会列举所有的需要翻译的代码和模版。感兴趣的读者可以检查 `这里 <https://github.com/miguelgrinberg/microblog/commit/cac572cb0e427654edd3ac599f6197f1f6ee29f6>`_。
+这里我不会列举所有需要翻译的代码和模版。感兴趣的读者可以检查 `这里 <https://github.com/miguelgrinberg/microblog/commit/cac572cb0e427654edd3ac599f6197f1f6ee29f6>`_。
 
-因此让我们假设我们已经发现所有文本并且把它们放入了 *gettext()* 或者 *_()* 调用中。那现在干什么了？
+因此让我们假设我们已经发现所有文本并且把它们放入了 *gettext()* 或者 *_()* 调用中。那现在要干什么了？
 
 现在我们运行 *pybabel* 提取文本到单独的文件中::
 
@@ -178,7 +178,7 @@ Windows 用户使用这个命令::
 
     flask/bin/pybabel init -i messages.pot -d app/translations -l es
 
-*pybabel init* 命令把 *.pot* 文件作为输入，生成一个新语言目录，以 *-d* 选项指定的目录为新语言的目录，以 *-l* 指定的语言为新语言。默认情况下，Babel 希望翻译的语言在与模版相同目录级别的 *translations* 文件夹中，因此我们把它们放在这里。
+*pybabel init* 命令把 *.pot* 文件作为输入，生成一个新语言目录，以 *-d* 选项指定的目录为新语言的目录，以 *-l* 指定的语言为想要翻译成的语言类型。默认情况下，Babel 希望翻译的语言在与模版相同目录级别的 *translations* 文件夹中，因此我们把它们放在这里。
 
 在你运行上述命令后，一个目录 *app/translations/es* 是创建了。在它里面有另一个名为 *LC_MESSAGES* 的目录，在它里面有一个 *messages.po* 文件。
 
@@ -190,7 +190,7 @@ Windows 用户使用这个命令::
 
     flask/bin/pybabel compile -d app/translations
 
-*pybabel compile* 这一步会读取 *.po* 文件的内容并且会相同的目录下生成一个名为 *.mo* 的编译的版本。这个文件以一种优化的格式包含了翻译的文本，应用程序可以更高效地使用它。
+*pybabel compile* 这一步会读取 *.po* 文件的内容并且会在相同的目录下生成一个名为 *.mo* 的编译的版本。这个文件以一种优化的格式包含了翻译的文本，应用程序可以更高效地使用它。
 
 翻译已经准备好被使用了。为了验证它你可以修改浏览器上的语言设置让西班牙语为最佳语言，或者你可以直接修改 *get_locale* 函数(文件 *app/views.py*)::
 

@@ -99,19 +99,102 @@ Windows 用户这么做::
 
 我们从上面的情况中可以知道 SQLAlchemy 是不能在数据库会话中注册删除操作。但是我们不知道为什么。
 
-如果你仔细看看堆栈轨迹的最下面，你会发现问题好像在 *Post* 对象最开始绑定在会话 *'1'*，现在我们试着绑定同一对象到会话 *'3'*中。
+如果你仔细看看堆栈轨迹的最下面，你会发现问题好像在 *Post* 对象最开始绑定在会话 *'1'*，现在我们试着绑定同一对象到会话 *'3'* 中。
 
-如果你搜索这个问题的话，你会发现很多用户都会遇到这个问题，尤其是使用一个多线程网页服务器，它们得到两个请求尝试同时把同一对象添加到不用的会话。但是我们使用的是 Python 开发网页服务器，它是一个单线程服务器，因此这不是我们问题的原因。这可能是一个导致两个会话在同一时间活跃。
+如果你搜索这个问题的话，你会发现很多用户都会遇到这个问题，尤其是使用一个多线程网页服务器，它们得到两个请求尝试同时把同一对象添加到不同的会话。但是我们使用的是 Python 开发网页服务器，它是一个单线程服务器，因此这不是我们问题的原因。这可能的原因是不知道什么操作导致两个会话在同一时间活跃。
 
-要看到如果我们可以了解更多的问题，我们应该尝试以一种更可控的环境下重现错误。幸运的是，在开发模式下的应用程序试图重现这个问题，它确实重现了。在开发模式中，当发生异常时，我们得到是 Flask web 的堆栈轨迹，而不是 *500.html* 模板。
+如果我们想要了解更多的问题，我们应该尝试以一种更可控的环境下重现错误。幸运的是，在开发模式下的应用程序试图重现这个问题，它确实重现了。在开发模式中，当发生异常时，我们得到是 Flask web 的堆栈轨迹，而不是 *500.html* 模板。
 
-web 的堆栈轨迹是十分好的，因为它允许你检查代码并且从服务器上计算表达式。没有真正理解在这段代码中到底为什么会发生这个，我们只是知道某些原因导致一个请求在结束的时候没有正常删除会话。因此更好的方案就是找出到底是谁创建这个会话。
+web 的堆栈轨迹是十分好的，因为它允许你检查代码并且从服务器上计算表达式。没有真正理解在这段代码中到底为什么会发生这种事情，我们只是知道某些原因导致一个请求在结束的时候没有正常删除会话。因此更好的方案就是找出到底是谁创建这个会话。
 
 
 使用 Python 调试器
 --------------------
 
-最容易找出谁创建一个对象的方式就是在对象构建中设置断点。断点是一个当满足一定条件的时候中断程序的命令。
+最容易找出谁创建一个对象的方式就是在对象构建中设置断点。断点是一个当满足一定条件的时候中断程序的命令。此时此刻，这是能够检查程序，比如获取中断时的堆栈轨迹，检查或者甚至改变变量值，等等。断点是 *调试器* 的特色之一。这次我们将会使用 Python 内置模块，叫做 *pdb*。
+
+但是我们该检查哪个类？让我们回到基于 Web 的堆栈轨迹，再仔细找找。在最底层的堆栈帧中，我们能使用代码浏览器和 Python 控制台来找出使用会话的类。在代码中，我们看到我们是在 *Session* 类中。这像是 SQLAlchemy 中的数据库会话的基础类。因为现在在最底层的堆栈帧正是在会话对象里，我们能够在控制台中得到会话实际的类，通过运行::
+
+  >>> print self
+  <flask_sqlalchemy._SignallingSession object at 0xff34914c>
+
+现在我们知道使用中的会话是通过 Flask-SQLAlchemy 定义的，因此这个扩展可能定义自己的会话类，作为 SQLAlchemy 会话的一个子类。
+
+现在我们可以到 Flask-SQLAlchemy 扩展的 *flask/lib/python2.7/site-packages/flask_sqlalchemy.py* 中检查源代码并且定位到类 *_SignallingSession* 和它的 *__init__()* 构造函数，现在我们准备用调试器工作。
+
+有很多方式在 Python 应用程序中设置断点。最简单的一种就是在我们想要中断的程序中写入如下代码::
+
+  import pdb; pdb.set_trace()
+
+因此我们继续向前并且暂时在 *_SignallingSession* 类的构造函数插入断点(文件 *flask/lib/python2.7/site-packages/flask_sqlalchemy.py*)::
+
+  class _SignallingSession(Session):
+
+      def __init__(self, db, autocommit=False, autoflush=False, **options):
+          import pdb; pdb.set_trace() # <-- this is temporary!
+          self.app = db.get_app()
+          self._model_changes = {}
+          Session.__init__(self, autocommit=autocommit, autoflush=autoflush,
+                           extension=db.session_extensions,
+                           bind=db.engine,
+                           binds=db.get_binds(self.app), **options)
+
+      # ...
+
+让我们继续运行看看会发生什么::
+
+  $ ./run.py
+  > /home/microblog/flask/lib/python2.7/site-packages/flask_sqlalchemy.py(198)__init__()
+  -> self.app = db.get_app()
+  (Pdb)
+
+因为没有打印出 “Running on ...” 的信息我们知道服务器实际上并没有完成启动过程。中断可能已经发生了在内部某些神秘的代码里面。
+
+最重要的问题是我们需要回答应用程序现在处于哪里，因为这将会告诉我们谁在请求创建会话 *'1'*。我们将会使用 *bt* 来获取堆栈轨迹::
+
+  (Pdb) bt
+    /home/microblog/run.py(2)<module>()
+  -> from app import app
+    /home/microblog/app/__init__.py(44)<module>()
+  -> from app import views, models
+    /home/microblog/app/views.py(6)<module>()
+  -> from forms import LoginForm, EditForm, PostForm, SearchForm
+    /home/microblog/app/forms.py(4)<module>()
+  -> from app.models import User
+    /home/microblog/app/models.py(92)<module>()
+  -> whooshalchemy.whoosh_index(app, Post)
+    /home/microblog/flask/lib/python2.6/site-packages/flask_whooshalchemy.py(168)whoosh_index()
+  -> _create_index(app, model))
+    /home/microblog/flask/lib/python2.6/site-packages/flask_whooshalchemy.py(199)_create_index()
+  -> model.query = _QueryProxy(model.query, primary_key,
+    /home/microblog/flask/lib/python2.6/site-packages/flask_sqlalchemy.py(397)__get__()
+  -> return type.query_class(mapper, session=self.sa.session())
+    /home/microblog/flask/lib/python2.6/site-packages/sqlalchemy/orm/scoping.py(54)__call__()
+  -> return self.registry()
+    /home/microblog/flask/lib/python2.6/site-packages/sqlalchemy/util/_collections.py(852)__call__()
+  -> return self.registry.setdefault(key, self.createfunc())
+  > /home/microblog/flask/lib/python2.6/site-packages/flask_sqlalchemy.py(198)__init__()
+  -> self.app = db.get_app()
+  (Pdb)
+
+像之前做的，我们会发现在 *models.py* 的 92 行中存在问题，那里是我们全文搜索引擎初始化的地方::
+
+  whooshalchemy.whoosh_index(app, Post)
+
+奇怪，在这个阶段我们并没有做触发数据库会话创建的事情，这看起来好像是初始化 Flask-WhooshAlchemy 的行为，它创建了一个数据库会话。
+
+这感觉就像这毕竟不是我们的错误，也许某种形式的交互在两个 Flask 扩展 SQLAlchemy 和 Whoosh 之间。我们能停留在这里并且寻求两个扩展的开发者的帮助。或者是我们继续调试看能不能找出问题的真正所在。我将会继续，如果大家不感兴趣的话，可以跳过下面的内容。
+
+让我们多看这个堆栈轨迹一眼。我们调用了 *whoosh_index()*，它反过来调用了 *_create_index()*。在 *_create_index()* 中的一行代码是这样的::
+
+  model.query = _QueryProxy(model.query, primary_key,
+              searcher, model)
+
+在这里的 *model* 的变量被设置成我们的 *Post* 类，我们在调用 *whoosh_index()* 的时候传入的 *Post* 类。考虑到这一点，这看起来像是 Flask-WhooshAlchemy 创建了一个 *Post.query* 封装，它把原始的 *Post.query* 作为参数，并且附加些其它的 Whoosh 特别的东西。接着是最让人感兴趣的一部分。根据上面的堆栈轨迹，下一个调用的函数是 *__get__()*，这是一个 Python 的 `描述符 <http://docs.python.org/2/howto/descriptor.html>`_。
+
+*__get__()* 方法是用于实现描述符，它是一个与它们行为关联的属性而不只是一个值。每次被引用,描述符 *__get__()* 的函数被调用。函数被支持返回属性的值。在这行代码中唯一被提及的的属性就是 *query*，
+
+
 
 
 

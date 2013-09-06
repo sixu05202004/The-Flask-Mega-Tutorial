@@ -82,7 +82,7 @@ Bootstrap 擅长如下这些东西:
 
 接下来我们需要对模板做的改变有:
 
-* 整个页面的内容括在单个列 `固定的布局 <http://twitter.github.com/bootstrap/scaffolding.html#layouts>`_ 与 `响应功能 <http://twitter.github.com/bootstrap/scaffolding.html#responsive>`_
+* 整个页面的内容使用 `固定的布局 <http://twitter.github.com/bootstrap/scaffolding.html#layouts>`_ 与 `响应功能 <http://twitter.github.com/bootstrap/scaffolding.html#responsive>`_
 * 使用 Bootstrap 的 `表单形式 <http://twitter.github.com/bootstrap/base-css.html#forms>`_ 替换所有的表单
 * 使用 `导航 <http://twitter.github.com/bootstrap/components.html#navbar>`_ 替换我们的导航栏
 * 用 `分页 <http://twitter.github.com/bootstrap/components.html#pagination>`_ 按钮 改变 上一页以及下一页的链接
