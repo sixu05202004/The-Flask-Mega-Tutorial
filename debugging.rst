@@ -192,9 +192,291 @@ web 的堆栈轨迹是十分好的，因为它允许你检查代码并且从服�
 
 在这里的 *model* 的变量被设置成我们的 *Post* 类，我们在调用 *whoosh_index()* 的时候传入的 *Post* 类。考虑到这一点，这看起来像是 Flask-WhooshAlchemy 创建了一个 *Post.query* 封装，它把原始的 *Post.query* 作为参数，并且附加些其它的 Whoosh 特别的东西。接着是最让人感兴趣的一部分。根据上面的堆栈轨迹，下一个调用的函数是 *__get__()*，这是一个 Python 的 `描述符 <http://docs.python.org/2/howto/descriptor.html>`_。
 
-*__get__()* 方法是用于实现描述符，它是一个与它们行为关联的属性而不只是一个值。每次被引用,描述符 *__get__()* 的函数被调用。函数被支持返回属性的值。在这行代码中唯一被提及的的属性就是 *query*，
+*__get__()* 方法是用于实现描述符，它是一个与它们行为关联的属性而不只是一个值。每次被引用,描述符 *__get__()* 的函数被调用。函数被支持返回属性的值。在这行代码中唯一被提及的的属性就是 *query*，所以现在我们知道，这个看似简单的属性，我们已经在过去使用的生成我们的数据库查询不是一个真正的属性，而是一个描述符。
+
+让我们继续往下看看接下来发生什么。在 *__get__()* 中的代码是这个::
+
+  return type.query_class(mapper, session=self.sa.session())
+
+这是一个相当暴露一段代码。比如，*User.query.get(id)* 我们间接调用 *__get__()* 方法来提供查询对象，这里我们能够看到这个查询对象会暗暗地带来一个数据库会话。
+
+当 Flask-WhooshAlchemy 使用 *model.query* 同样会触发一个会话，这个会话被创建和与查询对象关联。但是这个查询对象与运行在我们视图函数中的查询对象不一样，Flask-WhooshAlchemy 请求并不是短暂的。Flask-WhooshAlchemy 把这个查询对象传入作为自己的查询对象，并且存入到 *model.query*。由于没有 *__set__()* 方法对应，新的对象将被存储为一个属性。对于我们的 *Post* 类，这就意味着在 Flask-WhooshAlchemy 完成初始化，我们将会有名称相同的描述符和属性。根据优先级，在这种情况下，属性胜出。
+
+这一切最重要的方面是，这段代码设置一个持久的属性，里面有我们的会话 *'1'* 。即使应用程序处理的第一个请求将使用这个会话，然后忘掉它，会话不会消失，因为它仍然是引用由 *Post.query* 属性。这是我们的错误！
+
+该错误是由于混淆（我认为）描述的类型而造成的。它们看起来像常规属性，所以人们往往就这样使用它们。Flask-WhooshAlchemy 开发者只是想创建一个增强的查询对象用来为 Whoosh 查询存储一些有用的状态，但是他们没有意识到引用一个模型的 *query* 属性不像看起来的一样，背后隐藏与一个启动数据库的会话的属性关联。
 
 
+回归测试
+-----------
+
+既然现在已经清楚了发生问题的原因所在，我们是不是可以试着重现下问题，为修复问题做一些准备。如果不愿意这么做的话，那可能只能等到 Flask-WhooshAlchemy 的开发者们去修复，那如果修复版本要等到一年以后？我们是不是要一直等待着，或者直接取消删除这个功能。
+
+因此为了准备修复这个问题，我们可以试着去重现这个问题，我们可以试着去创建针对这个问题的测试。为了创建这个测试，我们需要模拟两个请求，第一个请求就是查询一个 Post 对象，模拟我们请求数据为了在首先显示 blog。因为这是第一个会话，我们准备命名这个会话为 *'1'*。接着我们需要忘记这个会话创建一个新的会话，就像 Flask-SQLAlchemy 所做的。试着删除 Post 对象在第二个会话中，这时候应该会触发这个 bug::
+
+  def test_delete_post(self):
+      # create a user and a post
+      u = User(nickname = 'john', email = 'john@example.com')
+      p = Post(body = 'test post', author = u, timestamp = datetime.utcnow())
+      db.session.add(u)
+      db.session.add(p)
+      db.session.commit()
+      # query the post and destroy the session
+      p = Post.query.get(1)
+      db.session.remove()
+      # delete the post using a new session
+      db.session = db.create_scoped_session()
+      db.session.delete(p)
+      db.session.commit()
+
+现在当我们运行测试的时候失败会出现::
+
+  $ ./tests.py
+  .E....
+  ======================================================================
+  ERROR: test_delete_post (__main__.TestCase)
+  ----------------------------------------------------------------------
+  Traceback (most recent call last):
+    File "./tests.py", line 133, in test_delete_post
+      db.session.delete(p)
+    File "/home/microblog/flask/lib/python2.7/site-packages/sqlalchemy/orm/scoping.py", line 114, in do
+      return getattr(self.registry(), name)(*args, **kwargs)
+    File "/home/microblog/flask/lib/python2.7/site-packages/sqlalchemy/orm/session.py", line 1400, in delete
+      self._attach(state)
+    File "/home/microblog/flask/lib/python2.7/site-packages/sqlalchemy/orm/session.py", line 1656, in _attach
+      state.session_id, self.hash_key))
+  InvalidRequestError: Object '<Post at 0xff09b7ac>' is already attached to session '1' (this is '3')
+
+  ----------------------------------------------------------------------
+  Ran 6 tests in 3.852s
+
+  FAILED (errors=1)
 
 
+修复
+-------
 
+为了解决这个问题，我们需要找到一种连接 Flask-WhooshAlchemy 查询对象到模型的替代方式。
+
+Flask-SQLAlchemy 的文档上提到过有一个 `model.query_class <http://pythonhosted.org/Flask-SQLAlchemy/api.html#flask.ext.sqlalchemy.Model.query_class>`_ 属性包含了用于查询的类。这实际上是一个更干净的方式使得 Flask-SQLAlchemy 使用自定义的查询类而不是 Flask-WhooshAlchemy 所做的。如果我们配置 Flask-SQLAlchemy 来创建查询使用 Whoosh 启用查询类(它已经是 Flask-SQLAlchemy *BaseQuery* 的子类)，接着我们应该得到跟以前一样的结果，但是没有 bug。
+
+我们在 github 上创建了一个 Flask-WhooshAlchemy  项目的分支，那里我已经实现上面这些修改。如果你想要看这些改变的话，请访问 `github diff <https://github.com/miguelgrinberg/Flask-WhooshAlchemy/commit/1e17350ea600e247c0094cfa4ae7145f08f4c4a3>`_，或者下载 `修改的扩展 <https://raw.github.com/miguelgrinberg/Flask-WhooshAlchemy/1e17350ea600e247c0094cfa4ae7145f08f4c4a3/flask_whooshalchemy.py>`_ 并且安装它在原始的 *flask_whooshalchemy.py* 文件所在地。
+
+
+测试覆盖率
+------------
+
+虽然我们已经有了测试应用程序的测试代码，但是我们并不知道我们的应用程序有多少地方被测试到。我们需要一个测试覆盖率的工具来检查一个应用程序，在执行这个工具后我们能得到一个我们的代码现在哪些地方被测试到的报告。
+
+Python 有一个测试覆盖率的工具，我们称之为 `coverage <http://nedbatchelder.com/code/coverage/>`_。让我们安装它::
+
+  flask/bin/pip install coverage
+
+这个工具可以作为一个命令行使用或者可以放在脚本里面。我们现在可以先不用考虑如何启动它。
+
+这有些改变我们需要加入到测试代码中为了生成一个覆盖率的报告(文件 *tests.py*)::
+
+  from coverage import coverage
+  cov = coverage(branch = True, omit = ['flask/*', 'tests.py'])
+  cov.start()
+
+  # ...
+
+  if __name__ == '__main__':
+      try:
+          unittest.main()
+      except:
+          pass
+      cov.stop()
+      cov.save()
+      print "\n\nCoverage Report:\n"
+      cov.report()
+      print "HTML version: " + os.path.join(basedir, "tmp/coverage/index.html")
+      cov.html_report(directory = 'tmp/coverage')
+      cov.erase()
+
+我们开始在脚本的最开始初始化 *coverage* 模块。*branch = True* 参数要求除了常规的覆盖率分析还需要做分支分析。*omit* 参数确保不会去获得我们安装在虚拟环境和测试框架自身的覆盖率报告，我们只做我们的应用程序代码的覆盖。
+
+为了收集覆盖率统计我们只要调用 *cov.start()*，接着运行我们的单元测试。我们必须从我们的单元测试框架中捕获以及通过异常，如果脚本不结束的话是没有机会生成一个覆盖率报告。在我们从测试中回来后，我们将会用 *cov.stop()* 停止覆盖率统计，并且用 *cov.save()* 生成结果。最后，*cov.report()* 把结果输出到控制台，*cov.html_report()* 生成一个好看的 HTML 报告，*cov.erase()* 删除数据文件。
+
+这是运行后的报告例子::
+
+  $ ./tests.py
+  .....F
+      ======================================================================
+  FAIL: test_translation (__main__.TestCase)
+  ----------------------------------------------------------------------
+  Traceback (most recent call last):
+    File "./tests.py", line 143, in test_translation
+      assert microsoft_translate(u'English', 'en', 'es') == u'Inglés'
+  AssertionError
+
+  ----------------------------------------------------------------------
+  Ran 6 tests in 3.981s
+
+  FAILED (failures=1)
+
+  Coverage Report:
+
+  Name             Stmts   Miss Branch BrMiss  Cover   Missing
+  ------------------------------------------------------------
+  app/__init__        39      0      6      3    93%
+  app/decorators       6      2      0      0    67%   5-6
+  app/emails          14      6      0      0    57%   9, 12-15, 21
+  app/forms           30     14      8      8    42%   15-16, 19-30
+  app/models          63      8     10      1    88%   32, 37, 47, 50, 53, 56, 78, 90
+  app/momentjs        12      5      0      0    58%   5, 8, 11, 14, 17
+  app/translate       33     24      4      3    27%   10-36, 39-56
+  app/views          169    124     46     46    21%   16, 20, 24-30, 34-37, 41, 45-46, 53-67, 75-81, 88-109, 113-114, 120-125, 132-143, 149-164, 169-183, 188-198, 203-205, 210-211, 218
+  config              22      0      0      0   100%
+  ------------------------------------------------------------
+  TOTAL              388    183     74     61    47%
+
+  HTML version: /home/microblog/tmp/coverage/index.html
+
+从上面的报告上可以看到我们测试 47% 的应用程序。我们也从上面得到没有被测试执行的函数的列表，因此我们必须重新看看这些行，考虑下我们还能编写些哪些测试。
+
+我们能看到 *app/models.py* 覆盖率是比较高(88%),因为我们的测试集中在我们的模型。*app/views.py* 覆盖率是比较低(21%)因为我们没有在测试代码中执行视图函数。
+
+我们新增加些测试为了提高覆盖率::
+
+  def test_user(self):
+      # make valid nicknames
+      n = User.make_valid_nickname('John_123')
+      assert n == 'John_123'
+      n = User.make_valid_nickname('John_[123]\n')
+      assert n == 'John_123'
+      # create a user
+      u = User(nickname = 'john', email = 'john@example.com')
+      db.session.add(u)
+      db.session.commit()
+      assert u.is_authenticated() == True
+      assert u.is_active() == True
+      assert u.is_anonymous() == False
+      assert u.id == int(u.get_id())
+
+  def test_make_unique_nickname(self):
+      # create a user and write it to the database
+      u = User(nickname = 'john', email = 'john@example.com')
+      db.session.add(u)
+      db.session.commit()
+      nickname = User.make_unique_nickname('susan')
+      assert nickname == 'susan'
+      nickname = User.make_unique_nickname('john')
+      assert nickname != 'john'
+      #...
+
+
+性能调优
+----------
+
+下一个话题就是性能。有什么比用户等待很长时间加载页面更令人沮丧的。我们想要确保我们的应用程序的速度，我们需要一些标准或者尺寸来衡量和分析。
+
+我们使用的技术称为 *profiling*。一个代码分析器监视正在运行的程序，很像覆盖工具，而是注意到不是行执行而是多少时间花在每个函数上。在分析阶段结束的时候会生成一个报告，里面列出了所有执行的函数以及每个函数执行了多久。对这个列表从最大到最小的时间排序是一个很好的注意，这样可以得出我们需要优化的地方。
+
+Python 有一个称为 `cProfile <http://docs.python.org/2/library/profile.html>`_ 的代码分析器。我们能够把这个分析器直接嵌入到我们的代码中，但我们做任何工作之前，搜索是否有人已经完成了集成工作是一个好注意。一个对 “Flask profiler” 的快速搜索得出 Flask 使用的 Werkzeug 模块有一个分析器的插件，我们将直接使用它。
+
+为了启用 Werkzeug 分析器，我们能创建一个像 *run.py* 的另外一个启动脚本。让我们称它为 *profile.py*::
+
+  #!flask/bin/python
+  from werkzeug.contrib.profiler import ProfilerMiddleware
+  from app import app
+
+  app.config['PROFILE'] = True
+  app.wsgi_app = ProfilerMiddleware(app.wsgi_app, restrictions = [30])
+  app.run(debug = True)
+
+一旦这个脚本运行，每一个请求将会显示分析器的摘要。这里就是其中一个例子::
+
+  --------------------------------------------------------------------------------
+  PATH: '/'
+           95477 function calls (89364 primitive calls) in 0.202 seconds
+
+     Ordered by: internal time, call count
+     List reduced from 1587 to 30 due to restriction <30>
+
+     ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+          1    0.061    0.061    0.061    0.061 {method 'commit' of 'sqlite3.Connection' objects}
+          1    0.013    0.013    0.018    0.018 flask/lib/python2.7/site-packages/sqlalchemy/dialects/sqlite/pysqlite.py:278(dbapi)
+      16807    0.006    0.000    0.006    0.000 {isinstance}
+       5053    0.006    0.000    0.012    0.000 flask/lib/python2.7/site-packages/jinja2/nodes.py:163(iter_child_nodes)
+  8746/8733    0.005    0.000    0.005    0.000 {getattr}
+        817    0.004    0.000    0.011    0.000 flask/lib/python2.7/site-packages/jinja2/lexer.py:548(tokeniter)
+          1    0.004    0.004    0.004    0.004 /usr/lib/python2.7/sqlite3/dbapi2.py:24(<module>)
+          4    0.004    0.001    0.015    0.004 {__import__}
+          1    0.004    0.004    0.009    0.009 flask/lib/python2.7/site-packages/sqlalchemy/dialects/sqlite/__init__.py:7(<module>)
+     1808/8    0.003    0.000    0.033    0.004 flask/lib/python2.7/site-packages/jinja2/visitor.py:34(visit)
+       9013    0.003    0.000    0.005    0.000 flask/lib/python2.7/site-packages/jinja2/nodes.py:147(iter_fields)
+       2822    0.003    0.000    0.003    0.000 {method 'match' of '_sre.SRE_Pattern' objects}
+        738    0.003    0.000    0.003    0.000 {method 'split' of 'str' objects}
+       1808    0.003    0.000    0.006    0.000 flask/lib/python2.7/site-packages/jinja2/visitor.py:26(get_visitor)
+       2862    0.003    0.000    0.003    0.000 {method 'append' of 'list' objects}
+    110/106    0.002    0.000    0.008    0.000 flask/lib/python2.7/site-packages/jinja2/parser.py:544(parse_primary)
+         11    0.002    0.000    0.002    0.000 {posix.stat}
+          5    0.002    0.000    0.010    0.002 flask/lib/python2.7/site-packages/sqlalchemy/engine/base.py:1549(_execute_clauseelement)
+          1    0.002    0.002    0.004    0.004 flask/lib/python2.7/site-packages/sqlalchemy/dialects/sqlite/base.py:124(<module>)
+    1229/36    0.002    0.000    0.008    0.000 flask/lib/python2.7/site-packages/jinja2/nodes.py:183(find_all)
+      416/4    0.002    0.000    0.006    0.002 flask/lib/python2.7/site-packages/jinja2/visitor.py:58(generic_visit)
+     101/10    0.002    0.000    0.003    0.000 flask/lib/python2.7/sre_compile.py:32(_compile)
+         15    0.002    0.000    0.003    0.000 flask/lib/python2.7/site-packages/sqlalchemy/schema.py:1094(_make_proxy)
+          8    0.002    0.000    0.002    0.000 {method 'execute' of 'sqlite3.Cursor' objects}
+          1    0.002    0.002    0.002    0.002 flask/lib/python2.7/encodings/base64_codec.py:8(<module>)
+          2    0.002    0.001    0.002    0.001 {method 'close' of 'sqlite3.Connection' objects}
+          1    0.001    0.001    0.001    0.001 flask/lib/python2.7/site-packages/sqlalchemy/dialects/sqlite/pysqlite.py:215(<module>)
+          2    0.001    0.001    0.002    0.001 flask/lib/python2.7/site-packages/wtforms/form.py:162(__call__)
+        980    0.001    0.000    0.001    0.000 {id}
+    936/127    0.001    0.000    0.008    0.000 flask/lib/python2.7/site-packages/jinja2/visitor.py:41(generic_visit)
+
+  --------------------------------------------------------------------------------
+
+  127.0.0.1 - - [09/Mar/2013 19:35:49] "GET / HTTP/1.1" 200 -
+
+在这个报告中每一行的含义如下:
+
+* **ncalls** : 这个函数被调用的次数。
+* **tottime** : 在这个函数中所花费所有时间。
+* **percall** : 是 **tottime** 除以 **ncalls** 的结果。
+* **cumtime** : 花费在这个函数以及任何它调用的函数的时间。
+* **percall** : **cumtime** 除以 **ncalls**。
+* **filename\:lineno(function)** : 函数名以及位置。
+
+有趣的是我们的模板也是作为函数出现的。这是因为 Jinja2 的模板是被编译成 Python 代码。现在看来暂时我们的应用程序还不存在性能的瓶颈。
+
+
+数据库性能
+-------------
+
+为了结束这篇，我们最后看看数据库性能。从上一部分内容中数据库的处理是在性能分析的报告中，因此我们只需要在数据库变得越来越慢的时候能够获得提醒。
+
+Flask-SQLAlchemy 文档提到了 `get_debug_queries <http://pythonhosted.org/Flask-SQLAlchemy/api.html#flask.ext.sqlalchemy.get_debug_queries>`_ 函数，它返回在请求执行期间所有的查询的列表。
+
+这是一个很有用的信息。我们可以充分利用这个信息来得到提醒。为了充分利用这个功能，我们在配置文件中需要启动它(文件 *config.py*)::
+
+  SQLALCHEMY_RECORD_QUERIES = True
+
+我们需要设置一个阀值，超过这个值我们认为是一个慢的查询(文件 *config.py*)::
+
+  # slow database query threshold (in seconds)
+  DATABASE_QUERY_TIMEOUT = 0.5
+
+为了检查是否需要发送警告，我们需要在每一个请求结束的时候进行处理。在 Flask 中，我们只需要设置一个 *after_request* 函数(文件 *app/views.py*)::
+
+  from flask.ext.sqlalchemy import get_debug_queries
+  from config import DATABASE_QUERY_TIMEOUT
+
+  @app.after_request
+  def after_request(response):
+      for query in get_debug_queries():
+          if query.duration >= DATABASE_QUERY_TIMEOUT:
+              app.logger.warning("SLOW QUERY: %s\nParameters: %s\nDuration: %fs\nContext: %s\n" % (query.statement, query.parameters, query.duration, query.context))
+      return response
+
+
+结束语
+---------
+
+本章到这里就算结束了，本来打算为这个系列再写关于部署的内容，但是由于官方的教程已经很详细了，这里不再啰嗦了。有需要请访问 `部署选择 <http://www.pythondoc.com/flask/deploying/index.html>`_。
+
+如果你想要节省时间的话，你可以下载 `microblog-0.16.zip <https://github.com/miguelgrinberg/microblog/archive/v0.16.zip>`_。
+
+本系列准备到这里就结束了，希望大家喜欢！
