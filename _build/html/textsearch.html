@@ -1,0 +1,326 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>全文搜索 &mdash; flask mega-tutorial 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="flask mega-tutorial 1.0 documentation" href="index.html" />
+    <link rel="next" title="邮件支持" href="email.html" />
+    <link rel="prev" title="分页" href="pagination.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="email.html" title="邮件支持"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="pagination.html" title="分页"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">flask mega-tutorial 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">全文搜索</a><ul>
+<li><a class="reference internal" href="#id2">回顾</a></li>
+<li><a class="reference internal" href="#id3">全文搜索引擎的简介</a></li>
+<li><a class="reference internal" href="#id4">配置</a></li>
+<li><a class="reference internal" href="#id5">模型修改</a></li>
+<li><a class="reference internal" href="#id6">搜索</a></li>
+<li><a class="reference internal" href="#id8">整合全文搜索到应用程序</a><ul>
+<li><a class="reference internal" href="#id9">配置</a></li>
+<li><a class="reference internal" href="#id10">搜索表单</a></li>
+<li><a class="reference internal" href="#id11">搜索视图函数</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id12">搜索结果页</a></li>
+<li><a class="reference internal" href="#id13">结束语</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="pagination.html"
+                        title="previous chapter">分页</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="email.html"
+                        title="next chapter">邮件支持</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/textsearch.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+just for test!
+
+
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="textsearch">
+<span id="id1"></span><h1>全文搜索<a class="headerlink" href="#textsearch" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id2">
+<h2>回顾<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>在前面的章节(<a class="reference internal" href="pagination.html#pagination"><em>分页</em></a>)，我们已经加强了数据库查询，因此能够在页面上获取各种查询。</p>
+<p>今天，我们会继续探讨数据库的话题，只是领域不同。所有存储内容的应用程序必须提供搜索能力。</p>
+<p>许多其它类型的网站可能使用了谷歌、必应等索引所有的内容并且提供查询结果。这个对于大多数静态页面的网站，像论坛，是很好用。我们应用程序 <em>microblog</em> 的基本单元是用户短小的 blog，不是整个页面。我们希望搜索结果是动态的。例如，我们想要在所有的 blog 中搜索关键词 “dog”。这是显而易见的，除非是有人搜索这个词，不然大型的搜索引擎不可能索引搜索结果。因此我们除了使用自己的搜索是别无选择的。</p>
+</div>
+<div class="section" id="id3">
+<h2>全文搜索引擎的简介<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>不幸的是，在关系数据库中的全文搜索支持没有得到很好的规范。每个数据库都以自己的方式实现全文搜索，并且 SQLAlchemy 没有实现全文搜索。</p>
+<p>我们目前使用了 SQLite 作为数据库，因此我们可以绕过 SQLAlchemy，使用 SQLite 提供的特性来创建全文文本索引。但是这并不是一个好主意，因为如果我们要更换数据库的时候，我们需要重写全文搜索的代码。</p>
+<p>因此，相反我们让数据库处理常规数据，我们将创建一个专门的数据库，专注服务于文本搜索。</p>
+<p>现在有一些开源的全文搜索引擎。在我的知识范围内唯一一个用 Python 编写的 Flask 扩展是 <a class="reference external" href="https://bitbucket.org/mchaput/whoosh/wiki/Home">Whoosh</a>。一个纯 Python 的搜索引擎的好处就是在 Python 解释器可用的任何地方能够安装和运行。缺点也是很显然的，性能可能比不上 C 或者 C++ 编写的。我的观点是最理想的解决方式就是开发一个连接不同搜索引擎的 Flask 扩展，以某种方式来处理搜索，就像 Flask-SQLAlchemy 一样。但是目前在 Flask 中暂时没有这类型的扩展。Django 开发者提供了一个很好的扩展，用来支持不同的全文搜索引擎，叫做 <a class="reference external" href="http://haystacksearch.org/">django-haystack</a>。也许不久就会有人写一个类似的 Flask 扩展。</p>
+<p>如果你暂时没有在虚拟环境上安装 Flask-WhooshAlchemy，请安装它。Windows 用户应该运行这个:</p>
+<div class="highlight-python"><pre>flask\Scripts\pip install Flask-WhooshAlchemy</pre>
+</div>
+<p>其它用户必须运行这个:</p>
+<div class="highlight-python"><pre>flask/bin/pip install Flask-WhooshAlchemy</pre>
+</div>
+</div>
+<div class="section" id="id4">
+<h2>配置<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<p>配置 Flask-WhooshAlchemy 也是相当简单。我们只需要告诉扩展全文搜索数据库的名称(文件 <em>config.py</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">WHOOSH_BASE</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">basedir</span><span class="p">,</span> <span class="s">&#39;search.db&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id5">
+<h2>模型修改<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<p>因为把 Flask-WhooshAlchemy 整合进 Flask-SQLAlchemy，我们需要在模型的类中指明哪些数据需要建立搜索索引(文件 <em>app/models.py</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">app</span> <span class="kn">import</span> <span class="n">app</span>
+<span class="kn">import</span> <span class="nn">flask.ext.whooshalchemy</span> <span class="kn">as</span> <span class="nn">whooshalchemy</span>
+
+<span class="k">class</span> <span class="nc">Post</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">__searchable__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;body&#39;</span><span class="p">]</span>
+
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+    <span class="n">body</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">140</span><span class="p">))</span>
+    <span class="n">timestamp</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">)</span>
+    <span class="n">user_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s">&#39;user.id&#39;</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&#39;&lt;Post </span><span class="si">%r</span><span class="s">&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">body</span><span class="p">)</span>
+
+<span class="n">whooshalchemy</span><span class="o">.</span><span class="n">whoosh_index</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">Post</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>模型有一个新的 <em>__searchable__</em> 字段，这里面包含数据库中的所有能被搜索并且建立索引的字段。在我们的例子中，我们只要索引 blog 的 <em>body</em> 字段。</p>
+<p>通过调用 <em>whoosh_index</em> 函数，我们为这个模型初始化了全文搜索索引。</p>
+<p>因为这个改变并不影响到关系数据库的格式，因此不需要录制新的迁移脚本。</p>
+<p>因为之前存储在数据库的 blog 是没有建立索引的。为了保持数据库和全文搜索引擎的同步，我们需要删除之前撰写的 blog:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">app.models</span> <span class="kn">import</span> <span class="n">Post</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">app</span> <span class="kn">import</span> <span class="n">db</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">post</span> <span class="ow">in</span> <span class="n">Post</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+<span class="gp">... </span>   <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">post</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id6">
+<h2>搜索<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<p>现在我们准备开始搜索。首先让我们在数据库中添加些 blog。有两种方式去添加。我们可以运行应用程序，通过浏览器像普通用户一样添加 blog。另外一种就是在 Python 提示符下。</p>
+<p>在 Python 提示符下，我们可以按如下的去做:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">app.models</span> <span class="kn">import</span> <span class="n">User</span><span class="p">,</span> <span class="n">Post</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">app</span> <span class="kn">import</span> <span class="n">db</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">datetime</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">Post</span><span class="p">(</span><span class="n">body</span><span class="o">=</span><span class="s">&#39;my first post&#39;</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">(),</span> <span class="n">author</span><span class="o">=</span><span class="n">u</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">Post</span><span class="p">(</span><span class="n">body</span><span class="o">=</span><span class="s">&#39;my second post&#39;</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">(),</span> <span class="n">author</span><span class="o">=</span><span class="n">u</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">Post</span><span class="p">(</span><span class="n">body</span><span class="o">=</span><span class="s">&#39;my third and last post&#39;</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">(),</span> <span class="n">author</span><span class="o">=</span><span class="n">u</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>现在我们在全文索引中有一些 blog，我们可以这样搜索:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">Post</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">whoosh_search</span><span class="p">(</span><span class="s">&#39;post&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+<span class="go">[&lt;Post u&#39;my second post&#39;&gt;, &lt;Post u&#39;my first post&#39;&gt;, &lt;Post u&#39;my third and last post&#39;&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Post</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">whoosh_search</span><span class="p">(</span><span class="s">&#39;second&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+<span class="go">[&lt;Post u&#39;my second post&#39;&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Post</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">whoosh_search</span><span class="p">(</span><span class="s">&#39;second OR last&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+<span class="go">[&lt;Post u&#39;my second post&#39;&gt;, &lt;Post u&#39;my third and last post&#39;&gt;]</span>
+</pre></div>
+</div>
+<p>在上面例子中你可以看到，查询并不限制于单个词。实际上，Whoosh 支持一个更加强大的 <a class="reference external" href="http://packages.python.org/Whoosh/querylang.html">搜索查询语言</a>。</p>
+</div>
+<div class="section" id="id8">
+<h2>整合全文搜索到应用程序<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<p>为了使得搜索功能在我们的应用程序中可用，我们需要添加些修改。</p>
+<div class="section" id="id9">
+<h3>配置<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
+<p>在配置文件中，我们需要指明搜索结果返回的最大数量(文件 <em>config.py</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">MAX_SEARCH_RESULTS</span> <span class="o">=</span> <span class="mi">50</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id10">
+<h3>搜索表单<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
+<p>我们准备在导航栏中添加一个搜索表单。把表单放在导航栏中是有好处的，因为应用程序所有页都有搜索表单。</p>
+<p>首先，我们添加一个搜索表单类(文件 <em>app/forms.py</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">SearchForm</span><span class="p">(</span><span class="n">Form</span><span class="p">):</span>
+    <span class="n">search</span> <span class="o">=</span> <span class="n">TextField</span><span class="p">(</span><span class="s">&#39;search&#39;</span><span class="p">,</span> <span class="n">validators</span> <span class="o">=</span> <span class="p">[</span><span class="n">Required</span><span class="p">()])</span>
+</pre></div>
+</div>
+<p>接着我们必须创建一个搜索表单对象并且使得它对所有模版中可用，因为我们将搜索表单放在导航栏中，导航栏是所有页面共有的。最容易的方式就是在 <em>before_request</em> 函数中创建这个表单对象，接着把它放在全局变量 <em>g</em> 中(文件 <em>app/views.py</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">forms</span> <span class="kn">import</span> <span class="n">SearchForm</span>
+
+<span class="nd">@app.before_request</span>
+<span class="k">def</span> <span class="nf">before_request</span><span class="p">():</span>
+    <span class="n">g</span><span class="o">.</span><span class="n">user</span> <span class="o">=</span> <span class="n">current_user</span>
+    <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">is_authenticated</span><span class="p">():</span>
+        <span class="n">g</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">last_seen</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">user</span><span class="p">)</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="n">g</span><span class="o">.</span><span class="n">search_form</span> <span class="o">=</span> <span class="n">SearchForm</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>我们接着添加表单到模板中(文件 <em>app/templates/base.html</em>):</p>
+<div class="highlight-python"><pre>&lt;div&gt;Microblog:
+    &lt;a href="{{ url_for('index') }}"&gt;Home&lt;/a&gt;
+    {% if g.user.is_authenticated() %}
+    | &lt;a href="{{ url_for('user', nickname = g.user.nickname) }}"&gt;Your Profile&lt;/a&gt;
+    | &lt;form style="display: inline;" action="{{url_for('search')}}" method="post" name="search"&gt;{{g.search_form.hidden_tag()}}{{g.search_form.search(size=20)}}&lt;input type="submit" value="Search"&gt;&lt;/form&gt;
+    | &lt;a href="{{ url_for('logout') }}"&gt;Logout&lt;/a&gt;
+    {% endif %}
+&lt;/div&gt;</pre>
+</div>
+<p>注意，只有当用户登录后，我们才会显示搜索表单。<em>before_request</em> 函数仅仅当用户登录才会创建一个表单对象，因为我们的程序不会对非认证用户显示任何内容。</p>
+</div>
+<div class="section" id="id11">
+<h3>搜索视图函数<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
+<p>上面的模版中，我们在 <em>action</em> 字段中设置发送搜索请求到 <em>search</em> 视图函数。<em>search</em> 视图函数如下(文件 <em>app/views.py</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/search&#39;</span><span class="p">,</span> <span class="n">methods</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">search</span><span class="p">():</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">g</span><span class="o">.</span><span class="n">search_form</span><span class="o">.</span><span class="n">validate_on_submit</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s">&#39;index&#39;</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s">&#39;search_results&#39;</span><span class="p">,</span> <span class="n">query</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">search_form</span><span class="o">.</span><span class="n">search</span><span class="o">.</span><span class="n">data</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>这个函数实际做的事情不多，它只是从查询表单这能够获取查询的内容，并把它作为参数重定向另外一页。搜索工作不在这里直接做的原因还是担心用户无意中触发了刷新，这样会导致表单数据被重复提交。</p>
+</div>
+</div>
+<div class="section" id="id12">
+<h2>搜索结果页<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h2>
+<p>一旦查询的关键字被接收到，<em>search_results</em> 函数就会开始工作(文件 <em>app/views.py</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">config</span> <span class="kn">import</span> <span class="n">MAX_SEARCH_RESULTS</span>
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/search_results/&lt;query&gt;&#39;</span><span class="p">)</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">search_results</span><span class="p">(</span><span class="n">query</span><span class="p">):</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">Post</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">whoosh_search</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">MAX_SEARCH_RESULTS</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s">&#39;search_results.html&#39;</span><span class="p">,</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="p">,</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="n">results</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>搜索结果视图函数把查询传递给 Whoosh，并且把最大的结果数也作为参数传递给 Whoosh。</p>
+<p>最后一部分就是搜索结果的模版(文件 <em>app/templates/search_results.html</em>):</p>
+<div class="highlight-python"><pre>&lt;!-- extend base layout --&gt;
+{% extends "base.html" %}
+
+{% block content %}
+&lt;h1&gt;Search results for "{{query}}":&lt;/h1&gt;
+{% for post in results %}
+    {% include 'post.html' %}
+{% endfor %}
+{% endblock %}</pre>
+</div>
+</div>
+<div class="section" id="id13">
+<h2>结束语<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h2>
+<p>如果你想要节省时间的话，你可以下载 <a class="reference external" href="https://github.com/miguelgrinberg/microblog/archive/v0.10.zip">microblog-0.10.zip</a>。</p>
+<p>我希望能在下一章继续见到各位！</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="email.html" title="邮件支持"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="pagination.html" title="分页"
+             >previous</a> |</li>
+        <li><a href="index.html">flask mega-tutorial 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+<div style="right">
+<script type="text/javascript"><!--
+google_ad_client = "ca-pub-3421553373953599";
+/* 评论上方 */
+google_ad_slot = "2110492886";
+google_ad_width = 728;
+google_ad_height = 90;
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+</div>
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F9adc7a1c86496c8e2bc61c4f8fc92d30' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+
+  </body>
+</html>
