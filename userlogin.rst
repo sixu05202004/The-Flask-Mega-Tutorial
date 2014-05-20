@@ -16,7 +16,7 @@
 配置
 -------
 
-像以前章节一样，我们从配置将会使用到的 Flask 扩展开始入手。对于登录系统，我们将会使用到两个扩展，Flask-Login 和 Flask-OpenID。配置情况如下(文件 *app\__init__.py*)::
+像以前章节一样，我们从配置将会使用到的 Flask 扩展开始入手。对于登录系统，我们将会使用到两个扩展，Flask-Login 和 Flask-OpenID。配置情况如下(文件 *app/__init__.py*)::
 
     import os
     from flask.ext.login import LoginManager
