@@ -1,0 +1,444 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>用户信息页和头像 &mdash; flask mega-tutorial 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="flask mega-tutorial 1.0 documentation" href="index.html" />
+    <link rel="next" title="单元测试" href="testing.html" />
+    <link rel="prev" title="用户登录" href="userlogin.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="testing.html" title="单元测试"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="userlogin.html" title="用户登录"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">flask mega-tutorial 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">用户信息页和头像</a><ul>
+<li><a class="reference internal" href="#id2">回顾</a></li>
+<li><a class="reference internal" href="#id3">用户信息页</a></li>
+<li><a class="reference internal" href="#id4">头像</a></li>
+<li><a class="reference internal" href="#id6">在子模板中重用</a></li>
+<li><a class="reference internal" href="#id7">更多有趣的信息</a></li>
+<li><a class="reference internal" href="#id8">编辑用户信息</a></li>
+<li><a class="reference internal" href="#id9">结束语</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="userlogin.html"
+                        title="previous chapter">用户登录</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="testing.html"
+                        title="next chapter">单元测试</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/profile.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="profile">
+<span id="id1"></span><h1>用户信息页和头像<a class="headerlink" href="#profile" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id2">
+<h2>回顾<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>在上一章中，我们已经完成了登录系统，因此我们可以使用 OpenIDs 登录以及登出。</p>
+<p>今天，我们将要完成个人信息页。首先，我们将创建用户信息页，显示用户信息以及最近的 blog。作为其中一部分，我们将会学习到显示用户头像。接着，我们将要用户 web 表单用来编辑用户信息。</p>
+</div>
+<div class="section" id="id3">
+<h2>用户信息页<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>创建一个用户信息不需要引入新的概念。我们只要创建一个新的视图函数以及与它配套的 HTML 模版。</p>
+<p>这里就是视图函数(文件 <em>app/views.py</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/user/&lt;nickname&gt;&#39;</span><span class="p">)</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">user</span><span class="p">(</span><span class="n">nickname</span><span class="p">):</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">nickname</span> <span class="o">=</span> <span class="n">nickname</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">user</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s">&#39;User &#39;</span> <span class="o">+</span> <span class="n">nickname</span> <span class="o">+</span> <span class="s">&#39; not found.&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s">&#39;index&#39;</span><span class="p">))</span>
+    <span class="n">posts</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">{</span> <span class="s">&#39;author&#39;</span><span class="p">:</span> <span class="n">user</span><span class="p">,</span> <span class="s">&#39;body&#39;</span><span class="p">:</span> <span class="s">&#39;Test post #1&#39;</span> <span class="p">},</span>
+        <span class="p">{</span> <span class="s">&#39;author&#39;</span><span class="p">:</span> <span class="n">user</span><span class="p">,</span> <span class="s">&#39;body&#39;</span><span class="p">:</span> <span class="s">&#39;Test post #2&#39;</span> <span class="p">}</span>
+    <span class="p">]</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s">&#39;user.html&#39;</span><span class="p">,</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">user</span><span class="p">,</span>
+        <span class="n">posts</span> <span class="o">=</span> <span class="n">posts</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>我们用于这个视图函数的装饰器与之前的有些不同。在这个例子中，我们有一个 <em>参数</em> 在里面，用 <em>&lt;nickname&gt;</em> 来表示。这转化为一个同名的参数添加到视图函数。当客户端以 URL <em>/user/miguel</em> 请求的时候，视图函数收到一个 <em>nickname = &#8216;miguel&#8217;</em> 参数而被调用。</p>
+<p>视图函数的实现没有让人惊喜的。首先，我们使用接收到参数 <em>nickname</em> 试着从数据库载入用户。如果没有找到用户的话，我们将会抛出错误信息，重定向到主页。</p>
+<p>一旦我们找到用户，我们把它传入到 <em>render_template</em> 调用， 并且传入一些伪造的 blog。注意在用户信息页上只会显示该用户的 blog，因此，我们伪造的 blog 的 <em>author</em> 域必须正确。</p>
+<p>我们最初的视图模版是十分简单的(文件 <em>app/templates/user.html</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;!-- extend base layout --&gt;
+{% extends &quot;base.html&quot; %}
+
+{% block content %}
+&lt;h1&gt;User: {{user.nickname}}!&lt;/h1&gt;
+&lt;hr&gt;
+{% for post in posts %}
+&lt;p&gt;
+  {{post.author.nickname}} says: &lt;b&gt;{{post.body}}&lt;/b&gt;
+&lt;/p&gt;
+{% endfor %}
+{% endblock %}
+</pre></div>
+</div>
+<p>用户信息页现在已经完成了，但是缺少对它的链接。为了让用户很容易地检查他的或者她的信息，我们直接把用户信息页的链接放在导航栏中(文件 <em>app/templates/base.html</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;div&gt;Microblog:
+     &lt;a href=&quot;{{ url_for(&#39;index&#39;) }}&quot;&gt;Home&lt;/a&gt;
+     {% if g.user.is_authenticated() %}
+     | &lt;a href=&quot;{{ url_for(&#39;user&#39;, nickname = g.user.nickname) }}&quot;&gt;Your Profile&lt;/a&gt;
+     | &lt;a href=&quot;{{ url_for(&#39;logout&#39;) }}&quot;&gt;Logout&lt;/a&gt;
+     {% endif %}
+ &lt;/div&gt;
+</pre></div>
+</div>
+<p>试试应用程序吧。点击导航栏中的个人资料链接，会把你带到用户信息页。因为我们还没有到任何用户的信息页的链接，因此你必须手动键入你想要看到的用户信息的 URL。比如，你可以键入 <em>http://localhost:5000/user/miguel</em>，查看 <em>miguel</em> 用户信息。</p>
+</div>
+<div class="section" id="id4">
+<h2>头像<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<p>我敢肯定你会同意我们的个人信息页是很无聊的。为了让他们有点更有趣，让我们添加用户头像。</p>
+<p>不需要在我们自己的服务器处理大量的上传图片，我们依赖 <a class="reference external" href="http://gravatar.com/">Gravatar</a> 服务为我们提供用户头像。</p>
+<p>因为返回一个头像是与用户相关的任务，我们把它放在 <em>User</em> 类(文件 <em>app/models.py</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">hashlib</span> <span class="kn">import</span> <span class="n">md5</span>
+<span class="c"># ...</span>
+<span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="c"># ...</span>
+    <span class="k">def</span> <span class="nf">avatar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&#39;http://www.gravatar.com/avatar/&#39;</span> <span class="o">+</span> <span class="n">md5</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">email</span><span class="p">)</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span> <span class="o">+</span> <span class="s">&#39;?d=mm&amp;s=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><em>User</em> 的方法 <em>avatar</em> 返回用户图片的 URL，以像素为单位缩放成要求的尺寸。</p>
+<p>有了 Gravatar 服务的协助，很容易处理头像。你只需要创建一个用户邮箱的 MD5 哈希，然后将其加入 URL中，像上面你看见的。在邮箱 MD5 后，你还需要提供一个定制头像尺寸的数字。<em>d=mm</em> 决定什么样的图片占位符当用户没有 Gravatar 账户。<em>mm</em> 选项将会返回一个“神秘人”图片，一个人灰色的轮廓。<em>s=N</em> 选项要求头像按照以像素为单位的给定尺寸缩放。</p>
+<p><a class="reference external" href="https://gravatar.com/site/implement/images">Gravatar 官方文档</a> 对 avatar URL 有着更加详细的解释。</p>
+<p>现在我们的 <em>User</em> 类知道怎样返回一个头像图片，我们把它融入到用户信息页的布局中(文件 <em>app/templates/user.html</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;!-- extend base layout --&gt;
+{% extends &quot;base.html&quot; %}
+
+{% block content %}
+&lt;table&gt;
+    &lt;tr valign=&quot;top&quot;&gt;
+        &lt;td&gt;&lt;img src=&quot;{{user.avatar(128)}}&quot;&gt;&lt;/td&gt;
+        &lt;td&gt;&lt;h1&gt;User: {{user.nickname}}&lt;/h1&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+{% for post in posts %}
+&lt;p&gt;
+  {{post.author.nickname}} says: &lt;b&gt;{{post.body}}&lt;/b&gt;
+&lt;/p&gt;
+{% endfor %}
+{% endblock %}
+</pre></div>
+</div>
+<p><em>User</em> 类负责返回头像是一个很巧妙的事情，如果有一天决定不想要 Gravatar 头像，我们只要重构 <em>avatar</em> 返回不同的 URLs(即使指向我们自己的服务器，如果我们想要自己的头像服务器)，所有我们的模版将会自动地开始显示新的头像。</p>
+<p>我们已经在用户信息页上添加了头像，如果我们想要在每一个 blog 前面显示头像了？这也是一个简单的工作，为了在每一个 blog 前显示头像，我们只需要在模块做一些小改变(文件 <em>app/templates/user.html</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;!-- extend base layout --&gt;
+{% extends &quot;base.html&quot; %}
+
+{% block content %}
+&lt;table&gt;
+    &lt;tr valign=&quot;top&quot;&gt;
+        &lt;td&gt;&lt;img src=&quot;{{user.avatar(128)}}&quot;&gt;&lt;/td&gt;
+        &lt;td&gt;&lt;h1&gt;User: {{user.nickname}}&lt;/h1&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+{% for post in posts %}
+&lt;table&gt;
+    &lt;tr valign=&quot;top&quot;&gt;
+        &lt;td&gt;&lt;img src=&quot;{{post.author.avatar(50)}}&quot;&gt;&lt;/td&gt;&lt;td&gt;&lt;i&gt;{{post.author.nickname}} says:&lt;/i&gt;&lt;br&gt;{{post.body}}&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;
+{% endfor %}
+{% endblock %}
+</pre></div>
+</div>
+<p>这就是我们的用户资料页的样子:</p>
+<img alt="_images/4.png" src="_images/4.png" />
+</div>
+<div class="section" id="id6">
+<h2>在子模板中重用<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<p>我们已经实现了用户信息页，它能够显示用户的 blog。我们的首页也应该显示任何一个用户这个时候的 blog
+。这样我们有两个页需要显示用户的 blog。当然我们可以直接拷贝和复制处理渲染 blog 的模板，但这不是最理想的。因为当我们决定要修改 blog 的布局的时候，我们要更新所有使用它的模板。</p>
+<p>相反，我们将要制作一个渲染 blog 的子模板，我们在使用它的模板中包含这个子模板。</p>
+<p>我们创建一个 blog 的子模板，这是一个再普通不过的模板(文件 <em>/app/templates/post.html</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;table&gt;
+    &lt;tr valign=&quot;top&quot;&gt;
+        &lt;td&gt;&lt;img src=&quot;{{post.author.avatar(50)}}&quot;&gt;&lt;/td&gt;&lt;td&gt;&lt;i&gt;{{post.author.nickname}} says:&lt;/i&gt;&lt;br&gt;{{post.body}}&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;
+</pre></div>
+</div>
+<p>接着我们使用 Jinja2 的 <em>include</em> 命令在我们的用户模板中调用这个子模板(文件 <em>app/templates/user.html</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;!-- extend base layout --&gt;
+{% extends &quot;base.html&quot; %}
+
+{% block content %}
+&lt;table&gt;
+    &lt;tr valign=&quot;top&quot;&gt;
+        &lt;td&gt;&lt;img src=&quot;{{user.avatar(128)}}&quot;&gt;&lt;/td&gt;
+        &lt;td&gt;&lt;h1&gt;User: {{user.nickname}}&lt;/h1&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+{% for post in posts %}
+    {% include &#39;post.html&#39; %}
+{% endfor %}
+{% endblock %}
+</pre></div>
+</div>
+<p>一旦我们有一个功能上完全实现的首页，我们将会调用这个子模板，但是现在不准备这么做，将会把它留在后面的章节。</p>
+</div>
+<div class="section" id="id7">
+<h2>更多有趣的信息<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<p>尽然我们现在已经有一个不错的用户信息页，我们还有更多的信息需要在上面显示。像用户自我说明可以显示在用户信息页上，因此我们将会让用户写一些自我介绍，并将它们显示在用户资料页上。我们也将追踪每个用户访问页面的最后一次的时间，因此我们将会把它显示在用户信息页上。</p>
+<p>为了增加这些，我们必须开始修改数据库。更具体地说，我们必须在我们的 <em>User</em> 类上增加两个字段(文件 <em>app/models.py</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+    <span class="n">nickname</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">64</span><span class="p">),</span> <span class="n">unique</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+    <span class="n">email</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">120</span><span class="p">),</span> <span class="n">index</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">unique</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+    <span class="n">role</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">SmallInteger</span><span class="p">,</span> <span class="n">default</span> <span class="o">=</span> <span class="n">ROLE_USER</span><span class="p">)</span>
+    <span class="n">posts</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span><span class="s">&#39;Post&#39;</span><span class="p">,</span> <span class="n">backref</span> <span class="o">=</span> <span class="s">&#39;author&#39;</span><span class="p">,</span> <span class="n">lazy</span> <span class="o">=</span> <span class="s">&#39;dynamic&#39;</span><span class="p">)</span>
+    <span class="n">about_me</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">140</span><span class="p">))</span>
+    <span class="n">last_seen</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>前面的章节我们已经讲述过数据库的迁移。因此为了增加这两个新字段到数据库，需要运行升级脚本:</p>
+<div class="highlight-python"><div class="highlight"><pre>./db_migrate.py
+</pre></div>
+</div>
+<p>脚本会返回如下信息:</p>
+<div class="highlight-python"><div class="highlight"><pre>New migration saved as db_repository/versions/003_migration.py
+Current database version: 3
+</pre></div>
+</div>
+<p>我们的两个新字段加入到我们的数据库。记得如果在 Windows 上的话，调用脚本的方式不同。</p>
+<p>如果我们没有迁移的支持，我们必须手动地编辑数据库，最差的方式就是删除表再重新创建。</p>
+<p>接着，让我们修改用户信息页模板来展示这些字段(文件 <em>app/templates/user.html</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;!-- extend base layout --&gt;
+{% extends &quot;base.html&quot; %}
+
+{% block content %}
+&lt;table&gt;
+    &lt;tr valign=&quot;top&quot;&gt;
+        &lt;td&gt;&lt;img src=&quot;{{user.avatar(128)}}&quot;&gt;&lt;/td&gt;
+        &lt;td&gt;
+            &lt;h1&gt;User: {{user.nickname}}&lt;/h1&gt;
+            {% if user.about_me %}&lt;p&gt;{{user.about_me}}&lt;/p&gt;{% endif %}
+            {% if user.last_seen %}&lt;p&gt;&lt;i&gt;Last seen on: {{user.last_seen}}&lt;/i&gt;&lt;/p&gt;{% endif %}
+        &lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+{% for post in posts %}
+    {% include &#39;post.html&#39; %}
+{% endfor %}
+{% endblock %}
+</pre></div>
+</div>
+<p>注意：我们利用 Jinja2 的条件语句来显示这些字段，因为只有当它们被设置的时候才会显示出来。</p>
+<p><em>last_seen</em> 字段能够被聪明地支持。记得在之前的章节中，我们创建了一个 <em>before_request</em> 函数，用来注册登录的用户到全局变量 <em>flask.g</em> 中。这个函数可以用来在数据库中更新用户最后一次的访问时间(文件 <em>app/views.py</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="c"># ...</span>
+<span class="nd">@app.before_request</span>
+<span class="k">def</span> <span class="nf">before_request</span><span class="p">():</span>
+    <span class="n">g</span><span class="o">.</span><span class="n">user</span> <span class="o">=</span> <span class="n">current_user</span>
+    <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">is_authenticated</span><span class="p">():</span>
+        <span class="n">g</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">last_seen</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">user</span><span class="p">)</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>如果你登录到你的信息页，最后出现时间会显示出来。每次刷新页面，最后出现时间都会更新，因此每次浏览器在发送请求之前，<em>before_request</em> 函数都会在数据库中更新时间。</p>
+<p>注意的是我们是以标准的 UTC 时区写入时间。我们在之前的章节中讨论过这个问题，因此我们将会以 UTC 格式写入所有时间内容以保证它们的一致性。这种时间形式在前台显示，看起来会很别扭。我们将会在后面的章节中修正这种显示问题。</p>
+<p>要显示用户的关于我的信息，我们必须给他们输入的地方，在“编辑个人信息”页面，这是正确的地方。</p>
+</div>
+<div class="section" id="id8">
+<h2>编辑用户信息<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<p>新增一个用户信息表单是相当容易的。我们开始创建网页表单(文件 <em>app/forms.py</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">flask.ext.wtf</span> <span class="kn">import</span> <span class="n">Form</span><span class="p">,</span> <span class="n">TextField</span><span class="p">,</span> <span class="n">BooleanField</span><span class="p">,</span> <span class="n">TextAreaField</span>
+<span class="kn">from</span> <span class="nn">flask.ext.wtf</span> <span class="kn">import</span> <span class="n">Required</span><span class="p">,</span> <span class="n">Length</span>
+
+<span class="k">class</span> <span class="nc">EditForm</span><span class="p">(</span><span class="n">Form</span><span class="p">):</span>
+    <span class="n">nickname</span> <span class="o">=</span> <span class="n">TextField</span><span class="p">(</span><span class="s">&#39;nickname&#39;</span><span class="p">,</span> <span class="n">validators</span> <span class="o">=</span> <span class="p">[</span><span class="n">Required</span><span class="p">()])</span>
+    <span class="n">about_me</span> <span class="o">=</span> <span class="n">TextAreaField</span><span class="p">(</span><span class="s">&#39;about_me&#39;</span><span class="p">,</span> <span class="n">validators</span> <span class="o">=</span> <span class="p">[</span><span class="n">Length</span><span class="p">(</span><span class="nb">min</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">max</span> <span class="o">=</span> <span class="mi">140</span><span class="p">)])</span>
+</pre></div>
+</div>
+<p>接着视图模板(文件 <em>app/templates/edit.html</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;!-- extend base layout --&gt;
+{% extends &quot;base.html&quot; %}
+
+{% block content %}
+&lt;h1&gt;Edit Your Profile&lt;/h1&gt;
+&lt;form action=&quot;&quot; method=&quot;post&quot; name=&quot;edit&quot;&gt;
+    {{form.hidden_tag()}}
+    &lt;table&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Your nickname:&lt;/td&gt;
+            &lt;td&gt;{{form.nickname(size = 24)}}&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;About yourself:&lt;/td&gt;
+            &lt;td&gt;{{form.about_me(cols = 32, rows = 4)}}&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;input type=&quot;submit&quot; value=&quot;Save Changes&quot;&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/table&gt;
+&lt;/form&gt;
+{% endblock %}
+</pre></div>
+</div>
+<p>最后我们编写视图函数(文件 <em>app/views.py</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">forms</span> <span class="kn">import</span> <span class="n">LoginForm</span><span class="p">,</span> <span class="n">EditForm</span>
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/edit&#39;</span><span class="p">,</span> <span class="n">methods</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;GET&#39;</span><span class="p">,</span> <span class="s">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">edit</span><span class="p">():</span>
+    <span class="n">form</span> <span class="o">=</span> <span class="n">EditForm</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">validate_on_submit</span><span class="p">():</span>
+        <span class="n">g</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">nickname</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">nickname</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">g</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">about_me</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">about_me</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">user</span><span class="p">)</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s">&#39;Your changes have been saved.&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s">&#39;edit&#39;</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">form</span><span class="o">.</span><span class="n">nickname</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">nickname</span>
+        <span class="n">form</span><span class="o">.</span><span class="n">about_me</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">about_me</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s">&#39;edit.html&#39;</span><span class="p">,</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="n">form</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>为了能够让这页很容易访问到，我们在用户信息页上添加了一个链接(文件 <em>app/templates/user.html</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;!-- extend base layout --&gt;
+{% extends &quot;base.html&quot; %}
+
+{% block content %}
+&lt;table&gt;
+    &lt;tr valign=&quot;top&quot;&gt;
+        &lt;td&gt;&lt;img src=&quot;{{user.avatar(128)}}&quot;&gt;&lt;/td&gt;
+        &lt;td&gt;
+            &lt;h1&gt;User: {{user.nickname}}&lt;/h1&gt;
+            {% if user.about_me %}&lt;p&gt;{{user.about_me}}&lt;/p&gt;{% endif %}
+            {% if user.last_seen %}&lt;p&gt;&lt;i&gt;Last seen on: {{user.last_seen}}&lt;/i&gt;&lt;/p&gt;{% endif %}
+            {% if user.id == g.user.id %}&lt;p&gt;&lt;a href=&quot;{{url_for(&#39;edit&#39;)}}&quot;&gt;Edit&lt;/a&gt;&lt;/p&gt;{% endif %}
+        &lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+{% for post in posts %}
+    {% include &#39;post.html&#39; %}
+{% endfor %}
+{% endblock %}
+</pre></div>
+</div>
+<p>编辑用户信息的链接是十分智能的，只有当用户浏览自己的用户信息页的时候才会出现，浏览其他用户的时候是不会出现的。</p>
+<p>下面用户信息页的新的截图:</p>
+<img alt="_images/5.png" src="_images/5.png" />
+</div>
+<div class="section" id="id9">
+<h2>结束语<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
+<p>最后留给大家一个问题，应用程序存在一个 bug。这个问题在前面的章节就已经存在，这一章的代码存在同样的问题。在下一章中我会解释这个 bug，并且修正它。</p>
+<p>如果你想要节省时间的话，你可以下载 <a class="reference external" href="https://github.com/miguelgrinberg/microblog/archive/v0.6.zip">microblog-0.6.zip</a>。</p>
+<p>请记住数据库并不包含在上述的压缩包中，请使用 <em>db_upgrade.py</em> 升级数据库，用 <em>db_create.py</em> 创建新的数据库。</p>
+<p>我希望能在下一章继续见到各位！</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="testing.html" title="单元测试"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="userlogin.html" title="用户登录"
+             >previous</a> |</li>
+        <li><a href="index.html">flask mega-tutorial 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+<div class="footer">
+    <p>
+ © Copyright Translate by by D.D 2013. Created using
+<a href="http://sphinx.pocoo.org/">Sphinx</a>
+1.2. 
+</p>
+
+<p><a href="http://www.miitbeian.gov.cn/">京ICP备**********号</a></p>
+<hr/>
+
+</div>
+
+
+
+
+  </body>
+</html>

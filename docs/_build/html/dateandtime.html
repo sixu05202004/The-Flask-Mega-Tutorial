@@ -1,0 +1,262 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>日期和时间 &mdash; flask mega-tutorial 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="flask mega-tutorial 1.0 documentation" href="index.html" />
+    <link rel="next" title="国际化和本地化" href="i18n.html" />
+    <link rel="prev" title="换装" href="facelift.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="i18n.html" title="国际化和本地化"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="facelift.html" title="换装"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">flask mega-tutorial 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">日期和时间</a><ul>
+<li><a class="reference internal" href="#id2">善意提醒</a></li>
+<li><a class="reference internal" href="#id3">时间戳的问题</a></li>
+<li><a class="reference internal" href="#id4">用户特定的时间戳</a></li>
+<li><a class="reference internal" href="#moment-js">介绍 moment.js</a></li>
+<li><a class="reference internal" href="#id7">整合 moment.js</a></li>
+<li><a class="reference internal" href="#id8">结束语</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="facelift.html"
+                        title="previous chapter">换装</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="i18n.html"
+                        title="next chapter">国际化和本地化</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/dateandtime.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="dateandtime">
+<span id="id1"></span><h1>日期和时间<a class="headerlink" href="#dateandtime" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id2">
+<h2>善意提醒<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>对于那些还没有注意到的读者，近来项目已经迁移到 github 上，你们可以在这个位置找到代码: <a class="reference external" href="https://github.com/miguelgrinberg/microblog">https://github.com/miguelgrinberg/microblog</a>。</p>
+<p>我已经添加了标签指向每个教程步​​骤，为您提供便利。</p>
+</div>
+<div class="section" id="id3">
+<h2>时间戳的问题<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>我们 <em>microblog</em> 应用程序已经忽略很长时间的一个方面就是时间和日期的显示。</p>
+<p>到目前为止，我们信任 Python 本身去渲染在我们 <em>User</em> 和 <em>Post</em> 对象中的 <em>datetime</em> 对象，然而这真不是一个好的解决方案。</p>
+<p>考虑如下的例子。我在 2012.12.31 的下午 3:54 写的这篇文章。我的时区是 PST (或者 UTC-8 如果你更喜欢的话)。在 Python 解释器运行能得到如下信息:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">now</span>
+<span class="go">2012-12-31 15:54:42.915204</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">now</span>
+<span class="go">2012-12-31 23:55:13.635874</span>
+</pre></div>
+</div>
+<p><em>now()</em> 调用返回本地时区的正确的时间，然而 <em>utcnow()</em> 调用返回 UTC 单位的时间。</p>
+<p>因此用哪个更好？</p>
+<p>如果我们所有的时间戳都使用 <em>now()</em>，我们将会在数据库中存储服务器运行本地的时间，然而这会带来一些问题。</p>
+<p>有一天我们想把服务器迁移到不同时区的地方，那么所有数据库中的时间戳必须修改成当地的正确时间在服务器重启之前。</p>
+<p>但是这还有一个更重要的问题。对于不同时区的用户很难清楚知道 blog 的发布时间因为他们看到的是在 PST 时区的时间。他们需要提前知道服务器的时区是 PST 才能做出适当的调整。</p>
+<p>显然，这不是一个好的选择，这是为什么开始使用我们的数据库的时候，我们决定我们总是以 UTC 时区存储时间戳。</p>
+<p>尽管用 UCT 时区标准化了时间戳解决了迁移服务器的问题。但是它解决不了第二个问题，日期和时间在世界上的任何地方都会以 UTC 形式呈献给用户。</p>
+<p>这也是很令人困惑的。想象下一个在 PST 时区的用户在下午 3:00 发布一篇 blog，结果首页显示的时间是下午 11:00 或者是 23:00。用户会不会感到很奇怪啊？</p>
+<p>今天，文章的目的是解决日期和时间显示的问题，使得我们的用户不要混淆。</p>
+</div>
+<div class="section" id="id4">
+<h2>用户特定的时间戳<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<p>最明显解决问题的方案就是为每一个用户单独把时间戳从 UTC 转换到当地时区。这也允许我们接着在数据库中使用 UTC 时区。</p>
+<p>但是如何知道每一个用户的当地时区了？</p>
+<p>许多网页都会有一个配置页，用户可以指定当地时区。这就需要我们添加一个新页，新页上需要一个表单，用户可以在表单上的下拉框中选择自己当地的时区。作为注册的一部分，用户第一次访问页面的时候，需要被要求输入他们的时区。</p>
+<p>尽管这是一个比较好的解决方案，但是用户的系统配置中已经配置了时区，让用户输入这样的信息有些累赘。如果我们能获取用户电脑上的时区的话看起来更有效些。</p>
+<p>出于安全原因，网页浏览器是不允许从用户的操作系统中获取信息。即使这是可能的话，我们需要在 Windows, Linux, Mac, iOS, 以及 Android 上(这还是没有统计其他类型的操作系统)去查询时区。</p>
+<p>其实网页浏览器知道用户的时区，并且可以通过标准的 Javascript APIs 导出。在 Web 2.0 世界里，用户开启 Javascript 的假设是安全的(现代的网页没有脚本是不能工作的)，因此这个方案是有潜力的。</p>
+<p>我们有两种方式通过 Javascript 来利用可用的时区配置:</p>
+<ul class="simple">
+<li>“老派” 的方式就是让网页浏览器在某时候发送时区信息当用户第一次登录到服务器。这可以通过 <a class="reference external" href="http://en.wikipedia.org/wiki/Ajax_(programming)">Ajax</a> 调用，或者 一个 <a class="reference external" href="http://en.wikipedia.org/wiki/Meta_refresh">刷新标记</a>。一旦服务器知道了时区会把它保存到用户的会话中，当模板渲染的时候会去调整时间。</li>
+<li>“新派” 的方式就是不会在服务器上改变任何东西，会继续把 UTC 时间戳发送到客户端浏览器上。从 UTC 到当地时区的转换是通过 Javascript 在客户端实现的。</li>
+</ul>
+<p>两种方式都不错，但是第二种更加不错。浏览器是最有能力根据系统时区配置来渲染时间的。最具有吸引力的是，第二种方式有现成的。</p>
+</div>
+<div class="section" id="moment-js">
+<h2>介绍 moment.js<a class="headerlink" href="#moment-js" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="http://momentjs.com/">Moment.js</a> 是一个小型的，自由的，开源的 Javascript 库，它能够渲染日期和时间。它提供了富有想象的格式化选项。</p>
+<p>为了在我们应用程序中使用 moment.js，我们需要在模板中写一点 Javascript。我们开始从 <a class="reference external" href="http://en.wikipedia.org/wiki/ISO_8601">ISO 8601</a> 时区构建一个 <em>moment</em> 对象。例如，我们可以创建一个 moment 对象像这样:</p>
+<blockquote>
+<div>moment(&#8220;2012-12-31T23:55:13 Z&#8221;)</div></blockquote>
+<p>一旦对象被构建，它能够被渲染成各种格式的字符串。例如，根据系统时区进行详细的渲染:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">moment</span><span class="p">(</span><span class="s">&quot;2012-12-31T23:55:13 Z&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s">&#39;LLLL&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>下面就是结果:</p>
+<div class="highlight-python"><div class="highlight"><pre>Tuesday, January 1 2013 7:55 AM
+</pre></div>
+</div>
+<p>这里是一些不同格式渲染的效果:</p>
+<img alt="_images/7.jpg" src="_images/7.jpg" />
+<p>除了提供了 <em>format()</em>，它还提供了 <em>fromNow()</em> 和 <em>calendar()</em>:</p>
+<img alt="_images/8.jpg" src="_images/8.jpg" />
+<p>请注意，在所有的例子中，服务器渲染相同的 UTC 时间，在自己的网页浏览器中执行不同的渲染。</p>
+<p>我们现在缺少的就是让 <em>moment</em> 返回的字符串在页面上可见。实现这个最简单的方式就是 Javascript 的 <em>document.write</em> 函数:</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;script&gt;
+document.write(moment(&quot;2012-12-31T23:55:13 Z&quot;).format(&#39;LLLL&#39;));
+&lt;/script&gt;
+</pre></div>
+</div>
+</div>
+<div class="section" id="id7">
+<h2>整合 moment.js<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<p>在我们的应用程序中使用 <em>moment.js</em> 还需要做一些事情。</p>
+<p>首先，把下载下来的 <em>moment.min.js</em> 放入到 <em>/app/static/js</em> 文件夹，这样它就能作为一个静态文件提供给客户端。</p>
+<p>接着，在我们的基础模板中添加对这个库的引用(文件 <em>app/templates/base.html</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;script src=&quot;/static/js/moment.min.js&quot;&gt;&lt;/script&gt;
+</pre></div>
+</div>
+<p>我们现在在模板中添加 <em>&lt;script&gt;</em> 标签，用来显示时间戳。但是与这样方式不同的，我们将会创建一个 <em>moment.js</em> 封装，我们能在模版中调用这个封装。这会节省不少时间如果我们必须修改时间戳渲染代码，因为我们已经把它放在一个地方。</p>
+<p>我们的封装是一个很简单的 Python 类(文件 <em>app/momentjs.py</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">jinja2</span> <span class="kn">import</span> <span class="n">Markup</span>
+
+<span class="k">class</span> <span class="nc">momentjs</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span> <span class="o">=</span> <span class="n">timestamp</span>
+
+    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">format</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Markup</span><span class="p">(</span><span class="s">&quot;&lt;script&gt;</span><span class="se">\n</span><span class="s">document.write(moment(</span><span class="se">\&quot;</span><span class="si">%s</span><span class="se">\&quot;</span><span class="s">).</span><span class="si">%s</span><span class="s">);</span><span class="se">\n</span><span class="s">&lt;/script&gt;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s">&quot;%Y-%m-</span><span class="si">%d</span><span class="s">T%H:%M:%S Z&quot;</span><span class="p">),</span> <span class="n">format</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fmt</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="s">&quot;format(</span><span class="se">\&quot;</span><span class="si">%s</span><span class="se">\&quot;</span><span class="s">)&quot;</span> <span class="o">%</span> <span class="n">fmt</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">calendar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="s">&quot;calendar()&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">fromNow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="s">&quot;fromNow()&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>注意 <em>render</em> 方法并不直接返回字符串而是把它放入了 Jinja2 提供的 <em>Markup</em> 对象中。原因是 Jinja2 默认情况下会自动转义，例如，我们的 <em>&lt;script&gt;</em> 标签是不可能到达到客户端，因为转义成 <em>&amp;lt;script&amp;gt;</em>。把字符串包裹在 <em>Markup</em> 对象里就是告诉 Jinja2 这个字符串是不需要转义的。</p>
+<p>既然我们有了一个封装的类，我们需要跟 Jinja2 绑定，这样模块就可以使用它(文件 <em>app/__init__.py</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">momentjs</span> <span class="kn">import</span> <span class="n">momentjs</span>
+<span class="n">app</span><span class="o">.</span><span class="n">jinja_env</span><span class="o">.</span><span class="n">globals</span><span class="p">[</span><span class="s">&#39;momentjs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">momentjs</span>
+</pre></div>
+</div>
+<p>上面的代码就是告诉 Jinja2 导入我们的类作为所有模板的一个全局变量。</p>
+<p>现在我们准备修改模版。在我们应用程序中有两个地方显示日期和时间。一个就是用户信息页，那里有最后一次登录时间。对于这个时间戳，我们将会使用 <em>calendar()</em> 格式(文件 <em>app/templates/user.html</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre>{% if user.last_seen %}
+&lt;p&gt;&lt;em&gt;Last seen: {{momentjs(user.last_seen).calendar()}}&lt;/em&gt;&lt;/p&gt;
+{% endif %}
+</pre></div>
+</div>
+<p>第二个地方就是在 post 子模板，它是被首页，用户信息页以及搜索页调用。在这里我们将会使用 <em>fromNow()</em> 格式，因为一篇 blog 的撰写时间和它离现在有多久了是一样重要的。我们需要修改子模板使得所有使用它的页面都有效(文件 <em>app/templates/post.html</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;p&gt;&lt;a href=&quot;{{url_for(&#39;user&#39;, nickname = post.author.nickname)}}&quot;&gt;{{post.author.nickname}}&lt;/a&gt; said {{momentjs(post.timestamp).fromNow()}}:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;{{post.body}}&lt;/strong&gt;&lt;/p&gt;
+</pre></div>
+</div>
+<p>做完这些修改后，我们解决了所有我们的时间戳问题。我们不需要对服务器代码做单个的修改！</p>
+</div>
+<div class="section" id="id8">
+<h2>结束语<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<p>不知不觉中我们已经做了很重要的一步，使得 <em>microblog</em> 让国际用户能够根据本地时区看到不同的日期和时间。在下一章中，我们会让国际用户更加高兴，我们让 <em>microblog</em> 支持多语言。</p>
+<p>如果你想要节省时间的话，你可以下载 <a class="reference external" href="https://github.com/miguelgrinberg/microblog/archive/v0.13.zip">microblog-0.13.zip</a>。</p>
+<p>我希望能在下一章继续见到各位！</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="i18n.html" title="国际化和本地化"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="facelift.html" title="换装"
+             >previous</a> |</li>
+        <li><a href="index.html">flask mega-tutorial 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+<div class="footer">
+    <p>
+ © Copyright Translate by by D.D 2013. Created using
+<a href="http://sphinx.pocoo.org/">Sphinx</a>
+1.2. 
+</p>
+
+<p><a href="http://www.miitbeian.gov.cn/">京ICP备**********号</a></p>
+<hr/>
+
+</div>
+
+
+
+
+  </body>
+</html>
