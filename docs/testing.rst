@@ -190,12 +190,12 @@ Flask 使用 Python *logging* 模块，因此当发生异常的时候发送邮�
 
 像之前讨论的，目前存在两个地方没有处理重复。第一个就是在 *after_login* 函数。当一个用户成功地登录进系统这个函数就会被调用，这里我们需要创建一个新的 User 实例。这里就是受影响的代码块(文件 *app/views.py*)::
 
-   if user is None:
+    if user is None:
         nickname = resp.nickname
         if nickname is None or nickname == "":
             nickname = resp.email.split('@')[0]
         nickname = User.make_unique_nickname(nickname)
-        user = User(nickname = nickname, email = resp.email, role = ROLE_USER)
+        user = User(nickname = nickname, email = resp.email)
         db.session.add(user)
         db.session.commit()
 
@@ -223,8 +223,8 @@ Flask 使用 Python *logging* 模块，因此当发生异常的时候发送邮�
 	from app.models import User
 
 	class EditForm(Form):
-	    nickname = TextField('nickname', validators = [Required()])
-	    about_me = TextAreaField('about_me', validators = [Length(min = 0, max = 140)])
+	    nickname = StringField('nickname', validators=[DataRequired()])
+	    about_me = TextAreaField('about_me', validators=[Length(min=0, max=140)])
 
 	    def __init__(self, original_nickname, *args, **kwargs):
 	        Form.__init__(self, *args, **kwargs)
@@ -235,7 +235,7 @@ Flask 使用 Python *logging* 模块，因此当发生异常的时候发送邮�
 	            return False
 	        if self.nickname.data == self.original_nickname:
 	            return True
-	        user = User.query.filter_by(nickname = self.nickname.data).first()
+	        user = User.query.filter_by(nickname=self.nickname.data).first()
 	        if user != None:
 	            self.nickname.errors.append('This nickname is already in use. Please choose another one.')
 	            return False
@@ -286,7 +286,7 @@ Flask 使用 Python *logging* 模块，因此当发生异常的时候发送邮�
 	class TestCase(unittest.TestCase):
 	    def setUp(self):
 	        app.config['TESTING'] = True
-	        app.config['CSRF_ENABLED'] = False
+	        app.config['WTF_CSRF_ENABLED'] = False
 	        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'test.db')
 	        self.app = app.test_client()
 	        db.create_all()
@@ -296,18 +296,18 @@ Flask 使用 Python *logging* 模块，因此当发生异常的时候发送邮�
 	        db.drop_all()
 
 	    def test_avatar(self):
-	        u = User(nickname = 'john', email = 'john@example.com')
+	        u = User(nickname='john', email='john@example.com')
 	        avatar = u.avatar(128)
 	        expected = 'http://www.gravatar.com/avatar/d4c74594d841139328695756648b6bd6'
 	        assert avatar[0:len(expected)] == expected
 
 	    def test_make_unique_nickname(self):
-	        u = User(nickname = 'john', email = 'john@example.com')
+	        u = User(nickname='john', email='john@example.com')
 	        db.session.add(u)
 	        db.session.commit()
 	        nickname = User.make_unique_nickname('john')
 	        assert nickname != 'john'
-	        u = User(nickname = nickname, email = 'susan@example.com')
+	        u = User(nickname=nickname, email='susan@example.com')
 	        db.session.add(u)
 	        db.session.commit()
 	        nickname2 = User.make_unique_nickname('john')
@@ -327,6 +327,11 @@ Flask 使用 Python *logging* 模块，因此当发生异常的时候发送邮�
 
 第二个就是我们前面编写的 *make_unique_nickname* 方法，同样是在 *User* 类中。
 
+为了运行测试套件你只要运行 *tests.py* 脚本::
+
+	python tests.py
+
+如果没有什么错误的话，你将会在控制台中得到测试报告。
 
 结束语
 --------

@@ -71,7 +71,7 @@ Bootstrap 擅长如下这些东西:
 	  <head>
 	    ...
 	    <link href="/static/css/bootstrap.min.css" rel="stylesheet" media="screen">
-	    <link href="/static/css/bootstrap-responsive.css" rel="stylesheet">
+	    <link href="/static/css/bootstrap-responsive.min.css" rel="stylesheet">
 	    <script src="http://code.jquery.com/jquery-latest.js"></script>
 	    <script src="/static/js/bootstrap.min.js"></script>
 	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -94,6 +94,16 @@ Bootstrap 擅长如下这些东西:
 
 结束语
 ----------
+
+为了让大家先目睹下装点后的应用程序，这里有一些对比截图供大家欣赏。
+
+.. image:: images/1-old.jpg
+
+.. image:: images/1-new.jpg
+
+.. image:: images/2-old.jpg
+
+.. image:: images/2-new.jpg
 
 如果你想要节省时间的话，你可以下载 `microblog-0.12.zip <https://github.com/miguelgrinberg/microblog/archive/v0.12.zip>`_。
 

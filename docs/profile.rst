@@ -188,7 +188,6 @@
         id = db.Column(db.Integer, primary_key = True)
         nickname = db.Column(db.String(64), unique = True)
         email = db.Column(db.String(120), index = True, unique = True)
-        role = db.Column(db.SmallInteger, default = ROLE_USER)
         posts = db.relationship('Post', backref = 'author', lazy = 'dynamic')
         about_me = db.Column(db.String(140))
         last_seen = db.Column(db.DateTime)
@@ -254,12 +253,13 @@
 
 新增一个用户信息表单是相当容易的。我们开始创建网页表单(文件 *app/forms.py*)::
 
-    from flask.ext.wtf import Form, TextField, BooleanField, TextAreaField
-    from flask.ext.wtf import Required, Length
+    from flask.ext.wtf import Form
+    from wtforms import StringField, BooleanField, TextAreaField
+    from wtforms.validators import DataRequired, Length
 
     class EditForm(Form):
-        nickname = TextField('nickname', validators = [Required()])
-        about_me = TextAreaField('about_me', validators = [Length(min = 0, max = 140)])
+        nickname = StringField('nickname', validators=[DataRequired()])
+        about_me = TextAreaField('about_me', validators=[Length(min=0, max=140)])
 
 接着视图模板(文件 *app/templates/edit.html*)::
 
@@ -291,7 +291,7 @@
 
     from forms import LoginForm, EditForm
 
-    @app.route('/edit', methods = ['GET', 'POST'])
+    @app.route('/edit', methods=['GET', 'POST'])
     @login_required
     def edit():
         form = EditForm()
@@ -305,8 +305,7 @@
         else:
             form.nickname.data = g.user.nickname
             form.about_me.data = g.user.about_me
-        return render_template('edit.html',
-            form = form)
+        return render_template('edit.html', form=form)
 
 为了能够让这页很容易访问到，我们在用户信息页上添加了一个链接(文件 *app/templates/user.html*)::
 

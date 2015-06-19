@@ -96,20 +96,14 @@ SQLALCHEMY_MIGRATE_REPO 是文件夹，我们将会把 SQLAlchemy-migrate 数据
 
 *nickname* 以及 *email* 字段是被定义成字符串，并且指定了最大的长度以便数据库可以优化空间占用。
 
-*role* 字段是一个整型，我们将使用它来表示哪个用户是管理员，哪个不是。
-
 现在我们已经决定用户表的样子，剩下的工作就是把它转换成代码(文件 *app/models.py*)::
 
 	from app import db
-
-	ROLE_USER = 0
-	ROLE_ADMIN = 1
 
 	class User(db.Model):
 	    id = db.Column(db.Integer, primary_key = True)
 	    nickname = db.Column(db.String(64), index = True, unique = True)
 	    email = db.Column(db.String(120), index = True, unique = True)
-	    role = db.Column(db.SmallInteger, default = ROLE_USER)
 
 	    def __repr__(self):
 	        return '<User %r>' % (self.nickname)
@@ -237,15 +231,11 @@ SQLALCHEMY_MIGRATE_REPO 是文件夹，我们将会把 SQLAlchemy-migrate 数据
 
     from app import db
 
-    ROLE_USER = 0
-    ROLE_ADMIN = 1
-
     class User(db.Model):
-        id = db.Column(db.Integer, primary_key = True)
-        nickname = db.Column(db.String(64), unique = True)
-        email = db.Column(db.String(120), unique = True)
-        role = db.Column(db.SmallInteger, default = ROLE_USER)
-        posts = db.relationship('Post', backref = 'author', lazy = 'dynamic')
+        id = db.Column(db.Integer, primary_key=True)
+        nickname = db.Column(db.String(64), index=True, unique=True)
+        email = db.Column(db.String(120), index=True, unique=True)
+        posts = db.relationship('Post', backref='author', lazy='dynamic')
 
         def __repr__(self):
             return '<User %r>' % (self.nickname)
@@ -276,9 +266,28 @@ SQLALCHEMY_MIGRATE_REPO 是文件夹，我们将会把 SQLAlchemy-migrate 数据
 编程时间
 ------------
 
+我们花了很多时间定义我们的数据库，但是我们仍没有看到它是如何工作的。因为我们的应用程序中还没有关于数据库的代码，让我们先在 Python 解释器上试用下我们全新的数据库。
+
+让我们先启动 Python。在 Linux 或者 OS X 上::
+
+    flask/bin/python
+
+
+或者在 Windows 上::
+
+    flask\Scripts\python
+
+
+一旦启动 Python，在 Python 提示符中输入如下语句::
+
+    >>> from app import db, models
+    >>>
+
+这将会把我们的数据库和模型载入内存中。
+
 首先创建一个新用户::
 
-    >>> u = models.User(nickname='john', email='john@email.com', role=models.ROLE_USER)
+    >>> u = models.User(nickname='john', email='john@email.com')
     >>> db.session.add(u)
     >>> db.session.commit()
     >>>
@@ -287,7 +296,7 @@ SQLALCHEMY_MIGRATE_REPO 是文件夹，我们将会把 SQLAlchemy-migrate 数据
 
 让我们添加另一个用户::
 
-    >>> u = models.User(nickname='susan', email='susan@email.com', role=models.ROLE_USER)
+    >>> u = models.User(nickname='susan', email='susan@email.com')
     >>> db.session.add(u)
     >>> db.session.commit()
     >>>

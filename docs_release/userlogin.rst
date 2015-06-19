@@ -41,7 +41,6 @@ Flask-Login 扩展需要在我们的 *User* 类中实现一些特定的方法。
         id = db.Column(db.Integer, primary_key = True)
         nickname = db.Column(db.String(64), unique = True)
         email = db.Column(db.String(120), unique = True)
-        role = db.Column(db.SmallInteger, default = ROLE_USER)
         posts = db.relationship('Post', backref = 'author', lazy = 'dynamic')
 
         def is_authenticated(self):
@@ -54,7 +53,10 @@ Flask-Login 扩展需要在我们的 *User* 类中实现一些特定的方法。
             return False
 
         def get_id(self):
-            return unicode(self.id)
+            try:
+                return unicode(self.id)  # python 2
+            except NameError:
+                return str(self.id)  # python 3
 
         def __repr__(self):
             return '<User %r>' % (self.nickname)
@@ -65,7 +67,7 @@ Flask-Login 扩展需要在我们的 *User* 类中实现一些特定的方法。
 
 *is_anonymous* 方法应该返回 *True*，除非是伪造的用户不允许登录系统。
 
-最后，*get_id* 方法应该返回一个用户唯一的标识符，以 unicode 格式。我们使用数据库生成的唯一的 id。
+最后，*get_id* 方法应该返回一个用户唯一的标识符，以 unicode 格式。我们使用数据库生成的唯一的 id。需要注意地是在 Python 2 和 3 之间由于 unicode 处理的方式的不同我们提供了相应的方式。
 
 
 user_loader 回调
@@ -90,10 +92,10 @@ user_loader 回调
     from flask import render_template, flash, redirect, session, url_for, request, g
     from flask.ext.login import login_user, logout_user, current_user, login_required
     from app import app, db, lm, oid
-    from forms import LoginForm
-    from models import User, ROLE_USER, ROLE_ADMIN
+    from .forms import LoginForm
+    from .models import User
 
-    @app.route('/login', methods = ['GET', 'POST'])
+    @app.route('/login', methods=['GET', 'POST'])
     @oid.loginhandler
     def login():
         if g.user is not None and g.user.is_authenticated():
@@ -101,11 +103,11 @@ user_loader 回调
         form = LoginForm()
         if form.validate_on_submit():
             session['remember_me'] = form.remember_me.data
-            return oid.try_login(form.openid.data, ask_for = ['nickname', 'email'])
+            return oid.try_login(form.openid.data, ask_for=['nickname', 'email'])
         return render_template('login.html', 
-            title = 'Sign In',
-            form = form,
-            providers = app.config['OPENID_PROVIDERS'])
+                               title='Sign In',
+                               form=form,
+                               providers=app.config['OPENID_PROVIDERS'])
 
 注意我们这里导入了不少新的模块，一些模块我们将会在不久后使用到。
 
@@ -134,12 +136,12 @@ Flask-OpenID 登录回调
         if resp.email is None or resp.email == "":
             flash('Invalid login. Please try again.')
             return redirect(url_for('login'))
-        user = User.query.filter_by(email = resp.email).first()
+        user = User.query.filter_by(email=resp.email).first()
         if user is None:
             nickname = resp.nickname
             if nickname is None or nickname == "":
                 nickname = resp.email.split('@')[0]
-            user = User(nickname = nickname, email = resp.email, role = ROLE_USER)
+            user = User(nickname=nickname, email=resp.email)
             db.session.add(user)
             db.session.commit()
         remember_me = False

@@ -35,6 +35,16 @@
     flask/bin/pip install Flask-WhooshAlchemy
 
 
+Python 3 兼容性
+----------------
+
+非常不幸地是，Flask-WhooshAlchemy 这个包在 Python 3 中存在问题。并且 Flask-WhooshAlchemy 不会兼容 Python 3。我为这个扩展做了一个分支并且做了一些改变以便其兼容 Python 3，因此你们需要卸载官方的版本并且安装我的分支::
+
+    $ flask/bin/pip uninstall flask-whooshalchemy
+    $ flask/bin/pip install git+git://github.com/miguelgrinberg/flask-whooshalchemy.git
+
+令人遗憾地这不是唯一的问题。Whoosh 同样与 Python 3 的兼容存在问题。我在测试中遇到过 `这个问题 <https://bitbucket.org/mchaput/whoosh/issue/395/ascii-codec-error-when-performing-query>`，但是以我的能力目前也无法解决这个问题，只能等待官方的修复。目前来说，Python 3 暂时不能完全地使用这个功能。
+
 配置
 ---------
 
@@ -49,12 +59,18 @@
 因为把 Flask-WhooshAlchemy 整合进 Flask-SQLAlchemy，我们需要在模型的类中指明哪些数据需要建立搜索索引(文件 *app/models.py*)::
 
     from app import app
-    import flask.ext.whooshalchemy as whooshalchemy
+
+    import sys
+    if sys.version_info >= (3, 0):
+        enable_search = False
+    else:
+        enable_search = True
+        import flask.ext.whooshalchemy as whooshalchemy
 
     class Post(db.Model):
         __searchable__ = ['body']
 
-        id = db.Column(db.Integer, primary_key = True)
+        id = db.Column(db.Integer, primary_key=True)
         body = db.Column(db.String(140))
         timestamp = db.Column(db.DateTime)
         user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -62,7 +78,8 @@
         def __repr__(self):
             return '<Post %r>' % (self.body)
 
-    whooshalchemy.whoosh_index(app, Post)
+    if enable_search:
+        whooshalchemy.whoosh_index(app, Post)
 
 模型有一个新的 *__searchable__* 字段，这里面包含数据库中的所有能被搜索并且建立索引的字段。在我们的例子中，我们只要索引 blog 的 *body* 字段。
 
@@ -130,7 +147,7 @@
 首先，我们添加一个搜索表单类(文件 *app/forms.py*)::
 
     class SearchForm(Form):
-        search = TextField('search', validators = [Required()])
+        search = StringField('search', validators=[DataRequired()])
 
 接着我们必须创建一个搜索表单对象并且使得它对所有模版中可用，因为我们将搜索表单放在导航栏中，导航栏是所有页面共有的。最容易的方式就是在 *before_request* 函数中创建这个表单对象，接着把它放在全局变量 *g* 中(文件 *app/views.py*)::
 

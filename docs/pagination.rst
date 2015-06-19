@@ -21,7 +21,7 @@
 首先我们定义一个单字段的表单对象(文件 *app/forms.py*)::
 
     class PostForm(Form):
-        post = TextField('post', validators = [Required()])
+        post = StringField('post', validators=[DataRequired()])
 
 接着，我们把表单添加到模板中(文件 *app/templates/index.html*)::
 
@@ -61,33 +61,33 @@
 最后，把这一切联系起来的视图函数需要被扩展用来处理表单(文件 *app/views.py*)::
 
     from forms import LoginForm, EditForm, PostForm
-    from models import User, ROLE_USER, ROLE_ADMIN, Post
+    from models import User, Post
 
-    @app.route('/', methods = ['GET', 'POST'])
-    @app.route('/index', methods = ['GET', 'POST'])
+    @app.route('/', methods=['GET', 'POST'])
+    @app.route('/index', methods=['GET', 'POST'])
     @login_required
     def index():
         form = PostForm()
         if form.validate_on_submit():
-            post = Post(body = form.post.data, timestamp = datetime.utcnow(), author = g.user)
+            post = Post(body=form.post.data, timestamp=datetime.utcnow(), author=g.user)
             db.session.add(post)
             db.session.commit()
             flash('Your post is now live!')
             return redirect(url_for('index'))
         posts = [
             { 
-                'author': { 'nickname': 'John' }, 
+                'author': {'nickname': 'John'}, 
                 'body': 'Beautiful day in Portland!' 
             },
             { 
-                'author': { 'nickname': 'Susan' }, 
+                'author': {'nickname': 'Susan'}, 
                 'body': 'The Avengers movie was so cool!' 
             }
         ]
         return render_template('index.html',
-            title = 'Home',
-            form = form,
-            posts = posts)
+                               title='Home',
+                               form=form,
+                               posts=posts)
 
 让我们一个一个来回顾下这个函数的修改点:
 
@@ -281,15 +281,15 @@ Flask-SQLAlchemy 天生就支持分页。比如如果我们想要得到用户关
     @app.route('/user/<nickname>')
     @app.route('/user/<nickname>/<int:page>')
     @login_required
-    def user(nickname, page = 1):
-        user = User.query.filter_by(nickname = nickname).first()
-        if user == None:
-            flash('User ' + nickname + ' not found.')
+    def user(nickname, page=1):
+        user = User.query.filter_by(nickname=nickname).first()
+        if user is None:
+            flash('User %s not found.' % nickname)
             return redirect(url_for('index'))
         posts = user.posts.paginate(page, POSTS_PER_PAGE, False)
         return render_template('user.html',
-            user = user,
-            posts = posts)
+                               user=user,
+                               posts=posts)
 
 注意上面的视图函数已经有一个 *nickname* 参数，我们把 *page* 作为它的第二个参数。
 

@@ -44,10 +44,8 @@ Windows 上的用户稍微有些不同，因为 Flask-Mail 中使用的一个模
     # email server
     MAIL_SERVER = 'your.mailserver.com'
     MAIL_PORT = 25
-    MAIL_USE_TLS = False
-    MAIL_USE_SSL = False
-    MAIL_USERNAME = 'you'
-    MAIL_PASSWORD = 'your-password'
+    MAIL_USERNAME = None
+    MAIL_PASSWORD = None
 
     # administrator list
     ADMINS = ['you@example.com']
@@ -59,8 +57,8 @@ Windows 上的用户稍微有些不同，因为 Flask-Mail 中使用的一个模
     MAIL_PORT = 465
     MAIL_USE_TLS = False
     MAIL_USE_SSL = True
-    MAIL_USERNAME = 'your-gmail-username'
-    MAIL_PASSWORD = 'your-gmail-password'
+    MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
+    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
 
     # administrator list
     ADMINS = ['your-gmail-username@gmail.com']
@@ -196,15 +194,17 @@ Flask-Mail 支持的应用超出了我们所用的。比如，抄送以及附件
 每次我们需要发送邮件的时候启动一个进程的资源远远小于启动一个新的发送邮件的整个过程，因此把 *mail.send(msg)* 调用移入线程中(文件 *app/emails.py*)::
 
     from threading import Thread
+    from app import app
 
-    def send_async_email(msg):
-        mail.send(msg)
+    def send_async_email(app, msg):
+        with app.app_context():
+            mail.send(msg)
 
     def send_email(subject, sender, recipients, text_body, html_body):
-        msg = Message(subject, sender = sender, recipients = recipients)
+        msg = Message(subject, sender=sender, recipients=recipients)
         msg.body = text_body
         msg.html = html_body
-        thr = Thread(target = send_async_email, args = [msg])
+        thr = Thread(target=send_async_email, args=[app, msg])
         thr.start()
 
 如果现在测试点击 *follow* 链接后的速度的话，浏览器会瞬间刷新页面了。
@@ -213,17 +213,18 @@ Flask-Mail 支持的应用超出了我们所用的。比如，抄送以及附件
 
 我们可以通过实现一个 `装饰器 <http://www.python.org/dev/peps/pep-0318/>`_ 来解决这个问题。有了装饰器，上面的代码可以修改为::
 
-    from decorators import async
+    from .decorators import async
 
     @async
-    def send_async_email(msg):
-        mail.send(msg)
+    def send_async_email(app, msg):
+        with app.app_context():
+            mail.send(msg)
 
     def send_email(subject, sender, recipients, text_body, html_body):
-        msg = Message(subject, sender = sender, recipients = recipients)
+        msg = Message(subject, sender=sender, recipients=recipients)
         msg.body = text_body
         msg.html = html_body
-        send_async_email(msg)
+        send_async_email(app, msg)
 
 好的多了吧，对不对？
 
