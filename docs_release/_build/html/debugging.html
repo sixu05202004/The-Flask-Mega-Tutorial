@@ -26,8 +26,8 @@
     <link rel="top" title="flask mega-tutorial 1.0 documentation" href="index.html" />
     <link rel="prev" title="Ajax" href="ajax.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -39,7 +39,7 @@
         <li><a href="index.html">flask mega-tutorial 1.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
@@ -60,13 +60,15 @@
   <h4>Previous topic</h4>
   <p class="topless"><a href="ajax.html"
                         title="previous chapter">Ajax</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/debugging.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/debugging.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
 
-<div id="searchbox" style="display: none">
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
@@ -97,7 +99,7 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="debugging">
 <span id="id1"></span><h1>调试，测试以及优化<a class="headerlink" href="#debugging" title="Permalink to this headline">¶</a></h1>
@@ -128,15 +130,18 @@
 </pre></div>
 </div>
 <p>为了调用这个函数，我们将会在模板中添加这个删除链接(文件 <em>app/templates/post.html</em>):</p>
-<div class="highlight-python"><pre>{% if post.author.id == g.user.id %}
-&lt;div&gt;&lt;a href="{{ url_for('delete', id = post.id) }}"&gt;{{ _('Delete') }}&lt;/a&gt;&lt;/div&gt;
-{% endif %}</pre>
+<div class="highlight-python"><div class="highlight"><pre>{% if post.author.id == g.user.id %}
+&lt;div&gt;&lt;a href=&quot;{{ url_for(&#39;delete&#39;, id = post.id) }}&quot;&gt;{{ _(&#39;Delete&#39;) }}&lt;/a&gt;&lt;/div&gt;
+{% endif %}
+</pre></div>
 </div>
 <p>现在我们接着继续，在生产模式下运行我们的应用程序。Linux 和 Mac 用户可以这么做:</p>
-<div class="highlight-python"><pre>$ ./runp.py</pre>
+<div class="highlight-python"><div class="highlight"><pre>$ ./runp.py
+</pre></div>
 </div>
 <p>Windows 用户这么做:</p>
-<div class="highlight-python"><pre>flask/Scripts/python runp.py</pre>
+<div class="highlight-python"><div class="highlight"><pre>flask/Scripts/python runp.py
+</pre></div>
 </div>
 <p>现在作为一个用户，撰写一篇 blog，接着改变主意删除它。当你点击删除链接的时候，错误出现了！</p>
 <p>我们得到了一个简短的消息说，应用程序已经遇到了一个错误，并已通知管理员。其实这个消息就是我们的 <em>500.html</em> 模版。在生产模式下，当在处理请求的时候出现一个异常错误，Flask 会返回一个 500 错误模版给客户端。因为我们是处于生产模式下，我们看不到错误信息或者堆栈轨迹。</p>
@@ -146,31 +151,32 @@
 <p>回想 <a class="reference internal" href="testing.html#testing"><em>单元测试</em></a> 这一章，我们开启了一些调试服务在应用程序中的生产模式版本。当时我们创造了一个写入到日志文件的日志记录器，以便应用程序可以在运行时写入调试或诊断信息。Flask 自身会在结束一个错误 500 代码请求之前写入不能处理的任何异常的堆栈轨迹。作为一个额外的选项，我们也开启了基于日志的邮件通知服务，它将会向管理员列表发送日志信息邮件当一个错误写入日志信息的时候。</p>
 <p>因此像上面的 bug，我们能够从两个地方，日志文件和发送的邮件，获得捕获的调试信息。</p>
 <p>一个堆栈轨迹并不足够，但是总比没有好吧。假设我们对问题一点都不知道，我们需要单从堆栈轨迹中之处发生些什么。这是这个特别的堆栈轨迹的副本:</p>
-<div class="highlight-python"><pre>127.0.0.1 - - [03/Mar/2013 23:57:39] "GET /delete/12 HTTP/1.1" 500 -
+<div class="highlight-python"><div class="highlight"><pre>127.0.0.1 - - [03/Mar/2013 23:57:39] &quot;GET /delete/12 HTTP/1.1&quot; 500 -
 Traceback (most recent call last):
-  File "/home/microblog/flask/lib/python2.7/site-packages/flask/app.py", line 1701, in __call__
+  File &quot;/home/microblog/flask/lib/python2.7/site-packages/flask/app.py&quot;, line 1701, in __call__
     return self.wsgi_app(environ, start_response)
-  File "/home/microblog/flask/lib/python2.7/site-packages/flask/app.py", line 1689, in wsgi_app
+  File &quot;/home/microblog/flask/lib/python2.7/site-packages/flask/app.py&quot;, line 1689, in wsgi_app
     response = self.make_response(self.handle_exception(e))
-  File "/home/microblog/flask/lib/python2.7/site-packages/flask/app.py", line 1687, in wsgi_app
+  File &quot;/home/microblog/flask/lib/python2.7/site-packages/flask/app.py&quot;, line 1687, in wsgi_app
     response = self.full_dispatch_request()
-  File "/home/microblog/flask/lib/python2.7/site-packages/flask/app.py", line 1360, in full_dispatch_request
+  File &quot;/home/microblog/flask/lib/python2.7/site-packages/flask/app.py&quot;, line 1360, in full_dispatch_request
     rv = self.handle_user_exception(e)
-  File "/home/microblog/flask/lib/python2.7/site-packages/flask/app.py", line 1358, in full_dispatch_request
+  File &quot;/home/microblog/flask/lib/python2.7/site-packages/flask/app.py&quot;, line 1358, in full_dispatch_request
     rv = self.dispatch_request()
-  File "/home/microblog/flask/lib/python2.7/site-packages/flask/app.py", line 1344, in dispatch_request
+  File &quot;/home/microblog/flask/lib/python2.7/site-packages/flask/app.py&quot;, line 1344, in dispatch_request
     return self.view_functions[rule.endpoint](**req.view_args)
-  File "/home/microblog/flask/lib/python2.7/site-packages/flask_login.py", line 496, in decorated_view
+  File &quot;/home/microblog/flask/lib/python2.7/site-packages/flask_login.py&quot;, line 496, in decorated_view
     return fn(*args, **kwargs)
-  File "/home/microblog/app/views.py", line 195, in delete
+  File &quot;/home/microblog/app/views.py&quot;, line 195, in delete
     db.session.delete(post)
-  File "/home/microblog/flask/lib/python2.7/site-packages/sqlalchemy/orm/scoping.py", line 114, in do
+  File &quot;/home/microblog/flask/lib/python2.7/site-packages/sqlalchemy/orm/scoping.py&quot;, line 114, in do
     return getattr(self.registry(), name)(*args, **kwargs)
-  File "/home/microblog/flask/lib/python2.7/site-packages/sqlalchemy/orm/session.py", line 1400, in delete
+  File &quot;/home/microblog/flask/lib/python2.7/site-packages/sqlalchemy/orm/session.py&quot;, line 1400, in delete
     self._attach(state)
-  File "/home/microblog/flask/lib/python2.7/site-packages/sqlalchemy/orm/session.py", line 1656, in _attach
+  File &quot;/home/microblog/flask/lib/python2.7/site-packages/sqlalchemy/orm/session.py&quot;, line 1656, in _attach
     state.session_id, self.hash_key))
-InvalidRequestError: Object '&lt;Post at 0xff35e7ac&gt;' is already attached to session '1' (this is '3')</pre>
+InvalidRequestError: Object &#39;&lt;Post at 0xff35e7ac&gt;&#39; is already attached to session &#39;1&#39; (this is &#39;3&#39;)
+</pre></div>
 </div>
 <p>如果你习惯读别的语言的堆栈轨迹，请注意 Python 的堆栈轨迹是反序的，最下面的是引起异常的发生点。</p>
 <p>从上面的堆栈轨迹中我们可以看到异常是被 SQLAlchemy 会话处理代码触发的。在堆栈轨迹中，对找出我们代码最后的执行语句也是十分有帮助的。我们会最后定位到我们的 <em>app/views.py</em> 文件中的 <em>delete()</em> 函数中的 <em>db.session.delete(post)</em> 语句。</p>
@@ -210,14 +216,15 @@ InvalidRequestError: Object '&lt;Post at 0xff35e7ac&gt;' is already attached to 
 </pre></div>
 </div>
 <p>让我们继续运行看看会发生什么:</p>
-<div class="highlight-python"><pre>$ ./run.py
+<div class="highlight-python"><div class="highlight"><pre>$ ./run.py
 &gt; /home/microblog/flask/lib/python2.7/site-packages/flask_sqlalchemy.py(198)__init__()
 -&gt; self.app = db.get_app()
-(Pdb)</pre>
+(Pdb)
+</pre></div>
 </div>
 <p>因为没有打印出 “Running on ...” 的信息我们知道服务器实际上并没有完成启动过程。中断可能已经发生了在内部某些神秘的代码里面。</p>
 <p>最重要的问题是我们需要回答应用程序现在处于哪里，因为这将会告诉我们谁在请求创建会话 <em>&#8216;1&#8217;</em>。我们将会使用 <em>bt</em> 来获取堆栈轨迹:</p>
-<div class="highlight-python"><pre>(Pdb) bt
+<div class="highlight-python"><div class="highlight"><pre>(Pdb) bt
   /home/microblog/run.py(2)&lt;module&gt;()
 -&gt; from app import app
   /home/microblog/app/__init__.py(44)&lt;module&gt;()
@@ -240,7 +247,8 @@ InvalidRequestError: Object '&lt;Post at 0xff35e7ac&gt;' is already attached to 
 -&gt; return self.registry.setdefault(key, self.createfunc())
 &gt; /home/microblog/flask/lib/python2.6/site-packages/flask_sqlalchemy.py(198)__init__()
 -&gt; self.app = db.get_app()
-(Pdb)</pre>
+(Pdb)
+</pre></div>
 </div>
 <p>像之前做的，我们会发现在 <em>models.py</em> 的 92 行中存在问题，那里是我们全文搜索引擎初始化的地方:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">whooshalchemy</span><span class="o">.</span><span class="n">whoosh_index</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">Post</span><span class="p">)</span>
@@ -285,26 +293,27 @@ InvalidRequestError: Object '&lt;Post at 0xff35e7ac&gt;' is already attached to 
 </pre></div>
 </div>
 <p>现在当我们运行测试的时候失败会出现:</p>
-<div class="highlight-python"><pre>$ ./tests.py
+<div class="highlight-python"><div class="highlight"><pre>$ ./tests.py
 .E....
 ======================================================================
 ERROR: test_delete_post (__main__.TestCase)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "./tests.py", line 133, in test_delete_post
+  File &quot;./tests.py&quot;, line 133, in test_delete_post
     db.session.delete(p)
-  File "/home/microblog/flask/lib/python2.7/site-packages/sqlalchemy/orm/scoping.py", line 114, in do
+  File &quot;/home/microblog/flask/lib/python2.7/site-packages/sqlalchemy/orm/scoping.py&quot;, line 114, in do
     return getattr(self.registry(), name)(*args, **kwargs)
-  File "/home/microblog/flask/lib/python2.7/site-packages/sqlalchemy/orm/session.py", line 1400, in delete
+  File &quot;/home/microblog/flask/lib/python2.7/site-packages/sqlalchemy/orm/session.py&quot;, line 1400, in delete
     self._attach(state)
-  File "/home/microblog/flask/lib/python2.7/site-packages/sqlalchemy/orm/session.py", line 1656, in _attach
+  File &quot;/home/microblog/flask/lib/python2.7/site-packages/sqlalchemy/orm/session.py&quot;, line 1656, in _attach
     state.session_id, self.hash_key))
-InvalidRequestError: Object '&lt;Post at 0xff09b7ac&gt;' is already attached to session '1' (this is '3')
+InvalidRequestError: Object &#39;&lt;Post at 0xff09b7ac&gt;&#39; is already attached to session &#39;1&#39; (this is &#39;3&#39;)
 
 ----------------------------------------------------------------------
 Ran 6 tests in 3.852s
 
-FAILED (errors=1)</pre>
+FAILED (errors=1)
+</pre></div>
 </div>
 </div>
 <div class="section" id="id5">
@@ -317,7 +326,8 @@ FAILED (errors=1)</pre>
 <h2>测试覆盖率<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
 <p>虽然我们已经有了测试应用程序的测试代码，但是我们并不知道我们的应用程序有多少地方被测试到。我们需要一个测试覆盖率的工具来检查一个应用程序，在执行这个工具后我们能得到一个我们的代码现在哪些地方被测试到的报告。</p>
 <p>Python 有一个测试覆盖率的工具，我们称之为 <a class="reference external" href="http://nedbatchelder.com/code/coverage/">coverage</a>。让我们安装它:</p>
-<div class="highlight-python"><pre>flask/bin/pip install coverage</pre>
+<div class="highlight-python"><div class="highlight"><pre>flask/bin/pip install coverage
+</pre></div>
 </div>
 <p>这个工具可以作为一个命令行使用或者可以放在脚本里面。我们现在可以先不用考虑如何启动它。</p>
 <p>这有些改变我们需要加入到测试代码中为了生成一个覆盖率的报告(文件 <em>tests.py</em>):</p>
@@ -344,14 +354,14 @@ FAILED (errors=1)</pre>
 <p>我们开始在脚本的最开始初始化 <em>coverage</em> 模块。<em>branch = True</em> 参数要求除了常规的覆盖率分析还需要做分支分析。<em>omit</em> 参数确保不会去获得我们安装在虚拟环境和测试框架自身的覆盖率报告，我们只做我们的应用程序代码的覆盖。</p>
 <p>为了收集覆盖率统计我们只要调用 <em>cov.start()</em>，接着运行我们的单元测试。我们必须从我们的单元测试框架中捕获以及通过异常，如果脚本不结束的话是没有机会生成一个覆盖率报告。在我们从测试中回来后，我们将会用 <em>cov.stop()</em> 停止覆盖率统计，并且用 <em>cov.save()</em> 生成结果。最后，<em>cov.report()</em> 把结果输出到控制台，<em>cov.html_report()</em> 生成一个好看的 HTML 报告，<em>cov.erase()</em> 删除数据文件。</p>
 <p>这是运行后的报告例子:</p>
-<div class="highlight-python"><pre>$ ./tests.py
+<div class="highlight-python"><div class="highlight"><pre>$ ./tests.py
 .....F
     ======================================================================
 FAIL: test_translation (__main__.TestCase)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "./tests.py", line 143, in test_translation
-    assert microsoft_translate(u'English', 'en', 'es') == u'Inglés'
+  File &quot;./tests.py&quot;, line 143, in test_translation
+    assert microsoft_translate(u&#39;English&#39;, &#39;en&#39;, &#39;es&#39;) == u&#39;Inglés&#39;
 AssertionError
 
 ----------------------------------------------------------------------
@@ -375,7 +385,8 @@ config              22      0      0      0   100%
 ------------------------------------------------------------
 TOTAL              388    183     74     61    47%
 
-HTML version: /home/microblog/tmp/coverage/index.html</pre>
+HTML version: /home/microblog/tmp/coverage/index.html
+</pre></div>
 </div>
 <p>从上面的报告上可以看到我们测试 47% 的应用程序。我们也从上面得到没有被测试执行的函数的列表，因此我们必须重新看看这些行，考虑下我们还能编写些哪些测试。</p>
 <p>我们能看到 <em>app/models.py</em> 覆盖率是比较高(88%),因为我们的测试集中在我们的模型。<em>app/views.py</em> 覆盖率是比较低(21%)因为我们没有在测试代码中执行视图函数。</p>
@@ -424,15 +435,15 @@ HTML version: /home/microblog/tmp/coverage/index.html</pre>
 </pre></div>
 </div>
 <p>一旦这个脚本运行，每一个请求将会显示分析器的摘要。这里就是其中一个例子:</p>
-<div class="highlight-python"><pre>--------------------------------------------------------------------------------
-PATH: '/'
+<div class="highlight-python"><div class="highlight"><pre>--------------------------------------------------------------------------------
+PATH: &#39;/&#39;
          95477 function calls (89364 primitive calls) in 0.202 seconds
 
    Ordered by: internal time, call count
    List reduced from 1587 to 30 due to restriction &lt;30&gt;
 
    ncalls  tottime  percall  cumtime  percall filename:lineno(function)
-        1    0.061    0.061    0.061    0.061 {method 'commit' of 'sqlite3.Connection' objects}
+        1    0.061    0.061    0.061    0.061 {method &#39;commit&#39; of &#39;sqlite3.Connection&#39; objects}
         1    0.013    0.013    0.018    0.018 flask/lib/python2.7/site-packages/sqlalchemy/dialects/sqlite/pysqlite.py:278(dbapi)
     16807    0.006    0.000    0.006    0.000 {isinstance}
      5053    0.006    0.000    0.012    0.000 flask/lib/python2.7/site-packages/jinja2/nodes.py:163(iter_child_nodes)
@@ -443,10 +454,10 @@ PATH: '/'
         1    0.004    0.004    0.009    0.009 flask/lib/python2.7/site-packages/sqlalchemy/dialects/sqlite/__init__.py:7(&lt;module&gt;)
    1808/8    0.003    0.000    0.033    0.004 flask/lib/python2.7/site-packages/jinja2/visitor.py:34(visit)
      9013    0.003    0.000    0.005    0.000 flask/lib/python2.7/site-packages/jinja2/nodes.py:147(iter_fields)
-     2822    0.003    0.000    0.003    0.000 {method 'match' of '_sre.SRE_Pattern' objects}
-      738    0.003    0.000    0.003    0.000 {method 'split' of 'str' objects}
+     2822    0.003    0.000    0.003    0.000 {method &#39;match&#39; of &#39;_sre.SRE_Pattern&#39; objects}
+      738    0.003    0.000    0.003    0.000 {method &#39;split&#39; of &#39;str&#39; objects}
      1808    0.003    0.000    0.006    0.000 flask/lib/python2.7/site-packages/jinja2/visitor.py:26(get_visitor)
-     2862    0.003    0.000    0.003    0.000 {method 'append' of 'list' objects}
+     2862    0.003    0.000    0.003    0.000 {method &#39;append&#39; of &#39;list&#39; objects}
   110/106    0.002    0.000    0.008    0.000 flask/lib/python2.7/site-packages/jinja2/parser.py:544(parse_primary)
        11    0.002    0.000    0.002    0.000 {posix.stat}
         5    0.002    0.000    0.010    0.002 flask/lib/python2.7/site-packages/sqlalchemy/engine/base.py:1549(_execute_clauseelement)
@@ -455,9 +466,9 @@ PATH: '/'
     416/4    0.002    0.000    0.006    0.002 flask/lib/python2.7/site-packages/jinja2/visitor.py:58(generic_visit)
    101/10    0.002    0.000    0.003    0.000 flask/lib/python2.7/sre_compile.py:32(_compile)
        15    0.002    0.000    0.003    0.000 flask/lib/python2.7/site-packages/sqlalchemy/schema.py:1094(_make_proxy)
-        8    0.002    0.000    0.002    0.000 {method 'execute' of 'sqlite3.Cursor' objects}
+        8    0.002    0.000    0.002    0.000 {method &#39;execute&#39; of &#39;sqlite3.Cursor&#39; objects}
         1    0.002    0.002    0.002    0.002 flask/lib/python2.7/encodings/base64_codec.py:8(&lt;module&gt;)
-        2    0.002    0.001    0.002    0.001 {method 'close' of 'sqlite3.Connection' objects}
+        2    0.002    0.001    0.002    0.001 {method &#39;close&#39; of &#39;sqlite3.Connection&#39; objects}
         1    0.001    0.001    0.001    0.001 flask/lib/python2.7/site-packages/sqlalchemy/dialects/sqlite/pysqlite.py:215(&lt;module&gt;)
         2    0.001    0.001    0.002    0.001 flask/lib/python2.7/site-packages/wtforms/form.py:162(__call__)
       980    0.001    0.000    0.001    0.000 {id}
@@ -465,7 +476,8 @@ PATH: '/'
 
 --------------------------------------------------------------------------------
 
-127.0.0.1 - - [09/Mar/2013 19:35:49] "GET / HTTP/1.1" 200 -</pre>
+127.0.0.1 - - [09/Mar/2013 19:35:49] &quot;GET / HTTP/1.1&quot; 200 -
+</pre></div>
 </div>
 <p>在这个报告中每一行的含义如下:</p>
 <ul class="simple">
@@ -518,7 +530,7 @@ PATH: '/'
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">

@@ -144,8 +144,8 @@ Flask-Babel 可以简单地通过创建 *Babel* 类的一个实例并且传入 F
             if self.nickname.data != User.make_valid_nickname(self.nickname.data):
                 self.nickname.errors.append(gettext('This nickname has invalid characters. Please use letters, numbers, dots and underscores only.'))
                 return False
-            user = User.query.filter_by(nickname = self.nickname.data).first()
-            if user != None:
+            user = User.query.filter_by(nickname=self.nickname.data).first()
+            if user is not None:
                 self.nickname.errors.append(gettext('This nickname is already in use. Please choose another one.'))
                 return False
             return True
@@ -264,6 +264,24 @@ Flask-Login 允许用户配置这个消息，因此我们要充分利用不会�
     flask/bin/pybabel extract -F babel.cfg -k lazy_gettext -o messages.pot app
 
 接下来的事情就跟上面更新翻译一样。依次 *pybabel update*，*poedit*，*pybabel compile*。
+
+随着 Flask 0.10 的问世，用户会话被序列化成 JSON。这给传入给 *flash()* 的参数的惰性求值带来问题。闪现的消息是被写入到用户会话中，但是用于包裹惰性求值的对象是一个复杂的结构，不能够直接转换成 JSON。Flask 0.9 并不会把用户会话被序列化成 JSON，因此没有这个问题。Flask-Babel 并没有解决这个问题，因此我们必须从我们这一边考虑解决问题。(文件 *app/__init__.py* )::
+
+    from flask.json import JSONEncoder
+
+    class CustomJSONEncoder(JSONEncoder):
+        """This class adds support for lazy translation texts to Flask's
+        JSON encoder. This is necessary when flashing translated texts."""
+        def default(self, obj):
+            from speaklater import is_lazy_string
+            if is_lazy_string(obj):
+                try:
+                    return unicode(obj)  # python 2
+                except NameError:
+                    return str(obj)  # python 3
+            return super(CustomJSONEncoder, self).default(obj)
+
+    app.json_encoder = CustomJSONEncoder
 
 
 快捷方式

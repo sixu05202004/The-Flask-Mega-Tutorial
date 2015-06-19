@@ -27,8 +27,8 @@
     <link rel="next" title="用户信息页和头像" href="profile.html" />
     <link rel="prev" title="数据库" href="database.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -43,7 +43,7 @@
         <li><a href="index.html">flask mega-tutorial 1.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
@@ -68,13 +68,15 @@
   <h4>Next topic</h4>
   <p class="topless"><a href="profile.html"
                         title="next chapter">用户信息页和头像</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/userlogin.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/userlogin.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
 
-<div id="searchbox" style="display: none">
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
@@ -105,7 +107,7 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="userlogin">
 <span id="id1"></span><h1>用户登录<a class="headerlink" href="#userlogin" title="Permalink to this headline">¶</a></h1>
@@ -117,7 +119,7 @@
 </div>
 <div class="section" id="id3">
 <h2>配置<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
-<p>像以前章节一样，我们从配置将会使用到的 Flask 扩展开始入手。对于登录系统，我们将会使用到两个扩展，Flask-Login 和 Flask-OpenID。配置情况如下(文件 <em>app__init__.py</em>):</p>
+<p>像以前章节一样，我们从配置将会使用到的 Flask 扩展开始入手。对于登录系统，我们将会使用到两个扩展，Flask-Login 和 Flask-OpenID。配置情况如下(文件 <em>app/__init__.py</em>):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">flask.ext.login</span> <span class="kn">import</span> <span class="n">LoginManager</span>
 <span class="kn">from</span> <span class="nn">flask.ext.openid</span> <span class="kn">import</span> <span class="n">OpenID</span>
@@ -138,7 +140,6 @@
     <span class="nb">id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
     <span class="n">nickname</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">64</span><span class="p">),</span> <span class="n">unique</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
     <span class="n">email</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">120</span><span class="p">),</span> <span class="n">unique</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
-    <span class="n">role</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">SmallInteger</span><span class="p">,</span> <span class="n">default</span> <span class="o">=</span> <span class="n">ROLE_USER</span><span class="p">)</span>
     <span class="n">posts</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span><span class="s">&#39;Post&#39;</span><span class="p">,</span> <span class="n">backref</span> <span class="o">=</span> <span class="s">&#39;author&#39;</span><span class="p">,</span> <span class="n">lazy</span> <span class="o">=</span> <span class="s">&#39;dynamic&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">is_authenticated</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -151,7 +152,10 @@
         <span class="k">return</span> <span class="bp">False</span>
 
     <span class="k">def</span> <span class="nf">get_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">unicode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">unicode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>  <span class="c"># python 2</span>
+        <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>  <span class="c"># python 3</span>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s">&#39;&lt;User </span><span class="si">%r</span><span class="s">&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nickname</span><span class="p">)</span>
@@ -160,7 +164,7 @@
 <p><em>is_authenticated</em> 方法有一个具有迷惑性的名称。一般而言，这个方法应该只返回 <em>True</em>，除非表示用户的对象因为某些原因不允许被认证。</p>
 <p><em>is_active</em> 方法应该返回 <em>True</em>，除非是用户是无效的，比如因为他们的账号是被禁止。</p>
 <p><em>is_anonymous</em> 方法应该返回 <em>True</em>，除非是伪造的用户不允许登录系统。</p>
-<p>最后，<em>get_id</em> 方法应该返回一个用户唯一的标识符，以 unicode 格式。我们使用数据库生成的唯一的 id。</p>
+<p>最后，<em>get_id</em> 方法应该返回一个用户唯一的标识符，以 unicode 格式。我们使用数据库生成的唯一的 id。需要注意地是在 Python 2 和 3 之间由于 unicode 处理的方式的不同我们提供了相应的方式。</p>
 </div>
 <div class="section" id="user-loader">
 <h2>user_loader 回调<a class="headerlink" href="#user-loader" title="Permalink to this headline">¶</a></h2>
@@ -179,10 +183,10 @@
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">flash</span><span class="p">,</span> <span class="n">redirect</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">url_for</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">g</span>
 <span class="kn">from</span> <span class="nn">flask.ext.login</span> <span class="kn">import</span> <span class="n">login_user</span><span class="p">,</span> <span class="n">logout_user</span><span class="p">,</span> <span class="n">current_user</span><span class="p">,</span> <span class="n">login_required</span>
 <span class="kn">from</span> <span class="nn">app</span> <span class="kn">import</span> <span class="n">app</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="n">lm</span><span class="p">,</span> <span class="n">oid</span>
-<span class="kn">from</span> <span class="nn">forms</span> <span class="kn">import</span> <span class="n">LoginForm</span>
-<span class="kn">from</span> <span class="nn">models</span> <span class="kn">import</span> <span class="n">User</span><span class="p">,</span> <span class="n">ROLE_USER</span><span class="p">,</span> <span class="n">ROLE_ADMIN</span>
+<span class="kn">from</span> <span class="nn">.forms</span> <span class="kn">import</span> <span class="n">LoginForm</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">User</span>
 
-<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/login&#39;</span><span class="p">,</span> <span class="n">methods</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;GET&#39;</span><span class="p">,</span> <span class="s">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/login&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;GET&#39;</span><span class="p">,</span> <span class="s">&#39;POST&#39;</span><span class="p">])</span>
 <span class="nd">@oid.loginhandler</span>
 <span class="k">def</span> <span class="nf">login</span><span class="p">():</span>
     <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">user</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">g</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">is_authenticated</span><span class="p">():</span>
@@ -190,11 +194,11 @@
     <span class="n">form</span> <span class="o">=</span> <span class="n">LoginForm</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">validate_on_submit</span><span class="p">():</span>
         <span class="n">session</span><span class="p">[</span><span class="s">&#39;remember_me&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">remember_me</span><span class="o">.</span><span class="n">data</span>
-        <span class="k">return</span> <span class="n">oid</span><span class="o">.</span><span class="n">try_login</span><span class="p">(</span><span class="n">form</span><span class="o">.</span><span class="n">openid</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">ask_for</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;nickname&#39;</span><span class="p">,</span> <span class="s">&#39;email&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">oid</span><span class="o">.</span><span class="n">try_login</span><span class="p">(</span><span class="n">form</span><span class="o">.</span><span class="n">openid</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">ask_for</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;nickname&#39;</span><span class="p">,</span> <span class="s">&#39;email&#39;</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s">&#39;login.html&#39;</span><span class="p">,</span>
-        <span class="n">title</span> <span class="o">=</span> <span class="s">&#39;Sign In&#39;</span><span class="p">,</span>
-        <span class="n">form</span> <span class="o">=</span> <span class="n">form</span><span class="p">,</span>
-        <span class="n">providers</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;OPENID_PROVIDERS&#39;</span><span class="p">])</span>
+                           <span class="n">title</span><span class="o">=</span><span class="s">&#39;Sign In&#39;</span><span class="p">,</span>
+                           <span class="n">form</span><span class="o">=</span><span class="n">form</span><span class="p">,</span>
+                           <span class="n">providers</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;OPENID_PROVIDERS&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>注意我们这里导入了不少新的模块，一些模块我们将会在不久后使用到。</p>
@@ -214,12 +218,12 @@
     <span class="k">if</span> <span class="n">resp</span><span class="o">.</span><span class="n">email</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">resp</span><span class="o">.</span><span class="n">email</span> <span class="o">==</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
         <span class="n">flash</span><span class="p">(</span><span class="s">&#39;Invalid login. Please try again.&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s">&#39;login&#39;</span><span class="p">))</span>
-    <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">email</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">email</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="n">resp</span><span class="o">.</span><span class="n">email</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">user</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
         <span class="n">nickname</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">nickname</span>
         <span class="k">if</span> <span class="n">nickname</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">nickname</span> <span class="o">==</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
             <span class="n">nickname</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">email</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;@&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">nickname</span> <span class="o">=</span> <span class="n">nickname</span><span class="p">,</span> <span class="n">email</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">email</span><span class="p">,</span> <span class="n">role</span> <span class="o">=</span> <span class="n">ROLE_USER</span><span class="p">)</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">nickname</span><span class="o">=</span><span class="n">nickname</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="n">resp</span><span class="o">.</span><span class="n">email</span><span class="p">)</span>
         <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
         <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
     <span class="n">remember_me</span> <span class="o">=</span> <span class="bp">False</span>
@@ -292,7 +296,7 @@
 </pre></div>
 </div>
 <p>但是我们还没有在模版中添加登出的链接。我们将要把这个链接放在基础层中的导航栏里(文件 <em>app/templates/base.html</em>):</p>
-<div class="highlight-python"><pre>&lt;html&gt;
+<div class="highlight-python"><div class="highlight"><pre>&lt;html&gt;
   &lt;head&gt;
     {% if title %}
     &lt;title&gt;{{title}} - microblog&lt;/title&gt;
@@ -302,9 +306,9 @@
   &lt;/head&gt;
   &lt;body&gt;
     &lt;div&gt;Microblog:
-        &lt;a href="{{ url_for('index') }}"&gt;Home&lt;/a&gt;
+        &lt;a href=&quot;{{ url_for(&#39;index&#39;) }}&quot;&gt;Home&lt;/a&gt;
         {% if g.user.is_authenticated() %}
-        | &lt;a href="{{ url_for('logout') }}"&gt;Logout&lt;/a&gt;
+        | &lt;a href=&quot;{{ url_for(&#39;logout&#39;) }}&quot;&gt;Logout&lt;/a&gt;
         {% endif %}
     &lt;/div&gt;
     &lt;hr&gt;
@@ -319,7 +323,8 @@
     {% endwith %}
     {% block content %}{% endblock %}
   &lt;/body&gt;
-&lt;/html&gt;</pre>
+&lt;/html&gt;
+</pre></div>
 </div>
 <p>实现起来是不是很简单？我们只需要检查有效的用户是否被设置到 <em>g.user</em> 以及是否我们已经添加了登出链接。我们也正好利用这个机会在模版中使用 <em>url_for</em>。</p>
 </div>
@@ -336,7 +341,7 @@
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">

@@ -27,8 +27,8 @@
     <link rel="next" title="全文搜索" href="textsearch.html" />
     <link rel="prev" title="关注者，联系人和好友" href="followers.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -43,7 +43,7 @@
         <li><a href="index.html">flask mega-tutorial 1.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
@@ -66,13 +66,15 @@
   <h4>Next topic</h4>
   <p class="topless"><a href="textsearch.html"
                         title="next chapter">全文搜索</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/pagination.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/pagination.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
 
-<div id="searchbox" style="display: none">
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
@@ -103,7 +105,7 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="pagination">
 <span id="id1"></span><h1>分页<a class="headerlink" href="#pagination" title="Permalink to this headline">¶</a></h1>
@@ -117,16 +119,16 @@
 <p>让我们先以简单的内容开始，主页应该有一个提交新的 blog 的表单。</p>
 <p>首先我们定义一个单字段的表单对象(文件 <em>app/forms.py</em>):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">PostForm</span><span class="p">(</span><span class="n">Form</span><span class="p">):</span>
-    <span class="n">post</span> <span class="o">=</span> <span class="n">TextField</span><span class="p">(</span><span class="s">&#39;post&#39;</span><span class="p">,</span> <span class="n">validators</span> <span class="o">=</span> <span class="p">[</span><span class="n">Required</span><span class="p">()])</span>
+    <span class="n">post</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="s">&#39;post&#39;</span><span class="p">,</span> <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">DataRequired</span><span class="p">()])</span>
 </pre></div>
 </div>
 <p>接着，我们把表单添加到模板中(文件 <em>app/templates/index.html</em>):</p>
-<div class="highlight-python"><pre>&lt;!-- extend base layout --&gt;
-{% extends "base.html" %}
+<div class="highlight-python"><div class="highlight"><pre>&lt;!-- extend base layout --&gt;
+{% extends &quot;base.html&quot; %}
 
 {% block content %}
 &lt;h1&gt;Hi, {{g.user.nickname}}!&lt;/h1&gt;
-&lt;form action="" method="post" name="post"&gt;
+&lt;form action=&quot;&quot; method=&quot;post&quot; name=&quot;post&quot;&gt;
     {{form.hidden_tag()}}
     &lt;table&gt;
         &lt;tr&gt;
@@ -134,13 +136,13 @@
             &lt;td&gt;{{ form.post(size = 30, maxlength = 140) }}&lt;/td&gt;
             &lt;td&gt;
             {% for error in form.errors.post %}
-            &lt;span style="color: red;"&gt;[{{error}}]&lt;/span&gt;&lt;br&gt;
+            &lt;span style=&quot;color: red;&quot;&gt;[{{error}}]&lt;/span&gt;&lt;br&gt;
             {% endfor %}
             &lt;/td&gt;
         &lt;/tr&gt;
         &lt;tr&gt;
             &lt;td&gt;&lt;/td&gt;
-            &lt;td&gt;&lt;input type="submit" value="Post!"&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;input type=&quot;submit&quot; value=&quot;Post!&quot;&gt;&lt;/td&gt;
             &lt;td&gt;&lt;/td&gt;
         &lt;/tr&gt;
     &lt;/table&gt;
@@ -150,38 +152,39 @@
   {{post.author.nickname}} says: &lt;b&gt;{{post.body}}&lt;/b&gt;
 &lt;/p&gt;
 {% endfor %}
-{% endblock %}</pre>
+{% endblock %}
+</pre></div>
 </div>
 <p>到目前为止，内容没有什么解释的，都不是新的东西。我们只是简单的添加另外一个表单而已，跟我们之前做的一样。</p>
 <p>最后，把这一切联系起来的视图函数需要被扩展用来处理表单(文件 <em>app/views.py</em>):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">forms</span> <span class="kn">import</span> <span class="n">LoginForm</span><span class="p">,</span> <span class="n">EditForm</span><span class="p">,</span> <span class="n">PostForm</span>
-<span class="kn">from</span> <span class="nn">models</span> <span class="kn">import</span> <span class="n">User</span><span class="p">,</span> <span class="n">ROLE_USER</span><span class="p">,</span> <span class="n">ROLE_ADMIN</span><span class="p">,</span> <span class="n">Post</span>
+<span class="kn">from</span> <span class="nn">models</span> <span class="kn">import</span> <span class="n">User</span><span class="p">,</span> <span class="n">Post</span>
 
-<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/&#39;</span><span class="p">,</span> <span class="n">methods</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;GET&#39;</span><span class="p">,</span> <span class="s">&#39;POST&#39;</span><span class="p">])</span>
-<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/index&#39;</span><span class="p">,</span> <span class="n">methods</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;GET&#39;</span><span class="p">,</span> <span class="s">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;GET&#39;</span><span class="p">,</span> <span class="s">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/index&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;GET&#39;</span><span class="p">,</span> <span class="s">&#39;POST&#39;</span><span class="p">])</span>
 <span class="nd">@login_required</span>
 <span class="k">def</span> <span class="nf">index</span><span class="p">():</span>
     <span class="n">form</span> <span class="o">=</span> <span class="n">PostForm</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">validate_on_submit</span><span class="p">():</span>
-        <span class="n">post</span> <span class="o">=</span> <span class="n">Post</span><span class="p">(</span><span class="n">body</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">(),</span> <span class="n">author</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">user</span><span class="p">)</span>
+        <span class="n">post</span> <span class="o">=</span> <span class="n">Post</span><span class="p">(</span><span class="n">body</span><span class="o">=</span><span class="n">form</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">(),</span> <span class="n">author</span><span class="o">=</span><span class="n">g</span><span class="o">.</span><span class="n">user</span><span class="p">)</span>
         <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">post</span><span class="p">)</span>
         <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
         <span class="n">flash</span><span class="p">(</span><span class="s">&#39;Your post is now live!&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s">&#39;index&#39;</span><span class="p">))</span>
     <span class="n">posts</span> <span class="o">=</span> <span class="p">[</span>
         <span class="p">{</span>
-            <span class="s">&#39;author&#39;</span><span class="p">:</span> <span class="p">{</span> <span class="s">&#39;nickname&#39;</span><span class="p">:</span> <span class="s">&#39;John&#39;</span> <span class="p">},</span>
+            <span class="s">&#39;author&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;nickname&#39;</span><span class="p">:</span> <span class="s">&#39;John&#39;</span><span class="p">},</span>
             <span class="s">&#39;body&#39;</span><span class="p">:</span> <span class="s">&#39;Beautiful day in Portland!&#39;</span>
         <span class="p">},</span>
         <span class="p">{</span>
-            <span class="s">&#39;author&#39;</span><span class="p">:</span> <span class="p">{</span> <span class="s">&#39;nickname&#39;</span><span class="p">:</span> <span class="s">&#39;Susan&#39;</span> <span class="p">},</span>
+            <span class="s">&#39;author&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;nickname&#39;</span><span class="p">:</span> <span class="s">&#39;Susan&#39;</span><span class="p">},</span>
             <span class="s">&#39;body&#39;</span><span class="p">:</span> <span class="s">&#39;The Avengers movie was so cool!&#39;</span>
         <span class="p">}</span>
     <span class="p">]</span>
     <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s">&#39;index.html&#39;</span><span class="p">,</span>
-        <span class="n">title</span> <span class="o">=</span> <span class="s">&#39;Home&#39;</span><span class="p">,</span>
-        <span class="n">form</span> <span class="o">=</span> <span class="n">form</span><span class="p">,</span>
-        <span class="n">posts</span> <span class="o">=</span> <span class="n">posts</span><span class="p">)</span>
+                           <span class="n">title</span><span class="o">=</span><span class="s">&#39;Home&#39;</span><span class="p">,</span>
+                           <span class="n">form</span><span class="o">=</span><span class="n">form</span><span class="p">,</span>
+                           <span class="n">posts</span><span class="o">=</span><span class="n">posts</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>让我们一个一个来回顾下这个函数的修改点:</p>
@@ -246,10 +249,11 @@
 </div>
 <p>在最后的应用程序中我们当然会使用每页显示的 blog 数大于 3，但是测试的时候用小的数量更加方便。</p>
 <p>接着，让我们看看不同页的 URLs 是什么样的。我们知道 Flask 路由可以携带参数，因此我们在 URL 后添加一个后缀表示所需的页面:</p>
-<div class="highlight-python"><pre>http://localhost:5000/         &lt;-- page #1 (default)
+<div class="highlight-python"><div class="highlight"><pre>http://localhost:5000/         &lt;-- page #1 (default)
 http://localhost:5000/index    &lt;-- page #1 (default)
 http://localhost:5000/index/1  &lt;-- page #1
-http://localhost:5000/index/2  &lt;-- page #2</pre>
+http://localhost:5000/index/2  &lt;-- page #2
+</pre></div>
 </div>
 <p>这种格式的 URLs 能够轻易地通过在我们的视图函数中附加一个 <em>route</em> 来实现(文件 <em>app/views.py</em>):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">config</span> <span class="kn">import</span> <span class="n">POSTS_PER_PAGE</span>
@@ -289,12 +293,13 @@ http://localhost:5000/index/2  &lt;-- page #2</pre>
 </pre></div>
 </div>
 <p>为了适应这种改变，我们必须修改模板(文件 <em>app/templates/index.html</em>):</p>
-<div class="highlight-python"><pre>&lt;!-- posts is a Paginate object --&gt;
+<div class="highlight-python"><div class="highlight"><pre>&lt;!-- posts is a Paginate object --&gt;
 {% for post in posts.items %}
 &lt;p&gt;
   {{post.author.nickname}} says: &lt;b&gt;{{post.body}}&lt;/b&gt;
 &lt;/p&gt;
-{% endfor %}</pre>
+{% endfor %}
+</pre></div>
 </div>
 <p>这个改变使得模版能够使用完全的 Paginate 对象。我们使用的这个对象的成员有:</p>
 <ul class="simple">
@@ -304,14 +309,15 @@ http://localhost:5000/index/2  &lt;-- page #2</pre>
 <li><em>prev_num</em>：前一页的页面数</li>
 </ul>
 <p>有了这些元素后，我们产生了这些(文件 <em>app/templates/index.html</em>):</p>
-<div class="highlight-python"><pre>&lt;!-- posts is a Paginate object --&gt;
+<div class="highlight-python"><div class="highlight"><pre>&lt;!-- posts is a Paginate object --&gt;
 {% for post in posts.items %}
 &lt;p&gt;
   {{post.author.nickname}} says: &lt;b&gt;{{post.body}}&lt;/b&gt;
 &lt;/p&gt;
 {% endfor %}
-{% if posts.has_prev %}&lt;a href="{{ url_for('index', page = posts.prev_num) }}"&gt;&lt;&lt; Newer posts&lt;/a&gt;{% else %}&lt;&lt; Newer posts{% endif %} |
-{% if posts.has_next %}&lt;a href="{{ url_for('index', page = posts.next_num) }}"&gt;Older posts &gt;&gt;&lt;/a&gt;{% else %}Older posts &gt;&gt;{% endif %}</pre>
+{% if posts.has_prev %}&lt;a href=&quot;{{ url_for(&#39;index&#39;, page = posts.prev_num) }}&quot;&gt;&lt;&lt; Newer posts&lt;/a&gt;{% else %}&lt;&lt; Newer posts{% endif %} |
+{% if posts.has_next %}&lt;a href=&quot;{{ url_for(&#39;index&#39;, page = posts.next_num) }}&quot;&gt;Older posts &gt;&gt;&lt;/a&gt;{% else %}Older posts &gt;&gt;{% endif %}
+</pre></div>
 </div>
 <p>因此，我们有了两个链接。第一个就是名为 “Newer posts”，这个链接使得我们能够访问上一页。第二个就是 “Older posts”，它指向下一页。</p>
 <p>当我们浏览第一页的时候，我们不希望看到有上一页的链接，因为这时候是不存在前一页。这是很容易被监测的，因为 <em>posts.has_prev</em> 会是 <em>False</em>。我们简单地处理这种情况，当用户浏览首页的时候，上一页会显示出来，但是不会有任何的链接。同样，下一页也是这样的处理方式。</p>
@@ -320,10 +326,11 @@ http://localhost:5000/index/2  &lt;-- page #2</pre>
 <h2>实现 Post 子模板<a class="headerlink" href="#post" title="Permalink to this headline">¶</a></h2>
 <p>在前面的章节中，我们定义了一个子模板来渲染单个 blog。定义这个子模板的原因是在多个使用单个 blog 的页面的时候只需要包含这个子模板就行了，不需要重复拷贝 HTML 代码。</p>
 <p>现在是时候在我们的首页上也包含这个子模板。大部分的事情都已经做完了，因此这是很简单的(文件 <em>app/templates/index.html</em>):</p>
-<div class="highlight-python"><pre>&lt;!-- posts is a Paginate object --&gt;
+<div class="highlight-python"><div class="highlight"><pre>&lt;!-- posts is a Paginate object --&gt;
 {% for post in posts.items %}
-    {% include 'post.html' %}
-{% endfor %}</pre>
+    {% include &#39;post.html&#39; %}
+{% endfor %}
+</pre></div>
 </div>
 <p>惊人吧？我们只是丢弃旧的渲染代码，取而代之的是一个包含子模板新的 HTML 代码。就只做了这一点，我们得到更好的版本。</p>
 <p>下面是目前应用程序的截图:</p>
@@ -343,25 +350,26 @@ http://localhost:5000/index/2  &lt;-- page #2</pre>
 <div class="highlight-python"><div class="highlight"><pre><span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/user/&lt;nickname&gt;&#39;</span><span class="p">)</span>
 <span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/user/&lt;nickname&gt;/&lt;int:page&gt;&#39;</span><span class="p">)</span>
 <span class="nd">@login_required</span>
-<span class="k">def</span> <span class="nf">user</span><span class="p">(</span><span class="n">nickname</span><span class="p">,</span> <span class="n">page</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
-    <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">nickname</span> <span class="o">=</span> <span class="n">nickname</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">user</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">flash</span><span class="p">(</span><span class="s">&#39;User &#39;</span> <span class="o">+</span> <span class="n">nickname</span> <span class="o">+</span> <span class="s">&#39; not found.&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">user</span><span class="p">(</span><span class="n">nickname</span><span class="p">,</span> <span class="n">page</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">nickname</span><span class="o">=</span><span class="n">nickname</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">user</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s">&#39;User </span><span class="si">%s</span><span class="s"> not found.&#39;</span> <span class="o">%</span> <span class="n">nickname</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s">&#39;index&#39;</span><span class="p">))</span>
     <span class="n">posts</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">posts</span><span class="o">.</span><span class="n">paginate</span><span class="p">(</span><span class="n">page</span><span class="p">,</span> <span class="n">POSTS_PER_PAGE</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s">&#39;user.html&#39;</span><span class="p">,</span>
-        <span class="n">user</span> <span class="o">=</span> <span class="n">user</span><span class="p">,</span>
-        <span class="n">posts</span> <span class="o">=</span> <span class="n">posts</span><span class="p">)</span>
+                           <span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">,</span>
+                           <span class="n">posts</span><span class="o">=</span><span class="n">posts</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>注意上面的视图函数已经有一个 <em>nickname</em> 参数，我们把 <em>page</em> 作为它的第二个参数。</p>
 <p>模版的改变同样很简单(文件 <em>app/templates/user.html</em>):</p>
-<div class="highlight-python"><pre>&lt;!-- posts is a Paginate object --&gt;
+<div class="highlight-python"><div class="highlight"><pre>&lt;!-- posts is a Paginate object --&gt;
 {% for post in posts.items %}
-    {% include 'post.html' %}
+    {% include &#39;post.html&#39; %}
 {% endfor %}
-{% if posts.has_prev %}&lt;a href="{{ url_for('user', nickname = user.nickname, page = posts.prev_num) }}"&gt;&lt;&lt; Newer posts&lt;/a&gt;{% else %}&lt;&lt; Newer posts{% endif %} |
-{% if posts.has_next %}&lt;a href="{{ url_for('user', nickname = user.nickname, page = posts.next_num) }}"&gt;Older posts &gt;&gt;&lt;/a&gt;{% else %}Older posts &gt;&gt;{% endif %}</pre>
+{% if posts.has_prev %}&lt;a href=&quot;{{ url_for(&#39;user&#39;, nickname = user.nickname, page = posts.prev_num) }}&quot;&gt;&lt;&lt; Newer posts&lt;/a&gt;{% else %}&lt;&lt; Newer posts{% endif %} |
+{% if posts.has_next %}&lt;a href=&quot;{{ url_for(&#39;user&#39;, nickname = user.nickname, page = posts.next_num) }}&quot;&gt;Older posts &gt;&gt;&lt;/a&gt;{% else %}Older posts &gt;&gt;{% endif %}
+</pre></div>
 </div>
 </div>
 <div class="section" id="id7">
@@ -377,7 +385,7 @@ http://localhost:5000/index/2  &lt;-- page #2</pre>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">

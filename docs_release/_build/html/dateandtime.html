@@ -27,8 +27,8 @@
     <link rel="next" title="国际化和本地化" href="i18n.html" />
     <link rel="prev" title="换装" href="facelift.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -43,7 +43,7 @@
         <li><a href="index.html">flask mega-tutorial 1.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
@@ -64,13 +64,15 @@
   <h4>Next topic</h4>
   <p class="topless"><a href="i18n.html"
                         title="next chapter">国际化和本地化</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/dateandtime.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/dateandtime.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
 
-<div id="searchbox" style="display: none">
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
@@ -101,7 +103,7 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="dateandtime">
 <span id="id1"></span><h1>日期和时间<a class="headerlink" href="#dateandtime" title="Permalink to this headline">¶</a></h1>
@@ -160,7 +162,8 @@
 </pre></div>
 </div>
 <p>下面就是结果:</p>
-<div class="highlight-python"><pre>Tuesday, January 1 2013 7:55 AM</pre>
+<div class="highlight-python"><div class="highlight"><pre>Tuesday, January 1 2013 7:55 AM
+</pre></div>
 </div>
 <p>这里是一些不同格式渲染的效果:</p>
 <img alt="_images/7.jpg" src="_images/7.jpg" />
@@ -168,9 +171,10 @@
 <img alt="_images/8.jpg" src="_images/8.jpg" />
 <p>请注意，在所有的例子中，服务器渲染相同的 UTC 时间，在自己的网页浏览器中执行不同的渲染。</p>
 <p>我们现在缺少的就是让 <em>moment</em> 返回的字符串在页面上可见。实现这个最简单的方式就是 Javascript 的 <em>document.write</em> 函数:</p>
-<div class="highlight-python"><pre>&lt;script&gt;
-document.write(moment("2012-12-31T23:55:13 Z").format('LLLL'));
-&lt;/script&gt;</pre>
+<div class="highlight-python"><div class="highlight"><pre>&lt;script&gt;
+document.write(moment(&quot;2012-12-31T23:55:13 Z&quot;).format(&#39;LLLL&#39;));
+&lt;/script&gt;
+</pre></div>
 </div>
 </div>
 <div class="section" id="id7">
@@ -178,7 +182,8 @@ document.write(moment("2012-12-31T23:55:13 Z").format('LLLL'));
 <p>在我们的应用程序中使用 <em>moment.js</em> 还需要做一些事情。</p>
 <p>首先，把下载下来的 <em>moment.min.js</em> 放入到 <em>/app/static/js</em> 文件夹，这样它就能作为一个静态文件提供给客户端。</p>
 <p>接着，在我们的基础模板中添加对这个库的引用(文件 <em>app/templates/base.html</em>):</p>
-<div class="highlight-python"><pre>&lt;script src="/static/js/moment.min.js"&gt;&lt;/script&gt;</pre>
+<div class="highlight-python"><div class="highlight"><pre>&lt;script src=&quot;/static/js/moment.min.js&quot;&gt;&lt;/script&gt;
+</pre></div>
 </div>
 <p>我们现在在模板中添加 <em>&lt;script&gt;</em> 标签，用来显示时间戳。但是与这样方式不同的，我们将会创建一个 <em>moment.js</em> 封装，我们能在模版中调用这个封装。这会节省不少时间如果我们必须修改时间戳渲染代码，因为我们已经把它放在一个地方。</p>
 <p>我们的封装是一个很简单的 Python 类(文件 <em>app/momentjs.py</em>):</p>
@@ -209,13 +214,15 @@ document.write(moment("2012-12-31T23:55:13 Z").format('LLLL'));
 </div>
 <p>上面的代码就是告诉 Jinja2 导入我们的类作为所有模板的一个全局变量。</p>
 <p>现在我们准备修改模版。在我们应用程序中有两个地方显示日期和时间。一个就是用户信息页，那里有最后一次登录时间。对于这个时间戳，我们将会使用 <em>calendar()</em> 格式(文件 <em>app/templates/user.html</em>):</p>
-<div class="highlight-python"><pre>{% if user.last_seen %}
+<div class="highlight-python"><div class="highlight"><pre>{% if user.last_seen %}
 &lt;p&gt;&lt;em&gt;Last seen: {{momentjs(user.last_seen).calendar()}}&lt;/em&gt;&lt;/p&gt;
-{% endif %}</pre>
+{% endif %}
+</pre></div>
 </div>
 <p>第二个地方就是在 post 子模板，它是被首页，用户信息页以及搜索页调用。在这里我们将会使用 <em>fromNow()</em> 格式，因为一篇 blog 的撰写时间和它离现在有多久了是一样重要的。我们需要修改子模板使得所有使用它的页面都有效(文件 <em>app/templates/post.html</em>):</p>
-<div class="highlight-python"><pre>&lt;p&gt;&lt;a href="{{url_for('user', nickname = post.author.nickname)}}"&gt;{{post.author.nickname}}&lt;/a&gt; said {{momentjs(post.timestamp).fromNow()}}:&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;{{post.body}}&lt;/strong&gt;&lt;/p&gt;</pre>
+<div class="highlight-python"><div class="highlight"><pre>&lt;p&gt;&lt;a href=&quot;{{url_for(&#39;user&#39;, nickname = post.author.nickname)}}&quot;&gt;{{post.author.nickname}}&lt;/a&gt; said {{momentjs(post.timestamp).fromNow()}}:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;{{post.body}}&lt;/strong&gt;&lt;/p&gt;
+</pre></div>
 </div>
 <p>做完这些修改后，我们解决了所有我们的时间戳问题。我们不需要对服务器代码做单个的修改！</p>
 </div>
@@ -233,7 +240,7 @@ document.write(moment("2012-12-31T23:55:13 Z").format('LLLL'));
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">

@@ -27,8 +27,8 @@
     <link rel="next" title="Ajax" href="ajax.html" />
     <link rel="prev" title="日期和时间" href="dateandtime.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -43,7 +43,7 @@
         <li><a href="index.html">flask mega-tutorial 1.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
@@ -67,13 +67,15 @@
   <h4>Next topic</h4>
   <p class="topless"><a href="ajax.html"
                         title="next chapter">Ajax</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/i18n.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/i18n.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
 
-<div id="searchbox" style="display: none">
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
@@ -104,17 +106,19 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="i18n">
 <span id="id1"></span><h1>国际化和本地化<a class="headerlink" href="#i18n" title="Permalink to this headline">¶</a></h1>
 <p>今天的文章的主题是国际化和本地化，通常简称 I18n 和 L10n。我们想要我们的 <em>microblog</em> 应用程序被尽可能多的用户使用，因为我们不能忘记有许多人是不是讲英文的，或者会说英文，但是更愿意讲本国语言。</p>
 <p>为了使得我们的应用程序便于外国访问者，我们将要使用 <a class="reference external" href="http://packages.python.org/Flask-Babel/">Flask-Babel</a> 扩展，它提供了一种简单使用的框架用来把应用程序翻译成不用的应用。</p>
 <p>如果你还没有安装 Flask-Babel，现在是时候安装。对于 Linux 和 Mac 用户:</p>
-<div class="highlight-python"><pre>flask/bin/pip install flask-babel</pre>
+<div class="highlight-python"><div class="highlight"><pre>flask/bin/pip install flask-babel
+</pre></div>
 </div>
 <p>对于 Windows 用户:</p>
-<div class="highlight-python"><pre>flask\Scripts\pip install flask-babel</pre>
+<div class="highlight-python"><div class="highlight"><pre>flask\Scripts\pip install flask-babel
+</pre></div>
 </div>
 <div class="section" id="id2">
 <h2>配置<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
@@ -146,13 +150,15 @@
 </div>
 <p>这个函数有一个 <em>localeselector</em> 装饰器，它被调用在请求之前为了当产生响应的时候给我们机会选择使用的语言。现在为止我们做的是简单的，我们只要读取浏览器发送的 HTTP 请求中的 <em>Accept-Languages</em> 头并且从我们支持的语言列表中选择最匹配的语言。这个过程实际上也相当简单，<em>best_match</em> 方法为我们做了所有工作。</p>
 <p><em>Accept-Languages</em> 头在大多数浏览器上被默认配置成操作系统层的所选择的语言，但是所有的浏览器给我们机会选择其它的语言。用户可以提供语言列表，每一个都有权重。作为例子，下面是复杂的 <em>Accept-Languages</em> 头:</p>
-<div class="highlight-python"><pre>Accept-Language: da, en-gb;q=0.8, en;q=0.7</pre>
+<div class="highlight-python"><div class="highlight"><pre>Accept-Language: da, en-gb;q=0.8, en;q=0.7
+</pre></div>
 </div>
 <p>上面的头信息表示最佳的语言是丹麦语(默认权重为 1)，接着是英国英语(权重是 0.8)以及最后一个选项是通用英语(权重是 0.7)。</p>
 <p>最后一项配置是我们需要一个 Babel 配置文件，它告诉 Babel 在我们代码和模板中的哪里去寻找翻译的文本(文件 <em>babel.cfg</em>):</p>
-<div class="highlight-python"><pre>[python: **.py]
+<div class="highlight-python"><div class="highlight"><pre>[python: **.py]
 [jinja2: **/templates/**.html]
-extensions=jinja2.ext.autoescape,jinja2.ext.with_</pre>
+extensions=jinja2.ext.autoescape,jinja2.ext.with_
+</pre></div>
 </div>
 <p>最前面的两行告诉 Babel 我们的 Python 代码以及模版的文件名模式。第三行是告诉 Babel 启用一些扩展使得它能够在 Jinja2 模版中寻找翻译的文本。</p>
 </div>
@@ -173,13 +179,16 @@ extensions=jinja2.ext.autoescape,jinja2.ext.with_</pre>
 </pre></div>
 </div>
 <p>在模板中我们必须做一些类似的工作，但是我们使用 <em>_()</em> 来简化 <em>gettext()</em>。比如，在我们基础模版中的链接的文本 <em>Home</em>:</p>
-<div class="highlight-python"><pre>&lt;li&gt;&lt;a href="{{ url_for('index') }}"&gt;Home&lt;/a&gt;&lt;/li&gt;</pre>
+<div class="highlight-python"><div class="highlight"><pre>&lt;li&gt;&lt;a href=&quot;{{ url_for(&#39;index&#39;) }}&quot;&gt;Home&lt;/a&gt;&lt;/li&gt;
+</pre></div>
 </div>
 <p>能够被标记翻译如下:</p>
-<div class="highlight-python"><pre>&lt;li&gt;&lt;a href="{{ url_for('index') }}"&gt;{{ _('Home') }}&lt;/a&gt;&lt;/li&gt;</pre>
+<div class="highlight-python"><div class="highlight"><pre>&lt;li&gt;&lt;a href=&quot;{{ url_for(&#39;index&#39;) }}&quot;&gt;{{ _(&#39;Home&#39;) }}&lt;/a&gt;&lt;/li&gt;
+</pre></div>
 </div>
 <p>不幸地是，不是所有我们要翻译的文本像上面一样的简单。作为一个例子，考虑下来自我们的 <em>post.html</em> 子模板中的如下的片段:</p>
-<div class="highlight-python"><pre>&lt;p&gt;&lt;a href="{{url_for('user', nickname = post.author.nickname)}}"&gt;{{post.author.nickname}}&lt;/a&gt; said {{momentjs(post.timestamp).fromNow()}}:&lt;/p&gt;</pre>
+<div class="highlight-python"><div class="highlight"><pre>&lt;p&gt;&lt;a href=&quot;{{url_for(&#39;user&#39;, nickname = post.author.nickname)}}&quot;&gt;{{post.author.nickname}}&lt;/a&gt; said {{momentjs(post.timestamp).fromNow()}}:&lt;/p&gt;
+</pre></div>
 </div>
 <p>这里我们要翻译的结构式：“<em>&lt;nickname&gt;</em> 说 <em>&lt;when&gt;</em>:”。一种尝试就是只标记翻译 “说”，因为我们不确定在这一句中姓名以及时间组合的次序在所有语言中是一样的。正确的办法是标记整个语句并且使用对姓名与时间使用占位符，这样翻译器会在必要的时候改变次序。更复的杂情况是，名称里面内嵌了一个超链接。</p>
 <p><em>gettext</em> 函数是支持使用 <em>%(name)s</em> 语法占位符，这也是我们最好的解决办法。下面是一个类似情况的占位符的例子:</p>
@@ -187,9 +196,10 @@ extensions=jinja2.ext.autoescape,jinja2.ext.with_</pre>
 </pre></div>
 </div>
 <p>回到我们的例子，这里是怎样标记文本翻译:</p>
-<div class="highlight-python"><pre>{% autoescape false %}
-&lt;p&gt;{{ _('%(nickname)s said %(when)s:', nickname = '&lt;a href="%s"&gt;%s&lt;/a&gt;' % (url_for('user', nickname = post.author.nickname), post.author.nickname), when = momentjs(post.timestamp).fromNow()) }}&lt;/p&gt;
-{% endautoescape %}</pre>
+<div class="highlight-python"><div class="highlight"><pre>{% autoescape false %}
+&lt;p&gt;{{ _(&#39;%(nickname)s said %(when)s:&#39;, nickname = &#39;&lt;a href=&quot;%s&quot;&gt;%s&lt;/a&gt;&#39; % (url_for(&#39;user&#39;, nickname = post.author.nickname), post.author.nickname), when = momentjs(post.timestamp).fromNow()) }}&lt;/p&gt;
+{% endautoescape %}
+</pre></div>
 </div>
 <p>因为我们在 <em>nickname</em> 占位符上放入了 HTML，我们需要关闭自动转义。但是关闭自动转义是一个很冒险的行为，渲染用户的输入并且不进行转义是很不安全的。</p>
 <p>赋值给 <em>when</em> 占位符的文本是安全的，因为它是我们的 <em>momentjs()</em> 封装函数生成的文本。但是 <em>nickname</em> 占位符的文本是来自我们 <em>User</em> 模型中的 <em>nickname</em> 字段，这是来自数据库中并且完全由用户输入。如果用户在这个字段中输入特定意义的 HTML 或者 Javascript 脚本，我们没有对这些进行转义，可能我们会执行这些代码，这也许是一个后门。我们不能允许这样的事情，因此我们需要避免这种情况。</p>
@@ -225,8 +235,8 @@ extensions=jinja2.ext.autoescape,jinja2.ext.with_</pre>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nickname</span><span class="o">.</span><span class="n">data</span> <span class="o">!=</span> <span class="n">User</span><span class="o">.</span><span class="n">make_valid_nickname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nickname</span><span class="o">.</span><span class="n">data</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">nickname</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gettext</span><span class="p">(</span><span class="s">&#39;This nickname has invalid characters. Please use letters, numbers, dots and underscores only.&#39;</span><span class="p">))</span>
             <span class="k">return</span> <span class="bp">False</span>
-        <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">nickname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nickname</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">user</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">nickname</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nickname</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">user</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">nickname</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gettext</span><span class="p">(</span><span class="s">&#39;This nickname is already in use. Please choose another one.&#39;</span><span class="p">))</span>
             <span class="k">return</span> <span class="bp">False</span>
         <span class="k">return</span> <span class="bp">True</span>
@@ -238,10 +248,12 @@ extensions=jinja2.ext.autoescape,jinja2.ext.with_</pre>
 <p>这里我不会列举所有需要翻译的代码和模版。感兴趣的读者可以检查 <a class="reference external" href="https://github.com/miguelgrinberg/microblog/commit/cac572cb0e427654edd3ac599f6197f1f6ee29f6">这里</a>。</p>
 <p>因此让我们假设我们已经发现所有文本并且把它们放入了 <em>gettext()</em> 或者 <em>_()</em> 调用中。那现在要干什么了？</p>
 <p>现在我们运行 <em>pybabel</em> 提取文本到单独的文件中:</p>
-<div class="highlight-python"><pre>flask/bin/pybabel extract -F babel.cfg -o messages.pot app</pre>
+<div class="highlight-python"><div class="highlight"><pre>flask/bin/pybabel extract -F babel.cfg -o messages.pot app
+</pre></div>
 </div>
 <p>Windows 用户使用这个命令:</p>
-<div class="highlight-python"><pre>flask\Scripts\pybabel extract -F babel.cfg -o messages.pot app</pre>
+<div class="highlight-python"><div class="highlight"><pre>flask\Scripts\pybabel extract -F babel.cfg -o messages.pot app
+</pre></div>
 </div>
 <p><em>pybabel extract</em> 命令会读取给定的配置文件，接着扫描在给定参数(在我们的例子中为 <em>app</em>)目录下的所有的代码和模版，当它发现标记翻译的文本就会把它拷贝到 <em>messages.pot</em> 文件。</p>
 <p><em>messages.pot</em> 文件是一个模板文件，其中包含所有需要翻译的文本。这个文件是用来作为一种生成语言文件的模型。</p>
@@ -249,14 +261,16 @@ extensions=jinja2.ext.autoescape,jinja2.ext.with_</pre>
 <div class="section" id="id6">
 <h2>生成一个语言目录<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
 <p>这个过程的下一步就是为一个新语言创建翻译。我们说过我们要做西班牙版本(语言代码为 <em>es</em>)，因此这是添加西班牙语到我们应用程序的命令:</p>
-<div class="highlight-python"><pre>flask/bin/pybabel init -i messages.pot -d app/translations -l es</pre>
+<div class="highlight-python"><div class="highlight"><pre>flask/bin/pybabel init -i messages.pot -d app/translations -l es
+</pre></div>
 </div>
 <p><em>pybabel init</em> 命令把 <em>.pot</em> 文件作为输入，生成一个新语言目录，以 <em>-d</em> 选项指定的目录为新语言的目录，以 <em>-l</em> 指定的语言为想要翻译成的语言类型。默认情况下，Babel 希望翻译的语言在与模版相同目录级别的 <em>translations</em> 文件夹中，因此我们把它们放在这里。</p>
 <p>在你运行上述命令后，一个目录 <em>app/translations/es</em> 是创建了。在它里面有另一个名为 <em>LC_MESSAGES</em> 的目录，在它里面有一个 <em>messages.po</em> 文件。</p>
 <p>下面就是翻译成西班牙语的截图:</p>
 <img alt="_images/9.jpg" src="_images/9.jpg" />
 <p>一旦文本翻译完成并且保存成 <em>messages.po</em> 文件，还有另外一个来发布这些文本:</p>
-<div class="highlight-python"><pre>flask/bin/pybabel compile -d app/translations</pre>
+<div class="highlight-python"><div class="highlight"><pre>flask/bin/pybabel compile -d app/translations
+</pre></div>
 </div>
 <p><em>pybabel compile</em> 这一步会读取 <em>.po</em> 文件的内容并且会在相同的目录下生成一个名为 <em>.mo</em> 的编译的版本。这个文件以一种优化的格式包含了翻译的文本，应用程序可以更高效地使用它。</p>
 <p>翻译已经准备好被使用了。为了验证它你可以修改浏览器上的语言设置让西班牙语为最佳语言，或者你可以直接修改 <em>get_locale</em> 函数(文件 <em>app/views.py</em>):</p>
@@ -270,8 +284,9 @@ extensions=jinja2.ext.autoescape,jinja2.ext.with_</pre>
 <h2>更新翻译<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
 <p>如果 <em>messages.po</em> 文件不完整会发生些什么，比如某些文本忘记了翻译？不会发生什么异常，应用程序会运行的好好的，只是这些文本不会被翻译继续显示成英文。</p>
 <p>如果在我们的代码或者模版中丢失了一些英文文本的话会发生些什么？任何没有放入 <em>gettext()</em> 或者 <em>_()</em> 的字符串都不会在翻译文件中，因此 Babel 不会感知这些，它们依然保持英文。一旦我们把丢失的文本添加进 <em>gettext()</em>，运行如下命令可以升级翻译文件:</p>
-<div class="highlight-python"><pre>flask/bin/pybabel extract -F babel.cfg -o messages.pot app
-flask/bin/pybabel update -i messages.pot -d app/translations</pre>
+<div class="highlight-python"><div class="highlight"><pre>flask/bin/pybabel extract -F babel.cfg -o messages.pot app
+flask/bin/pybabel update -i messages.pot -d app/translations
+</pre></div>
 </div>
 <p><em>extract</em> 命令与前面用过的是一样的，它只是生成一个更新的 <em>messages.pot</em> 文件，文件里添加了新的文本。<em>update</em> 调用会把更新的文件加入到所有翻译的语言中。</p>
 <p>一旦每一个语言文件夹的 <em>messages.po</em> 文件被更新了，我们可以运行 <em>poedit</em> 查看更新的文本，接着重复 <em>pybabel compile</em> 命令使得新的文本对应用程序可用。</p>
@@ -294,9 +309,10 @@ flask/bin/pybabel update -i messages.pot -d app/translations</pre>
 </pre></div>
 </div>
 <p>接着需要在基础模版中修改引用 <em>moment.js</em> 的代码(文件 <em>app/templates/base.html</em>):</p>
-<div class="highlight-python"><pre>{% if g.locale != 'en' %}
-&lt;script src="/static/js/moment-{{g.locale}}.min.js"&gt;&lt;/script&gt;
-{% endif %}</pre>
+<div class="highlight-python"><div class="highlight"><pre>{% if g.locale != &#39;en&#39; %}
+&lt;script src=&quot;/static/js/moment-{{g.locale}}.min.js&quot;&gt;&lt;/script&gt;
+{% endif %}
+</pre></div>
 </div>
 </div>
 <div class="section" id="id9">
@@ -314,9 +330,28 @@ flask/bin/pybabel update -i messages.pot -d app/translations</pre>
 </pre></div>
 </div>
 <p>最后，当使用 <em>lazy_gettext</em> 的时候，<em>pybabel extract</em> 命令需要一个额外的 <em>-k</em> 的选项指明是 <em>lazy_gettext</em> 函数:</p>
-<div class="highlight-python"><pre>flask/bin/pybabel extract -F babel.cfg -k lazy_gettext -o messages.pot app</pre>
+<div class="highlight-python"><div class="highlight"><pre>flask/bin/pybabel extract -F babel.cfg -k lazy_gettext -o messages.pot app
+</pre></div>
 </div>
 <p>接下来的事情就跟上面更新翻译一样。依次 <em>pybabel update</em>，<em>poedit</em>，<em>pybabel compile</em>。</p>
+<p>随着 Flask 0.10 的问世，用户会话被序列化成 JSON。这给传入给 <em>flash()</em> 的参数的惰性求值带来问题。闪现的消息是被写入到用户会话中，但是用于包裹惰性求值的对象是一个复杂的结构，不能够直接转换成 JSON。Flask 0.9 并不会把用户会话被序列化成 JSON，因此没有这个问题。Flask-Babel 并没有解决这个问题，因此我们必须从我们这一边考虑解决问题。(文件 <em>app/__init__.py</em> ):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">flask.json</span> <span class="kn">import</span> <span class="n">JSONEncoder</span>
+
+<span class="k">class</span> <span class="nc">CustomJSONEncoder</span><span class="p">(</span><span class="n">JSONEncoder</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This class adds support for lazy translation texts to Flask&#39;s</span>
+<span class="sd">    JSON encoder. This is necessary when flashing translated texts.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">speaklater</span> <span class="kn">import</span> <span class="n">is_lazy_string</span>
+        <span class="k">if</span> <span class="n">is_lazy_string</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">return</span> <span class="nb">unicode</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>  <span class="c"># python 2</span>
+            <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+                <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>  <span class="c"># python 3</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">CustomJSONEncoder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">default</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+<span class="n">app</span><span class="o">.</span><span class="n">json_encoder</span> <span class="o">=</span> <span class="n">CustomJSONEncoder</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="id10">
 <h2>快捷方式<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h2>
@@ -378,7 +413,7 @@ flask/bin/pybabel update -i messages.pot -d app/translations</pre>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">

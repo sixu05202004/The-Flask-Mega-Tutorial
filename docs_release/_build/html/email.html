@@ -27,8 +27,8 @@
     <link rel="next" title="换装" href="facelift.html" />
     <link rel="prev" title="全文搜索" href="textsearch.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -43,7 +43,7 @@
         <li><a href="index.html">flask mega-tutorial 1.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
@@ -67,13 +67,15 @@
   <h4>Next topic</h4>
   <p class="topless"><a href="facelift.html"
                         title="next chapter">换装</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/email.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/email.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
 
-<div id="searchbox" style="display: none">
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
@@ -104,7 +106,7 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="email">
 <span id="id1"></span><h1>邮件支持<a class="headerlink" href="#email" title="Permalink to this headline">¶</a></h1>
@@ -118,10 +120,12 @@
 <h2>安装 Flask-Mail<a class="headerlink" href="#flask-mail" title="Permalink to this headline">¶</a></h2>
 <p>幸运地，Flask 已经存在处理邮件的扩展，尽管不是 100% 支持我们想要的功能，但是已经很好了。</p>
 <p>在我们的虚拟环境上安装 Flask-Mail 是相当简单的。在 Windows 以外的其它系统上的用户可以按照如下命令:</p>
-<div class="highlight-python"><pre>flask/bin/pip install flask-mail</pre>
+<div class="highlight-python"><div class="highlight"><pre>flask/bin/pip install flask-mail
+</pre></div>
 </div>
 <p>Windows 上的用户稍微有些不同，因为 Flask-Mail 中使用的一个模块不支持该系统，用户需要按照如下命令:</p>
-<div class="highlight-python"><pre>flask\Scripts\pip install --no-deps lamson chardet flask-mail</pre>
+<div class="highlight-python"><div class="highlight"><pre>flask\Scripts\pip install --no-deps lamson chardet flask-mail
+</pre></div>
 </div>
 </div>
 <div class="section" id="id3">
@@ -136,10 +140,8 @@
 <div class="highlight-python"><div class="highlight"><pre><span class="c"># email server</span>
 <span class="n">MAIL_SERVER</span> <span class="o">=</span> <span class="s">&#39;your.mailserver.com&#39;</span>
 <span class="n">MAIL_PORT</span> <span class="o">=</span> <span class="mi">25</span>
-<span class="n">MAIL_USE_TLS</span> <span class="o">=</span> <span class="bp">False</span>
-<span class="n">MAIL_USE_SSL</span> <span class="o">=</span> <span class="bp">False</span>
-<span class="n">MAIL_USERNAME</span> <span class="o">=</span> <span class="s">&#39;you&#39;</span>
-<span class="n">MAIL_PASSWORD</span> <span class="o">=</span> <span class="s">&#39;your-password&#39;</span>
+<span class="n">MAIL_USERNAME</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="n">MAIL_PASSWORD</span> <span class="o">=</span> <span class="bp">None</span>
 
 <span class="c"># administrator list</span>
 <span class="n">ADMINS</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;you@example.com&#39;</span><span class="p">]</span>
@@ -151,8 +153,8 @@
 <span class="n">MAIL_PORT</span> <span class="o">=</span> <span class="mi">465</span>
 <span class="n">MAIL_USE_TLS</span> <span class="o">=</span> <span class="bp">False</span>
 <span class="n">MAIL_USE_SSL</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="n">MAIL_USERNAME</span> <span class="o">=</span> <span class="s">&#39;your-gmail-username&#39;</span>
-<span class="n">MAIL_PASSWORD</span> <span class="o">=</span> <span class="s">&#39;your-gmail-password&#39;</span>
+<span class="n">MAIL_USERNAME</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;MAIL_USERNAME&#39;</span><span class="p">)</span>
+<span class="n">MAIL_PASSWORD</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;MAIL_PASSWORD&#39;</span><span class="p">)</span>
 
 <span class="c"># administrator list</span>
 <span class="n">ADMINS</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;your-gmail-username@gmail.com&#39;</span><span class="p">]</span>
@@ -214,30 +216,32 @@
 </div>
 <p>也许你会感到很惊奇。我们的老朋友 <em>render_template</em> 居然出现在这里。如果你还记得，我们用此函数来渲染视图中所有的 HTML 模板。像视图中的模板一样，邮件的主体也是使用模板的理想候选者。</p>
 <p>因此我们需要编写我们的关注者提醒邮件的文本以及 HTML 版本的模板。这里是文本版本(文件 <em>app/templates/follower_email.txt</em>):</p>
-<div class="highlight-python"><pre>Dear {{user.nickname}},
+<div class="highlight-python"><div class="highlight"><pre>Dear {{user.nickname}},
 
-{{follower.nickname}} is now a follower. Click on the following link to visit {{follower.nickname}}'s profile page:
+{{follower.nickname}} is now a follower. Click on the following link to visit {{follower.nickname}}&#39;s profile page:
 
-{{url_for("user", nickname = follower.nickname, _external = True)}}
+{{url_for(&quot;user&quot;, nickname = follower.nickname, _external = True)}}
 
 Regards,
 
-The microblog admin</pre>
+The microblog admin
+</pre></div>
 </div>
 <p>对于 HTML 版本，我们可能会做得更好些，甚至会显示出关注者的头像和用户信息(文件 <em>app/templates/follower_email.html</em>):</p>
-<div class="highlight-python"><pre>&lt;p&gt;Dear {{user.nickname}},&lt;/p&gt;
-&lt;p&gt;&lt;a href="{{url_for("user", nickname = follower.nickname, _external = True)}}"&gt;{{follower.nickname}}&lt;/a&gt; is now a follower.&lt;/p&gt;
+<div class="highlight-python"><div class="highlight"><pre>&lt;p&gt;Dear {{user.nickname}},&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;{{url_for(&quot;user&quot;, nickname = follower.nickname, _external = True)}}&quot;&gt;{{follower.nickname}}&lt;/a&gt; is now a follower.&lt;/p&gt;
 &lt;table&gt;
-    &lt;tr valign="top"&gt;
-        &lt;td&gt;&lt;img src="{{follower.avatar(50)}}"&gt;&lt;/td&gt;
+    &lt;tr valign=&quot;top&quot;&gt;
+        &lt;td&gt;&lt;img src=&quot;{{follower.avatar(50)}}&quot;&gt;&lt;/td&gt;
         &lt;td&gt;
-            &lt;a href="{{url_for('user', nickname = follower.nickname, _external = True)}}"&gt;{{follower.nickname}}&lt;/a&gt;&lt;br /&gt;
+            &lt;a href=&quot;{{url_for(&#39;user&#39;, nickname = follower.nickname, _external = True)}}&quot;&gt;{{follower.nickname}}&lt;/a&gt;&lt;br /&gt;
             {{follower.about_me}}
         &lt;/td&gt;
     &lt;/tr&gt;
 &lt;/table&gt;
 &lt;p&gt;Regards,&lt;/p&gt;
-&lt;p&gt;The &lt;code&gt;microblog&lt;/code&gt; admin&lt;/p&gt;</pre>
+&lt;p&gt;The &lt;code&gt;microblog&lt;/code&gt; admin&lt;/p&gt;
+</pre></div>
 </div>
 <p>注意在上面模板中的 <em>url_for</em> 有 <em>_external = True</em> 参数。默认情况下，<em>url_for</em> 函数生成的 URLs 是与当前页面的域名相关的。例如，<em>url_for(&#8220;index&#8221;)</em> 返回值将会是 <em>/index</em>，但是在实际视图函数中返回的是 <em>http://localhost:5000/index</em>。在邮件中是不存在域名的内容，因此我们必须要生成完全的包含域名的 URLs，<em>_external</em> 参数就是为这个目的。</p>
 <p>最后一步就是把发送邮件整合到实际的视图函数中(文件 <em>app/views.py</em>):</p>
@@ -268,32 +272,35 @@ The microblog admin</pre>
 <p>事实上 Python 已经支持运行异步任务，而且有不止一种方式。<em>threading</em> 以及 <em>multiprocessing</em> 模块都可以达到这个目的。</p>
 <p>每次我们需要发送邮件的时候启动一个进程的资源远远小于启动一个新的发送邮件的整个过程，因此把 <em>mail.send(msg)</em> 调用移入线程中(文件 <em>app/emails.py</em>):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Thread</span>
+<span class="kn">from</span> <span class="nn">app</span> <span class="kn">import</span> <span class="n">app</span>
 
-<span class="k">def</span> <span class="nf">send_async_email</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
-    <span class="n">mail</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">send_async_email</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">app</span><span class="o">.</span><span class="n">app_context</span><span class="p">():</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">send_email</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="n">sender</span><span class="p">,</span> <span class="n">recipients</span><span class="p">,</span> <span class="n">text_body</span><span class="p">,</span> <span class="n">html_body</span><span class="p">):</span>
-    <span class="n">msg</span> <span class="o">=</span> <span class="n">Message</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="n">sender</span> <span class="o">=</span> <span class="n">sender</span><span class="p">,</span> <span class="n">recipients</span> <span class="o">=</span> <span class="n">recipients</span><span class="p">)</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="n">Message</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="n">sender</span><span class="o">=</span><span class="n">sender</span><span class="p">,</span> <span class="n">recipients</span><span class="o">=</span><span class="n">recipients</span><span class="p">)</span>
     <span class="n">msg</span><span class="o">.</span><span class="n">body</span> <span class="o">=</span> <span class="n">text_body</span>
     <span class="n">msg</span><span class="o">.</span><span class="n">html</span> <span class="o">=</span> <span class="n">html_body</span>
-    <span class="n">thr</span> <span class="o">=</span> <span class="n">Thread</span><span class="p">(</span><span class="n">target</span> <span class="o">=</span> <span class="n">send_async_email</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="n">msg</span><span class="p">])</span>
+    <span class="n">thr</span> <span class="o">=</span> <span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">send_async_email</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="n">app</span><span class="p">,</span> <span class="n">msg</span><span class="p">])</span>
     <span class="n">thr</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>如果现在测试点击 <em>follow</em> 链接后的速度的话，浏览器会瞬间刷新页面了。</p>
 <p>既然异步的邮件发送功能已经实现了，如果将来我们需要实现其它异步的函数，还有什么需要改进的吗？我们需要为每一个实现异步功能的函数拷贝多线程的代码吗？这并不好。</p>
 <p>我们可以通过实现一个 <a class="reference external" href="http://www.python.org/dev/peps/pep-0318/">装饰器</a> 来解决这个问题。有了装饰器，上面的代码可以修改为:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">decorators</span> <span class="kn">import</span> <span class="n">async</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">.decorators</span> <span class="kn">import</span> <span class="n">async</span>
 
 <span class="nd">@async</span>
-<span class="k">def</span> <span class="nf">send_async_email</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
-    <span class="n">mail</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">send_async_email</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">app</span><span class="o">.</span><span class="n">app_context</span><span class="p">():</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">send_email</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="n">sender</span><span class="p">,</span> <span class="n">recipients</span><span class="p">,</span> <span class="n">text_body</span><span class="p">,</span> <span class="n">html_body</span><span class="p">):</span>
-    <span class="n">msg</span> <span class="o">=</span> <span class="n">Message</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="n">sender</span> <span class="o">=</span> <span class="n">sender</span><span class="p">,</span> <span class="n">recipients</span> <span class="o">=</span> <span class="n">recipients</span><span class="p">)</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="n">Message</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="n">sender</span><span class="o">=</span><span class="n">sender</span><span class="p">,</span> <span class="n">recipients</span><span class="o">=</span><span class="n">recipients</span><span class="p">)</span>
     <span class="n">msg</span><span class="o">.</span><span class="n">body</span> <span class="o">=</span> <span class="n">text_body</span>
     <span class="n">msg</span><span class="o">.</span><span class="n">html</span> <span class="o">=</span> <span class="n">html_body</span>
-    <span class="n">send_async_email</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="n">send_async_email</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>好的多了吧，对不对？</p>
@@ -323,7 +330,7 @@ The microblog admin</pre>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">

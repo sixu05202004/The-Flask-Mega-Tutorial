@@ -27,8 +27,8 @@
     <link rel="next" title="关注者，联系人和好友" href="followers.html" />
     <link rel="prev" title="用户信息页和头像" href="profile.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -43,7 +43,7 @@
         <li><a href="index.html">flask mega-tutorial 1.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
@@ -67,13 +67,15 @@
   <h4>Next topic</h4>
   <p class="topless"><a href="followers.html"
                         title="next chapter">关注者，联系人和好友</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/testing.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/testing.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
 
-<div id="searchbox" style="display: none">
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
@@ -104,7 +106,7 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="testing">
 <span id="id1"></span><h1>单元测试<a class="headerlink" href="#testing" title="Permalink to this headline">¶</a></h1>
@@ -123,12 +125,14 @@
 <h2>Flask 调试<a class="headerlink" href="#flask" title="Permalink to this headline">¶</a></h2>
 <p>让我们来看看当我们触发一个 bug 的时候会发生些什么。</p>
 <p>先让我们创建一个新的数据库。在 Linux:</p>
-<div class="highlight-python"><pre>rm app.db
-./db_create.py</pre>
+<div class="highlight-python"><div class="highlight"><pre>rm app.db
+./db_create.py
+</pre></div>
 </div>
 <p>或者在 Windows 上:</p>
-<div class="highlight-python"><pre>del app.db
-flask/Scripts/python db_create.py</pre>
+<div class="highlight-python"><div class="highlight"><pre>del app.db
+flask/Scripts/python db_create.py
+</pre></div>
 </div>
 <p>为了重现这个 bug，你需要两个 OpenID 账号，理想地是不同的提供商，从而使得它们的 cookies 不会太复杂。遵照这些步骤创建一个重复的昵称：</p>
 <blockquote>
@@ -141,8 +145,9 @@ flask/Scripts/python db_create.py</pre>
 </ul>
 </div></blockquote>
 <p>糟糕！我们已经得到了来自 SQLAlchem​​y 的一个异常。错误的信息写着:</p>
-<div class="highlight-python"><pre>sqlalchemy.exc.IntegrityError
-IntegrityError: (IntegrityError) column nickname is not unique u'UPDATE user SET nickname=?, about_me=? WHERE user.id = ?' (u'dup', u'', 2)</pre>
+<div class="highlight-python"><div class="highlight"><pre>sqlalchemy.exc.IntegrityError
+IntegrityError: (IntegrityError) column nickname is not unique u&#39;UPDATE user SET nickname=?, about_me=? WHERE user.id = ?&#39; (u&#39;dup&#39;, u&#39;&#39;, 2)
+</pre></div>
 </div>
 <p>紧跟着错误后面的是错误的 <a class="reference external" href="http://en.wikipedia.org/wiki/Stack_trace">堆栈跟踪</a>，这是一个相当不错的东西，在这里你可以去任何一帧并且检查源代码或者甚至在浏览器正确地上计算表达式。</p>
 <p>错误是相当地明显的，我们试着在数据库中插入重复的昵称。数据库模型对 <em>nickname</em> 字段有着 <em>unique</em> 限制，因此这不是一个合法的操作。</p>
@@ -155,7 +160,8 @@ IntegrityError: (IntegrityError) column nickname is not unique u'UPDATE user SET
 </pre></div>
 </div>
 <p>现在重启应用程序:</p>
-<div class="highlight-python"><pre>./runp.py</pre>
+<div class="highlight-python"><div class="highlight"><pre>./runp.py
+</pre></div>
 </div>
 <p>接着重新尝试修改第二个账号的昵称为 ‘dup’。</p>
 <p>这个时候我们不会得到一个前面出现的错误。相反，我们会得到一个 HTTP 错误 500，这是服务器内部错误。尽管还是返回一个错误，但至少不暴露我们的应用程序的任何细节给陌生人。当调试关闭，500 错误页是由 Flask 产生的并且发生了未处理的异常。</p>
@@ -177,23 +183,25 @@ IntegrityError: (IntegrityError) column nickname is not unique u'UPDATE user SET
 </div>
 <p>上面的不需要多做解释，代码很清楚，唯一值得感兴趣就是在错误 500 处理器中的 <em>rollback</em> 声明。这是很有必要的因为这个函数是被作为异常的结果被调用。如果异常是被一个数据库错误触发，数据库的会话会处于一个不正常的状态，因此我们必须把会话回滚到正常工作状态在渲染 500 错误页模板之前。</p>
 <p>这是 404 错误的模板:</p>
-<div class="highlight-python"><pre>&lt;!-- extend base layout --&gt;
-{% extends "base.html" %}
+<div class="highlight-python"><div class="highlight"><pre>&lt;!-- extend base layout --&gt;
+{% extends &quot;base.html&quot; %}
 
 {% block content %}
 &lt;h1&gt;File Not Found&lt;/h1&gt;
-&lt;p&gt;&lt;a href="{{url_for('index')}}"&gt;Back&lt;/a&gt;&lt;/p&gt;
-{% endblock %}</pre>
+&lt;p&gt;&lt;a href=&quot;{{url_for(&#39;index&#39;)}}&quot;&gt;Back&lt;/a&gt;&lt;/p&gt;
+{% endblock %}
+</pre></div>
 </div>
 <p>这是 500 错误的一个模板:</p>
-<div class="highlight-python"><pre>&lt;!-- extend base layout --&gt;
-{% extends "base.html" %}
+<div class="highlight-python"><div class="highlight"><pre>&lt;!-- extend base layout --&gt;
+{% extends &quot;base.html&quot; %}
 
 {% block content %}
 &lt;h1&gt;An unexpected error has occurred&lt;/h1&gt;
 &lt;p&gt;The administrator has been notified. Sorry for the inconvenience!&lt;/p&gt;
-&lt;p&gt;&lt;a href="{{url_for('index')}}"&gt;Back&lt;/a&gt;&lt;/p&gt;
-{% endblock %}</pre>
+&lt;p&gt;&lt;a href=&quot;{{url_for(&#39;index&#39;)}}&quot;&gt;Back&lt;/a&gt;&lt;/p&gt;
+{% endblock %}
+</pre></div>
 </div>
 <p>注意的是在上面两个模板中我们继续使用我们 <em>base.html</em> 布局，这是为了让错误页面和应用程序的外观是统一的。</p>
 </div>
@@ -226,7 +234,8 @@ IntegrityError: (IntegrityError) column nickname is not unique u'UPDATE user SET
 </pre></div>
 </div>
 <p>在一个没有邮件服务器的开发机器上测试上述代码是相当容易的，多亏了 Python 的 SMTP 调试服务器。仅需要打开一个新的命令行窗口(Windows 用户打开命令提示符)接着运行如下内容打开一个伪造的邮箱服务器:</p>
-<div class="highlight-python"><pre>python -m smtpd -n -c DebuggingServer localhost:25</pre>
+<div class="highlight-python"><div class="highlight"><pre>python -m smtpd -n -c DebuggingServer localhost:25
+</pre></div>
 </div>
 <p>当邮箱服务器运行后，应用程序发送的邮件将会被接收到并且显示在命令行窗口上。</p>
 </div>
@@ -256,17 +265,17 @@ IntegrityError: (IntegrityError) column nickname is not unique u'UPDATE user SET
 <p>让我们解决 <em>nickname</em> 重复的问题。</p>
 <p>像之前讨论的，目前存在两个地方没有处理重复。第一个就是在 <em>after_login</em> 函数。当一个用户成功地登录进系统这个函数就会被调用，这里我们需要创建一个新的 User 实例。这里就是受影响的代码块(文件 <em>app/views.py</em>):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">if</span> <span class="n">user</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-     <span class="n">nickname</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">nickname</span>
-     <span class="k">if</span> <span class="n">nickname</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">nickname</span> <span class="o">==</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
-         <span class="n">nickname</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">email</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;@&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-     <span class="n">nickname</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">make_unique_nickname</span><span class="p">(</span><span class="n">nickname</span><span class="p">)</span>
-     <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">nickname</span> <span class="o">=</span> <span class="n">nickname</span><span class="p">,</span> <span class="n">email</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">email</span><span class="p">,</span> <span class="n">role</span> <span class="o">=</span> <span class="n">ROLE_USER</span><span class="p">)</span>
-     <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
-     <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+    <span class="n">nickname</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">nickname</span>
+    <span class="k">if</span> <span class="n">nickname</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">nickname</span> <span class="o">==</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
+        <span class="n">nickname</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">email</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;@&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">nickname</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">make_unique_nickname</span><span class="p">(</span><span class="n">nickname</span><span class="p">)</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">nickname</span> <span class="o">=</span> <span class="n">nickname</span><span class="p">,</span> <span class="n">email</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">email</span><span class="p">)</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>解决问题的方式就是让 User 类为我们选择一个唯一的名字。这就是新的 <em>make_unique_nickname</em> 方法所做的(文件 <em>app/models.py</em>):</p>
-<div class="highlight-python"><pre>class User(db.Model):
+<div class="highlight-python"><div class="highlight"><pre>class User(db.Model):
 # ...
 @staticmethod
 def make_unique_nickname(nickname):
@@ -279,15 +288,16 @@ def make_unique_nickname(nickname):
             break
         version += 1
     return new_nickname
-# ...</pre>
+# ...
+</pre></div>
 </div>
 <p>这种方法简单地增加一个计数器为请求的昵称，直到找到一个唯一的名称。例如，如果用户名 “miguel”已经存在，这个方法将会建议使用 “miguel2”，如果这个还是存在，将会建议使用 &#8220;miguel3&#8221;，依次下去直至找到唯一的用户名。需要注意的是我们把这个方法作为一个静态方法，因为这种操作并不适用于任何特定的类的实例。</p>
 <p>第二个存在重复昵称问题的地方就是编辑用户信息的视图函数。这个稍微有些难处理，因为这是用户自己选择的昵称。正确的做法就是不接受一个重复的昵称，让用户重新输入一个。我们将通过添加一个昵称表单字段定制化的验证来解决这个问题。如果用户输入一个不合法的昵称，字段的验证将会失败，用户将会返回到编辑用户信息页。为了添加验证，我们只需覆盖表单的 <em>validate</em> 方法(文件 <em>app/forms.py</em>):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">app.models</span> <span class="kn">import</span> <span class="n">User</span>
 
 <span class="k">class</span> <span class="nc">EditForm</span><span class="p">(</span><span class="n">Form</span><span class="p">):</span>
-    <span class="n">nickname</span> <span class="o">=</span> <span class="n">TextField</span><span class="p">(</span><span class="s">&#39;nickname&#39;</span><span class="p">,</span> <span class="n">validators</span> <span class="o">=</span> <span class="p">[</span><span class="n">Required</span><span class="p">()])</span>
-    <span class="n">about_me</span> <span class="o">=</span> <span class="n">TextAreaField</span><span class="p">(</span><span class="s">&#39;about_me&#39;</span><span class="p">,</span> <span class="n">validators</span> <span class="o">=</span> <span class="p">[</span><span class="n">Length</span><span class="p">(</span><span class="nb">min</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">max</span> <span class="o">=</span> <span class="mi">140</span><span class="p">)])</span>
+    <span class="n">nickname</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="s">&#39;nickname&#39;</span><span class="p">,</span> <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">DataRequired</span><span class="p">()])</span>
+    <span class="n">about_me</span> <span class="o">=</span> <span class="n">TextAreaField</span><span class="p">(</span><span class="s">&#39;about_me&#39;</span><span class="p">,</span> <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">Length</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">140</span><span class="p">)])</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">original_nickname</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">Form</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -298,7 +308,7 @@ def make_unique_nickname(nickname):
             <span class="k">return</span> <span class="bp">False</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nickname</span><span class="o">.</span><span class="n">data</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_nickname</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">True</span>
-        <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">nickname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nickname</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">nickname</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nickname</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">user</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">nickname</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;This nickname is already in use. Please choose another one.&#39;</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">False</span>
@@ -315,13 +325,14 @@ def make_unique_nickname(nickname):
 </pre></div>
 </div>
 <p>为了完成这个修改，我们必须在表单模板中使得字段错误信息会显示(文件 <em>app/templates/edit.html</em>):</p>
-<div class="highlight-python"><pre>&lt;td&gt;Your nickname:&lt;/td&gt;
+<div class="highlight-python"><div class="highlight"><pre>&lt;td&gt;Your nickname:&lt;/td&gt;
 &lt;td&gt;
     {{form.nickname(size = 24)}}
     {% for error in form.errors.nickname %}
-    &lt;br&gt;&lt;span style="color: red;"&gt;[{{error}}]&lt;/span&gt;
+    &lt;br&gt;&lt;span style=&quot;color: red;&quot;&gt;[{{error}}]&lt;/span&gt;
     {% endfor %}
-&lt;/td&gt;</pre>
+&lt;/td&gt;
+</pre></div>
 </div>
 <p>现在问题是修复了，重复将会被禁止。。。除非是都没有。我们仍然存在潜在的问题，当两个或者更多的线程或者处理同时访问数据库的时候，但是这将会是以后的话题。</p>
 </div>
@@ -342,7 +353,7 @@ def make_unique_nickname(nickname):
 <span class="k">class</span> <span class="nc">TestCase</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;TESTING&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
-        <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;CSRF_ENABLED&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;WTF_CSRF_ENABLED&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;SQLALCHEMY_DATABASE_URI&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;sqlite:///&#39;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">basedir</span><span class="p">,</span> <span class="s">&#39;test.db&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">test_client</span><span class="p">()</span>
         <span class="n">db</span><span class="o">.</span><span class="n">create_all</span><span class="p">()</span>
@@ -352,18 +363,18 @@ def make_unique_nickname(nickname):
         <span class="n">db</span><span class="o">.</span><span class="n">drop_all</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">test_avatar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">u</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">nickname</span> <span class="o">=</span> <span class="s">&#39;john&#39;</span><span class="p">,</span> <span class="n">email</span> <span class="o">=</span> <span class="s">&#39;john@example.com&#39;</span><span class="p">)</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">nickname</span><span class="o">=</span><span class="s">&#39;john&#39;</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="s">&#39;john@example.com&#39;</span><span class="p">)</span>
         <span class="n">avatar</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">avatar</span><span class="p">(</span><span class="mi">128</span><span class="p">)</span>
         <span class="n">expected</span> <span class="o">=</span> <span class="s">&#39;http://www.gravatar.com/avatar/d4c74594d841139328695756648b6bd6&#39;</span>
         <span class="k">assert</span> <span class="n">avatar</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">expected</span><span class="p">)]</span> <span class="o">==</span> <span class="n">expected</span>
 
     <span class="k">def</span> <span class="nf">test_make_unique_nickname</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">u</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">nickname</span> <span class="o">=</span> <span class="s">&#39;john&#39;</span><span class="p">,</span> <span class="n">email</span> <span class="o">=</span> <span class="s">&#39;john@example.com&#39;</span><span class="p">)</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">nickname</span><span class="o">=</span><span class="s">&#39;john&#39;</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="s">&#39;john@example.com&#39;</span><span class="p">)</span>
         <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
         <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
         <span class="n">nickname</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">make_unique_nickname</span><span class="p">(</span><span class="s">&#39;john&#39;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">nickname</span> <span class="o">!=</span> <span class="s">&#39;john&#39;</span>
-        <span class="n">u</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">nickname</span> <span class="o">=</span> <span class="n">nickname</span><span class="p">,</span> <span class="n">email</span> <span class="o">=</span> <span class="s">&#39;susan@example.com&#39;</span><span class="p">)</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">nickname</span><span class="o">=</span><span class="n">nickname</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="s">&#39;susan@example.com&#39;</span><span class="p">)</span>
         <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
         <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
         <span class="n">nickname2</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">make_unique_nickname</span><span class="p">(</span><span class="s">&#39;john&#39;</span><span class="p">)</span>
@@ -379,6 +390,11 @@ def make_unique_nickname(nickname):
 <p>测试实现成了方法。一个测试支持运行应用程序的多个函数，并且有已知的结果以及应该断言结果是否不同于预期的。</p>
 <p>目前为止在测试框架中有两个测试。第一个就是验证 Gravatar 的头像 URL生成是否正确。注意测试中期待的结果是硬编码，验证 <em>User</em> 类的返回的头像 URL。</p>
 <p>第二个就是我们前面编写的 <em>make_unique_nickname</em> 方法，同样是在 <em>User</em> 类中。</p>
+<p>为了运行测试套件你只要运行 <em>tests.py</em> 脚本:</p>
+<div class="highlight-python"><div class="highlight"><pre>python tests.py
+</pre></div>
+</div>
+<p>如果没有什么错误的话，你将会在控制台中得到测试报告。</p>
 </div>
 <div class="section" id="id8">
 <h2>结束语<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
@@ -393,7 +409,7 @@ def make_unique_nickname(nickname):
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">

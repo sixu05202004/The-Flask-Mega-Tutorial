@@ -27,8 +27,8 @@
     <link rel="next" title="用户登录" href="userlogin.html" />
     <link rel="prev" title="web 表单" href="webforms.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -43,7 +43,7 @@
         <li><a href="index.html">flask mega-tutorial 1.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
@@ -70,13 +70,15 @@
   <h4>Next topic</h4>
   <p class="topless"><a href="userlogin.html"
                         title="next chapter">用户登录</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/database.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/database.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
 
-<div id="searchbox" style="display: none">
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
@@ -107,7 +109,7 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="database">
 <span id="id1"></span><h1>数据库<a class="headerlink" href="#database" title="Permalink to this headline">¶</a></h1>
@@ -120,13 +122,16 @@
 <h2>从命令行中运行 Python 脚本<a class="headerlink" href="#python" title="Permalink to this headline">¶</a></h2>
 <p>在这一章中我们会写一些脚本用来简化数据库的管理。在我们开始编写脚本之前，先来温习下 Python 脚本如何在命令行中执行。</p>
 <p>如果你使用 Linux 或者 OS X 系统的话，脚本必须给予一定的权限，像这样:</p>
-<div class="highlight-python"><pre>chmod a+x script.py</pre>
+<div class="highlight-python"><div class="highlight"><pre>chmod a+x script.py
+</pre></div>
 </div>
 <p>脚本中有一个 <a class="reference external" href="http://en.wikipedia.org/wiki/Shebang_(Unix)">shebang</a> ，它指明应该使用的解释器。一个脚本如果被赋予了执行权限并且有一个 shebang 行能够被简单地像这样执行:</p>
-<div class="highlight-python"><pre>./script.py &lt;arguments&gt;</pre>
+<div class="highlight-python"><div class="highlight"><pre>./script.py &lt;arguments&gt;
+</pre></div>
 </div>
 <p>在 Windows 上，上面的操作是没有作用的，相反你必须提供脚本作为选择的 Python 解释器的一个参数:</p>
-<div class="highlight-python"><pre>flask\Scripts\python script.py &lt;arguments&gt;</pre>
+<div class="highlight-python"><div class="highlight"><pre>flask\Scripts\python script.py &lt;arguments&gt;
+</pre></div>
 </div>
 <p>为了避免键入 Python 解释器的路径，你可以把 <em>microblog/flask/Scripts</em> 加入到系统路径中，但是务必让它在你的 Python 解释器之前。</p>
 <p>从现在起，在本教程中的 Linux / OS X 的语法将用于缩写。如果你是在 Windows 上，记得适当的语法转换。</p>
@@ -175,18 +180,13 @@
 <img alt="_images/2.png" src="_images/2.png" />
 <p><em>id</em> 字段通常会在所有模型中，并且用于作为主键。在数据库的每一个用户会被赋予一个不同的 id 值，存储在这个字段中。幸好这是自动完成的，我们仅仅需要的是提供 <em>id</em> 这个字段。</p>
 <p><em>nickname</em> 以及 <em>email</em> 字段是被定义成字符串，并且指定了最大的长度以便数据库可以优化空间占用。</p>
-<p><em>role</em> 字段是一个整型，我们将使用它来表示哪个用户是管理员，哪个不是。</p>
 <p>现在我们已经决定用户表的样子，剩下的工作就是把它转换成代码(文件 <em>app/models.py</em>):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">app</span> <span class="kn">import</span> <span class="n">db</span>
-
-<span class="n">ROLE_USER</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="n">ROLE_ADMIN</span> <span class="o">=</span> <span class="mi">1</span>
 
 <span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
     <span class="nb">id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
     <span class="n">nickname</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">64</span><span class="p">),</span> <span class="n">index</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">unique</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
     <span class="n">email</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">120</span><span class="p">),</span> <span class="n">index</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">unique</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
-    <span class="n">role</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">SmallInteger</span><span class="p">,</span> <span class="n">default</span> <span class="o">=</span> <span class="n">ROLE_USER</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s">&#39;&lt;User </span><span class="si">%r</span><span class="s">&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nickname</span><span class="p">)</span>
@@ -214,7 +214,8 @@
 </pre></div>
 </div>
 <p>为了创建数据库，你需要运行这个脚本(记得如果在 Windows 上命令有些不同):</p>
-<div class="highlight-python"><pre>./db_create.py</pre>
+<div class="highlight-python"><div class="highlight"><pre>./db_create.py
+</pre></div>
 </div>
 <p>在运行上述命令之后你会发现一个新的 <em>app.db</em> 文件。这是一个空的 sqlite 数据库，创建一开始就支持迁移。同样你还将有一个 <em>db_repository</em> 文件夹，里面还有一些文件，这是 <em>SQLAlchemy-migrate</em> 存储它的数据文件的地方。请注意，我们不会再生的存储库，如果它已经存在。这将使我们重新创建数据库，同时保留现有的存储库，如果我们需要。</p>
 </div>
@@ -243,11 +244,13 @@
 <p>然而在使用上面的脚本自动地完成迁移的时候也不是没有问题的，我见过有时候它很难识别新老格式的变化。为了让 SQLAlchemy-migrate 容易地识别出变化，我绝不会重命名存在的字段，我仅限于增加或者删除模型或者字段，或者改变已存在字段的类型。当然我一直会检查生成的迁移脚本，确保它是正确。</p>
 <p>毋庸置疑你不应该在没有备份下去尝试迁移数据库。当然也不能在生产环境下直接运行迁移脚本，必须在开发环境下确保迁移运转正常。</p>
 <p>因此让我们继续进行，记录下迁移:</p>
-<div class="highlight-python"><pre>./db_migrate.py</pre>
+<div class="highlight-python"><div class="highlight"><pre>./db_migrate.py
+</pre></div>
 </div>
 <p>脚本的输出如下:</p>
-<div class="highlight-python"><pre>New migration saved as db_repository/versions/001_migration.py
-Current database version: 1</pre>
+<div class="highlight-python"><div class="highlight"><pre>New migration saved as db_repository/versions/001_migration.py
+Current database version: 1
+</pre></div>
 </div>
 <p>脚本会打印出迁移脚本存储在哪里，也会打印出目前数据库版本。空数据库的版本是0，在我们迁移到包含用户的数据库后，版本为1.</p>
 </div>
@@ -288,15 +291,11 @@ Current database version: 1</pre>
 <p>让我们修改模型以反映这些变化(<em>app/models.py</em>):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">app</span> <span class="kn">import</span> <span class="n">db</span>
 
-<span class="n">ROLE_USER</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="n">ROLE_ADMIN</span> <span class="o">=</span> <span class="mi">1</span>
-
 <span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
-    <span class="nb">id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
-    <span class="n">nickname</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">64</span><span class="p">),</span> <span class="n">unique</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
-    <span class="n">email</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">120</span><span class="p">),</span> <span class="n">unique</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
-    <span class="n">role</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">SmallInteger</span><span class="p">,</span> <span class="n">default</span> <span class="o">=</span> <span class="n">ROLE_USER</span><span class="p">)</span>
-    <span class="n">posts</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span><span class="s">&#39;Post&#39;</span><span class="p">,</span> <span class="n">backref</span> <span class="o">=</span> <span class="s">&#39;author&#39;</span><span class="p">,</span> <span class="n">lazy</span> <span class="o">=</span> <span class="s">&#39;dynamic&#39;</span><span class="p">)</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">nickname</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">64</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">email</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">120</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">posts</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span><span class="s">&#39;Post&#39;</span><span class="p">,</span> <span class="n">backref</span><span class="o">=</span><span class="s">&#39;author&#39;</span><span class="p">,</span> <span class="n">lazy</span><span class="o">=</span><span class="s">&#39;dynamic&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s">&#39;&lt;User </span><span class="si">%r</span><span class="s">&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nickname</span><span class="p">)</span>
@@ -314,17 +313,34 @@ Current database version: 1</pre>
 <p>我们添加了一个 <em>Post</em> 类，这是用来表示用户编写的 blog。在 <em>Post</em> 类中的 <em>user_id</em> 字段初始化成外键，因此 Flask-SQLAlchemy 知道这个字段是连接到用户上。</p>
 <p>值得注意的是我们已经在 <em>User</em> 类中添加一个新的字段称为 <em>posts</em>，它是被构建成一个 <em>db.relationship</em> 字段。这并不是一个实际的数据库字段，因此是不会出现在上面的图中。对于一个一对多的关系，<em>db.relationship</em> 字段通常是定义在“一”这一边。在这种关系下，我们得到一个 <em>user.posts</em> 成员，它给出一个用户所有的 blog。不用担心很多细节不知道什么意思，以后我们会不断地看到例子。</p>
 <p>首先还是来运行迁移脚本:</p>
-<div class="highlight-python"><pre>./db_migrate.py</pre>
+<div class="highlight-python"><div class="highlight"><pre>./db_migrate.py
+</pre></div>
 </div>
 <p>输出:</p>
-<div class="highlight-python"><pre>New migration saved as db_repository/versions/002_migration.py
-Current database version: 2</pre>
+<div class="highlight-python"><div class="highlight"><pre>New migration saved as db_repository/versions/002_migration.py
+Current database version: 2
+</pre></div>
 </div>
 </div>
 <div class="section" id="id11">
 <h2>编程时间<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h2>
+<p>我们花了很多时间定义我们的数据库，但是我们仍没有看到它是如何工作的。因为我们的应用程序中还没有关于数据库的代码，让我们先在 Python 解释器上试用下我们全新的数据库。</p>
+<p>让我们先启动 Python。在 Linux 或者 OS X 上:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">flask</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">python</span>
+</pre></div>
+</div>
+<p>或者在 Windows 上:</p>
+<div class="highlight-python"><div class="highlight"><pre>flask\Scripts\python
+</pre></div>
+</div>
+<p>一旦启动 Python，在 Python 提示符中输入如下语句:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">app</span> <span class="kn">import</span> <span class="n">db</span><span class="p">,</span> <span class="n">models</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>这将会把我们的数据库和模型载入内存中。</p>
 <p>首先创建一个新用户:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">User</span><span class="p">(</span><span class="n">nickname</span><span class="o">=</span><span class="s">&#39;john&#39;</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="s">&#39;john@email.com&#39;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">ROLE_USER</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">User</span><span class="p">(</span><span class="n">nickname</span><span class="o">=</span><span class="s">&#39;john&#39;</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="s">&#39;john@email.com&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 <span class="go">&gt;&gt;&gt;</span>
@@ -332,7 +348,7 @@ Current database version: 2</pre>
 </div>
 <p>在会话的上下文中完成对数据库的更改。多个的更改可以在一个会话中累积，当所有的更改已经提交，你可以发出一个 <em>db.session.commit()</em>，这能原子地写入更改。如果在会话中出现错误的时候， <em>db.session.rollback()</em> 可以是数据库回到会话开始的状态。如果即没有 <em>commit</em> 也没有 <em>rollback</em> 发生，系统默认情况下会回滚会话。会话保证数据库将永远保持一致的状态。</p>
 <p>让我们添加另一个用户:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">User</span><span class="p">(</span><span class="n">nickname</span><span class="o">=</span><span class="s">&#39;susan&#39;</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="s">&#39;susan@email.com&#39;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">ROLE_USER</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">User</span><span class="p">(</span><span class="n">nickname</span><span class="o">=</span><span class="s">&#39;susan&#39;</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="s">&#39;susan@email.com&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 <span class="go">&gt;&gt;&gt;</span>
@@ -369,13 +385,13 @@ Current database version: 2</pre>
 <p>这里我们设置我们的 <em>timestamp</em> 为 UTC 时区。所有存储在数据库的时间戳都会是 UTC。我们有来自世界上不同地方的用户因此需要有个统一的时间单位。在后面的教程中会以当地的时间呈现这些时间在用户面前。</p>
 <p>你可能注意到了我们并没有设置 <em>user_id</em> 字段。相反我们在 <em>author</em> 字段上存储了一个 User 对象。ORM 层将会知道怎么完成 <em>user_id</em> 字段。</p>
 <p>让我们多做一些查询:</p>
-<div class="highlight-python"><pre># get all posts from a user
+<div class="highlight-python"><div class="highlight"><pre># get all posts from a user
 &gt;&gt;&gt; u = models.User.query.get(1)
 &gt;&gt;&gt; print u
-&lt;User u'john'&gt;
+&lt;User u&#39;john&#39;&gt;
 &gt;&gt;&gt; posts = u.posts.all()
 &gt;&gt;&gt; print posts
-[&lt;Post u'my first post!'&gt;]
+[&lt;Post u&#39;my first post!&#39;&gt;]
 
 # obtain author of each post
 &gt;&gt;&gt; for p in posts:
@@ -386,14 +402,15 @@ Current database version: 2</pre>
 # a user that has no posts
 &gt;&gt;&gt; u = models.User.query.get(2)
 &gt;&gt;&gt; print u
-&lt;User u'susan'&gt;
+&lt;User u&#39;susan&#39;&gt;
 &gt;&gt;&gt; print u.posts.all()
 []
 
 # get all users in reverse alphabetical order
-&gt;&gt;&gt; print models.User.query.order_by('nickname desc').all()
-[&lt;User u'susan'&gt;, &lt;User u'john'&gt;]
-&gt;&gt;&gt;</pre>
+&gt;&gt;&gt; print models.User.query.order_by(&#39;nickname desc&#39;).all()
+[&lt;User u&#39;susan&#39;&gt;, &lt;User u&#39;john&#39;&gt;]
+&gt;&gt;&gt;
+</pre></div>
 </div>
 <p><a class="reference external" href="http://packages.python.org/Flask-SQLAlchemy/index.html">Flask-SQLAlchemy</a> 文档可能会提供更多有帮助的信息。</p>
 <p>在结束之前，需要清除一下刚才创建的数据，以便在下一章中会有一个干净的数据库:</p>
@@ -424,7 +441,7 @@ Current database version: 2</pre>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">

@@ -110,7 +110,6 @@
         id = db.Column(db.Integer, primary_key = True)
         nickname = db.Column(db.String(64), unique = True)
         email = db.Column(db.String(120), index = True, unique = True)
-        role = db.Column(db.SmallInteger, default = ROLE_USER)
         posts = db.relationship('Post', backref = 'author', lazy = 'dynamic')
         about_me = db.Column(db.String(140))
         last_seen = db.Column(db.DateTime)
@@ -391,7 +390,7 @@
             if nickname is None or nickname == "":
                 nickname = resp.email.split('@')[0]
             nickname = User.make_unique_nickname(nickname)
-            user = User(nickname = nickname, email = resp.email, role = ROLE_USER)
+            user = User(nickname = nickname, email = resp.email)
             db.session.add(user)
             db.session.commit()
             # make the user follow him/herself
@@ -411,40 +410,42 @@
 接着，我们将会定义关注以及取消关注用户的视图函数(文件 *app/views.py*)::
 
     @app.route('/follow/<nickname>')
+    @login_required
     def follow(nickname):
-        user = User.query.filter_by(nickname = nickname).first()
-        if user == None:
-            flash('User ' + nickname + ' not found.')
+        user = User.query.filter_by(nickname=nickname).first()
+        if user is None:
+            flash('User %s not found.' % nickname)
             return redirect(url_for('index'))
         if user == g.user:
             flash('You can\'t follow yourself!')
-            return redirect(url_for('user', nickname = nickname))
+            return redirect(url_for('user', nickname=nickname))
         u = g.user.follow(user)
         if u is None:
             flash('Cannot follow ' + nickname + '.')
-            return redirect(url_for('user', nickname = nickname))
+            return redirect(url_for('user', nickname=nickname))
         db.session.add(u)
         db.session.commit()
         flash('You are now following ' + nickname + '!')
-        return redirect(url_for('user', nickname = nickname))
+        return redirect(url_for('user', nickname=nickname))
 
     @app.route('/unfollow/<nickname>')
+    @login_required
     def unfollow(nickname):
-        user = User.query.filter_by(nickname = nickname).first()
-        if user == None:
-            flash('User ' + nickname + ' not found.')
+        user = User.query.filter_by(nickname=nickname).first()
+        if user is None:
+            flash('User %s not found.' % nickname)
             return redirect(url_for('index'))
         if user == g.user:
             flash('You can\'t unfollow yourself!')
-            return redirect(url_for('user', nickname = nickname))
+            return redirect(url_for('user', nickname=nickname))
         u = g.user.unfollow(user)
         if u is None:
             flash('Cannot unfollow ' + nickname + '.')
-            return redirect(url_for('user', nickname = nickname))
+            return redirect(url_for('user', nickname=nickname))
         db.session.add(u)
         db.session.commit()
         flash('You have stopped following ' + nickname + '.')
-        return redirect(url_for('user', nickname = nickname))
+        return redirect(url_for('user', nickname=nickname))
 
 这里应该不需要做过多的解释，但是需要注意的是检查周围的错误，为了防止期望之外的错误，试着给用户提供信息并且重定向到合适的位置当错误发生的时候。
 

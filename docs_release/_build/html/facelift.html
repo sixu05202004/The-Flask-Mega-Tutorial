@@ -27,8 +27,8 @@
     <link rel="next" title="日期和时间" href="dateandtime.html" />
     <link rel="prev" title="邮件支持" href="email.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -43,7 +43,7 @@
         <li><a href="index.html">flask mega-tutorial 1.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
@@ -63,13 +63,15 @@
   <h4>Next topic</h4>
   <p class="topless"><a href="dateandtime.html"
                         title="next chapter">日期和时间</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/facelift.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/facelift.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
 
-<div id="searchbox" style="display: none">
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
@@ -100,7 +102,7 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="facelift">
 <span id="id1"></span><h1>换装<a class="headerlink" href="#facelift" title="Permalink to this headline">¶</a></h1>
@@ -134,10 +136,11 @@
 <p>在我们把 Bootstrap 添加到应用程序之前，我们必须安装 Bootstrap CSS，Javascript 以及 图片文件到我们的网页服务器可以找到的地方。</p>
 <p>在 Flask 中，<em>app/static</em> 文件夹就是这些常规文件所在地。当一个 URL 中有一个 <em>/static</em> 后缀的话，网页服务器就知道到这个文件夹中寻找文件。</p>
 <p>例如，如果我们存储一个名为 <em>image.png</em> 文件在 <em>/app/static</em> 中，我们能够在模板中显示带有如下标签的图片:</p>
-<div class="highlight-python"><pre>&lt;img src="/static/image.png" /&gt;</pre>
+<div class="highlight-python"><div class="highlight"><pre>&lt;img src=&quot;/static/image.png&quot; /&gt;
+</pre></div>
 </div>
 <p>我们将会根据如下结构来安装 Bootstrap 框架:</p>
-<div class="highlight-python"><pre>/app
+<div class="highlight-python"><div class="highlight"><pre>/app
     /static
         /css
             bootstrap.min.css
@@ -146,22 +149,24 @@
             glyphicons-halflings.png
             glyphicons-halflings-white.png
         /js
-            bootstrap.min.js</pre>
+            bootstrap.min.js
+</pre></div>
 </div>
 <p>根据 <a class="reference external" href="http://twitter.github.com/bootstrap/getting-started.html#html-template">说明</a> ，我们必须在基础模板中的 <em>head</em> 部分加入如下内容:</p>
-<div class="highlight-python"><pre>&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
+<div class="highlight-python"><div class="highlight"><pre>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
   &lt;head&gt;
     ...
-    &lt;link href="/static/css/bootstrap.min.css" rel="stylesheet" media="screen"&gt;
-    &lt;link href="/static/css/bootstrap-responsive.css" rel="stylesheet"&gt;
-    &lt;script src="http://code.jquery.com/jquery-latest.js"&gt;&lt;/script&gt;
-    &lt;script src="/static/js/bootstrap.min.js"&gt;&lt;/script&gt;
-    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;link href=&quot;/static/css/bootstrap.min.css&quot; rel=&quot;stylesheet&quot; media=&quot;screen&quot;&gt;
+    &lt;link href=&quot;/static/css/bootstrap-responsive.min.css&quot; rel=&quot;stylesheet&quot;&gt;
+    &lt;script src=&quot;http://code.jquery.com/jquery-latest.js&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;/static/js/bootstrap.min.js&quot;&gt;&lt;/script&gt;
+    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
     ...
   &lt;/head&gt;
   ...
-&lt;/html&gt;</pre>
+&lt;/html&gt;
+</pre></div>
 </div>
 <p>接下来我们需要对模板做的改变有:</p>
 <ul class="simple">
@@ -176,6 +181,11 @@
 </div>
 <div class="section" id="id15">
 <h2>结束语<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h2>
+<p>为了让大家先目睹下装点后的应用程序，这里有一些对比截图供大家欣赏。</p>
+<img alt="_images/1-old.jpg" src="_images/1-old.jpg" />
+<img alt="_images/1-new.jpg" src="_images/1-new.jpg" />
+<img alt="_images/2-old.jpg" src="_images/2-old.jpg" />
+<img alt="_images/2-new.jpg" src="_images/2-new.jpg" />
 <p>如果你想要节省时间的话，你可以下载 <a class="reference external" href="https://github.com/miguelgrinberg/microblog/archive/v0.12.zip">microblog-0.12.zip</a>。</p>
 <p>我希望能在下一章继续见到各位！</p>
 </div>
@@ -187,7 +197,7 @@
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">

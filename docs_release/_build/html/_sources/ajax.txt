@@ -130,7 +130,14 @@ Ajax
 
 这听起来很复杂，因此如果不需要关注细节的话，这里有一个做了很多“脏”工作并且把文本翻译成别的语言的函数(文件 *app/translate.py*)::
 
-    import urllib, httplib
+    try:
+        import httplib  # Python 2
+    except ImportError:
+        import http.client as httplib  # Python 3
+    try:
+        from urllib import urlencode  # Python 2
+    except ImportError:
+        from urllib.parse import urlencode  # Python 3
     import json
     from flask.ext.babel import gettext
     from config import MS_TRANSLATOR_CLIENT_ID, MS_TRANSLATOR_CLIENT_SECRET
@@ -140,12 +147,11 @@ Ajax
             return gettext('Error: translation service not configured.')
         try:
             # get access token
-            params = urllib.urlencode({
+            params = urlencode({
                 'client_id': MS_TRANSLATOR_CLIENT_ID,
                 'client_secret': MS_TRANSLATOR_CLIENT_SECRET,
                 'scope': 'http://api.microsofttranslator.com', 
-                'grant_type': 'client_credentials'
-            })
+                'grant_type': 'client_credentials'})
             conn = httplib.HTTPSConnection("datamarket.accesscontrol.windows.net")
             conn.request("POST", "/v2/OAuth2-13", params)
             response = json.loads (conn.getresponse().read())
@@ -153,14 +159,12 @@ Ajax
 
             # translate
             conn = httplib.HTTPConnection('api.microsofttranslator.com')
-            params = {
-                'appId': 'Bearer ' + token,
-                'from': sourceLang,
-                'to': destLang,
-                'text': text.encode("utf-8")
-            }
-            conn.request("GET", '/V2/Ajax.svc/Translate?' + urllib.urlencode(params))
-            response = json.loads("{\"response\":" + conn.getresponse().read().decode('utf-8-sig') + "}")
+            params = {'appId': 'Bearer ' + token,
+                      'from': sourceLang,
+                      'to': destLang,
+                      'text': text.encode("utf-8")}
+            conn.request("GET", '/V2/Ajax.svc/Translate?' + urlencode(params))
+            response = json.loads("{\"response\":" + conn.getresponse().read().decode('utf-8') + "}")
             return response["response"]
         except:
             return gettext('Error: Unexpected error.')

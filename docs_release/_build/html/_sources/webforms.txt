@@ -51,16 +51,17 @@ OpenID 登录仅仅需要一个字符串，被称为 OpenID。我们将在表单
 
 所以让我们编写第一个表单(文件 *app/forms.py*)::
 
-	from flask.ext.wtf import Form, TextField, BooleanField
-	from flask.ext.wtf import Required
+	from flask.ext.wtf import Form
+	from wtforms import StringField, BooleanField
+	from wtforms.validators import DataRequired
 
 	class LoginForm(Form):
-	    openid = TextField('openid', validators = [Required()])
-	    remember_me = BooleanField('remember_me', default = False)
+	    openid = StringField('openid', validators=[DataRequired()])
+	    remember_me = BooleanField('remember_me', default=False)
 
 我相信这个类不言而明。我们导入 *Form* 类，接着导入两个我们需要的字段类，*TextField* 和 *BooleanField*。
 
-*Required* 是一个验证器，一个函数，它能够作用于一个域，用于对用户提交的数据进行验证。 *Required* 验证器只是简单地检查相应域提交的数据是否是空。在 Flask-WTF 中有许多的验证器，我们将会在以后看到它们。
+*DataRequired* 验证器只是简单地检查相应域提交的数据是否是空。在 Flask-WTF 中有许多的验证器，我们将会在以后看到它们。
 
 
 表单模板
@@ -104,7 +105,7 @@ OpenID 登录仅仅需要一个字符串，被称为 OpenID。我们将在表单
 
 	from flask import render_template, flash, redirect
 	from app import app
-	from forms import LoginForm
+	from .forms import LoginForm
 
 	# index view function suppressed for brevity
 
@@ -197,22 +198,22 @@ Flask-WTF 使得工作变得简单的另外一点就是处理提交的数据。�
 	{% extends "base.html" %}
 
 	{% block content %}
-	<h1>Sign In</h1>
-	<form action="" method="post" name="login">
-	    {{form.hidden_tag()}}
-	    <p>
-	        Please enter your OpenID:<br>
-	        {{form.openid(size=80)}}<br>
-	        {% for error in form.errors.openid %}
-	        <span style="color: red;">[{{error}}]</span>
-	        {% endfor %}<br>
-	    </p>
-	    <p>{{form.remember_me}} Remember Me</p>
-	    <p><input type="submit" value="Sign In"></p>
-	</form>
+	  <h1>Sign In</h1>
+	  <form action="" method="post" name="login">
+	      {{ form.hidden_tag() }}
+	      <p>
+	          Please enter your OpenID:<br>
+	          {{ form.openid(size=80) }}<br>
+	          {% for error in form.openid.errors %}
+	            <span style="color: red;">[{{ error }}]</span>
+	          {% endfor %}<br>
+	      </p>
+	      <p>{{ form.remember_me }} Remember Me</p>
+	      <p><input type="submit" value="Sign In"></p>
+	  </form>
 	{% endblock %}
 
-唯一的变化就是我们增加了一个循环获取验证 *openid* 字段的信息。通常情况下，任何需要验证的字段都会把错误信息放入 *form.errors.field_name* 下。在我们的例子中，我们使用 *form.errors.openid* 。我们以红色的字体颜色显示这些错误信息以引起用户的注意。
+唯一的变化就是我们增加了一个循环获取验证 *openid* 字段的信息。通常情况下，任何需要验证的字段都会把错误信息放入 *form.field_name.errors* 下。在我们的例子中，我们使用 *form.openid.errors* 。我们以红色的字体颜色显示这些错误信息以引起用户的注意。
 
 
 处理 OpenIDs
@@ -270,18 +271,18 @@ Flask-WTF 使得工作变得简单的另外一点就是处理提交的数据。�
 	</script>
 	<h1>Sign In</h1>
 	<form action="" method="post" name="login">
-	    {{form.hidden_tag()}}
+	    {{ form.hidden_tag() }}
 	    <p>
 	        Please enter your OpenID, or select one of the providers below:<br>
-	        {{form.openid(size=80)}}
-	        {% for error in form.errors.openid %}
-	        <span style="color: red;">[{{error}}]</span>
+	        {{ form.openid(size=80) }}
+	        {% for error in form.openid.errors %}
+	          <span style="color: red;">[{{error}}]</span>
 	        {% endfor %}<br>
 	        |{% for pr in providers %}
-	        <a href="javascript:set_openid('{{pr.url}}', '{{pr.name}}');">{{pr.name}}</a> |
+	          <a href="javascript:set_openid('{{ pr.url }}', '{{ pr.name }}');">{{ pr.name }}</a> |
 	        {% endfor %}
 	    </p>
-	    <p>{{form.remember_me}} Remember Me</p>
+	    <p>{{ form.remember_me }} Remember Me</p>
 	    <p><input type="submit" value="Sign In"></p>
 	</form>
 	{% endblock %}

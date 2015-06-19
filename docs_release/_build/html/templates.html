@@ -27,8 +27,8 @@
     <link rel="next" title="web 表单" href="webforms.html" />
     <link rel="prev" title="Hello World" href="helloworld.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -43,7 +43,7 @@
         <li><a href="index.html">flask mega-tutorial 1.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
@@ -65,13 +65,15 @@
   <h4>Next topic</h4>
   <p class="topless"><a href="webforms.html"
                         title="next chapter">web 表单</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/templates.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/templates.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
 
-<div id="searchbox" style="display: none">
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
@@ -102,14 +104,14 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="templates">
 <span id="id1"></span><h1>模板<a class="headerlink" href="#templates" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id2">
 <h2>回顾<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
 <p>如果你依照 <a class="reference internal" href="helloworld.html#helloworld"><em>Hello World</em></a> 这一章的话，你应当有一个完全工作的简单的 web 应用程序，它有着如下的文件结构:</p>
-<div class="highlight-python"><pre>microblog\
+<div class="highlight-python"><div class="highlight"><pre>microblog\
 flask\
         &lt;virtual environment files&gt;
 app\
@@ -118,7 +120,8 @@ app\
         __init__.py
         views.py
 tmp\
-run.py</pre>
+run.py
+</pre></div>
 </div>
 <p>你可以执行 <em>run.py</em> 来运行应用程序，接着在你的网页浏览器上打开 <em>http://localhost:5000</em> 网址。</p>
 <p>在 Python 中生成 HTML 并不好玩，实际上是相当繁琐的，因为你必须自行做好 HTML 转义以保持应用程序的安全。由于这个原因，Flask 自动为你配置好 Jinja2 模版。我们将会在这一章中介绍一些模板基本概念以及基本用法。</p>
@@ -155,14 +158,15 @@ run.py</pre>
 <h2>模板从天而降<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
 <p>如果你能够保持你的应用程序与网页的布局或者界面逻辑上是分开的，这样不是显得更加容易组织？难道你不觉得是这样吗？你甚至可以聘请一个网页设计师来设计一个杀手级的网页而你专注于 Python 编码。模板可以帮助实现这种分离。</p>
 <p>让我们编写第一个我们的模板(文件 <em>app/templates/index.html</em>):</p>
-<div class="highlight-python"><pre>&lt;html&gt;
+<div class="highlight-python"><div class="highlight"><pre>&lt;html&gt;
   &lt;head&gt;
     &lt;title&gt;{{title}} - microblog&lt;/title&gt;
   &lt;/head&gt;
   &lt;body&gt;
       &lt;h1&gt;Hello, {{user.nickname}}!&lt;/h1&gt;
   &lt;/body&gt;
-&lt;/html&gt;</pre>
+&lt;/html&gt;
+</pre></div>
 </div>
 <p>正如你在上面看到，我们只是写了一个大部分标准的HTML页面，唯一的区别是有一些动态内容的在 <em>{{ ... }}</em> 中。</p>
 <p>现在看看怎样在我们的视图函数(文件 <em>app/views.py</em>)中使用这些模板:</p>
@@ -185,7 +189,7 @@ run.py</pre>
 <div class="section" id="id5">
 <h2>模板中控制语句<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
 <p>Jinja2 模板同样支持控制语句，像在 <em>{%...%}</em> 块中。让我们在我们的模板中添加一个 if 声明(文件 <em>app/templates/index.html</em>):</p>
-<div class="highlight-python"><pre>&lt;html&gt;
+<div class="highlight-python"><div class="highlight"><pre>&lt;html&gt;
   &lt;head&gt;
     {% if title %}
     &lt;title&gt;{{title}} - microblog&lt;/title&gt;
@@ -196,7 +200,8 @@ run.py</pre>
   &lt;body&gt;
       &lt;h1&gt;Hello, {{user.nickname}}!&lt;/h1&gt;
   &lt;/body&gt;
-&lt;/html&gt;</pre>
+&lt;/html&gt;
+</pre></div>
 </div>
 <p>现在我们的模板变得更加智能了。如果视图函数忘记输入页面标题的参数，不会触发异常反而会出现我们自己提供的标题。放心地去掉视图函数中 <em>render_template</em> 的调用中的 <em>title</em> 参数，看看 <em>if</em> 语句是如何工作的！</p>
 </div>
@@ -225,7 +230,7 @@ run.py</pre>
 <p>为了表示用户的文章，我们使用了列表，其中每一个元素包含 <em>author</em> 和 <em>body</em> 字段。当我们使用真正的数据库的时候，我们会保留这些字段的名称，因此我们在设计以及测试模板的时候尽管使用的是假冒的对象，但不必担心迁移到数据库上更新模板。</p>
 <p>在模板这一方面，我们必须解决一个新问题。列表中可能有许多元素，多少篇文章被展示将取决于视图函数。模板不会假设有多少文章，因此它必须准备渲染视图传送的文章数量。</p>
 <p>因此让我们来看看怎么使用 <em>for</em> 来做到这一点(文件 <em>app/templates/index.html</em>):</p>
-<div class="highlight-python"><pre>&lt;html&gt;
+<div class="highlight-python"><div class="highlight"><pre>&lt;html&gt;
   &lt;head&gt;
     {% if title %}
     &lt;title&gt;{{title}} - microblog&lt;/title&gt;
@@ -239,7 +244,8 @@ run.py</pre>
     &lt;p&gt;{{post.author.nickname}} says: &lt;b&gt;{{post.body}}&lt;/b&gt;&lt;/p&gt;
     {% endfor %}
   &lt;/body&gt;
-&lt;/html&gt;</pre>
+&lt;/html&gt;
+</pre></div>
 </div>
 <p>简单吧？试试吧，确保给予足够的文章列表。</p>
 </div>
@@ -250,7 +256,7 @@ run.py</pre>
 <p>我们可以在 <em>index.html</em> 模板中添加一个导航栏，但是随着应用的扩展，越来越多的模板需要这个导航栏，我们需要在每一个模板中复制这个导航栏。然而你必须要保证每一个导航栏都要同步，如果你有大量的模板，这需要花费很大的力气。</p>
 <p>相反，我们可以利用 Jinja2 的模板继承的特点，这允许我们把所有模板公共的部分移除出页面的布局，接着把它们放在一个基础模板中，所有使用它的模板可以导入该基础模板。</p>
 <p>所以让我们定义一个基础模板，该模板包含导航栏以及上面谈论的标题(文件 <em>app/templates/base.html</em>):</p>
-<div class="highlight-python"><pre>&lt;html&gt;
+<div class="highlight-python"><div class="highlight"><pre>&lt;html&gt;
   &lt;head&gt;
     {% if title %}
     &lt;title&gt;{{title}} - microblog&lt;/title&gt;
@@ -259,21 +265,23 @@ run.py</pre>
     {% endif %}
   &lt;/head&gt;
   &lt;body&gt;
-    &lt;div&gt;Microblog: &lt;a href="/index"&gt;Home&lt;/a&gt;&lt;/div&gt;
+    &lt;div&gt;Microblog: &lt;a href=&quot;/index&quot;&gt;Home&lt;/a&gt;&lt;/div&gt;
     &lt;hr&gt;
     {% block content %}{% endblock %}
   &lt;/body&gt;
-&lt;/html&gt;</pre>
+&lt;/html&gt;
+</pre></div>
 </div>
 <p>在这个模板中，我们使用 <em>block</em> 控制语句来定义派生模板可以插入的地方。块被赋予唯一的名字。</p>
 <p>接着现在剩下的就是修改我们的 <em>index.html</em> 模板继承自 <em>base.html</em> (文件 <em>app/templates/index.html</em>):</p>
-<div class="highlight-python"><pre>{% extends "base.html" %}
+<div class="highlight-python"><div class="highlight"><pre>{% extends &quot;base.html&quot; %}
 {% block content %}
 &lt;h1&gt;Hi, {{user.nickname}}!&lt;/h1&gt;
 {% for post in posts %}
 &lt;div&gt;&lt;p&gt;{{post.author.nickname}} says: &lt;b&gt;{{post.body}}&lt;/b&gt;&lt;/p&gt;&lt;/div&gt;
 {% endfor %}
-{% endblock %}</pre>
+{% endblock %}
+</pre></div>
 </div>
 </div>
 <div class="section" id="id8">
@@ -290,7 +298,7 @@ run.py</pre>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">

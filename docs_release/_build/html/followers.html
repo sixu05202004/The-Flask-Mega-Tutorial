@@ -27,8 +27,8 @@
     <link rel="next" title="分页" href="pagination.html" />
     <link rel="prev" title="单元测试" href="testing.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -43,7 +43,7 @@
         <li><a href="index.html">flask mega-tutorial 1.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
@@ -83,13 +83,15 @@
   <h4>Next topic</h4>
   <p class="topless"><a href="pagination.html"
                         title="next chapter">分页</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/followers.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/followers.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
 
-<div id="searchbox" style="display: none">
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
@@ -120,7 +122,7 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="followers">
 <span id="id1"></span><h1>关注者，联系人和好友<a class="headerlink" href="#followers" title="Permalink to this headline">¶</a></h1>
@@ -195,7 +197,6 @@
     <span class="nb">id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
     <span class="n">nickname</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">64</span><span class="p">),</span> <span class="n">unique</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
     <span class="n">email</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">120</span><span class="p">),</span> <span class="n">index</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">unique</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
-    <span class="n">role</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">SmallInteger</span><span class="p">,</span> <span class="n">default</span> <span class="o">=</span> <span class="n">ROLE_USER</span><span class="p">)</span>
     <span class="n">posts</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span><span class="s">&#39;Post&#39;</span><span class="p">,</span> <span class="n">backref</span> <span class="o">=</span> <span class="s">&#39;author&#39;</span><span class="p">,</span> <span class="n">lazy</span> <span class="o">=</span> <span class="s">&#39;dynamic&#39;</span><span class="p">)</span>
     <span class="n">about_me</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">140</span><span class="p">))</span>
     <span class="n">last_seen</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">)</span>
@@ -218,7 +219,8 @@
 </ul>
 <p>如果上面的解释很难理解的话，没有关系。我们会在后面使用这些查询，一切就会明了。</p>
 <p>因为我们对数据库做出了修改，现在我们必须生成一个新的迁移脚本:</p>
-<div class="highlight-python"><pre>./db_migrate.py</pre>
+<div class="highlight-python"><div class="highlight"><pre>./db_migrate.py
+</pre></div>
 </div>
 </div>
 <div class="section" id="id10">
@@ -276,7 +278,8 @@
 </pre></div>
 </div>
 <p>通过执行下面的命令来运行这个测试:</p>
-<div class="highlight-python"><pre>./tests.py</pre>
+<div class="highlight-python"><div class="highlight"><pre>./tests.py
+</pre></div>
 </div>
 </div>
 <div class="section" id="id12">
@@ -423,7 +426,7 @@
         <span class="k">if</span> <span class="n">nickname</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">nickname</span> <span class="o">==</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
             <span class="n">nickname</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">email</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;@&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">nickname</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">make_unique_nickname</span><span class="p">(</span><span class="n">nickname</span><span class="p">)</span>
-        <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">nickname</span> <span class="o">=</span> <span class="n">nickname</span><span class="p">,</span> <span class="n">email</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">email</span><span class="p">,</span> <span class="n">role</span> <span class="o">=</span> <span class="n">ROLE_USER</span><span class="p">)</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">nickname</span> <span class="o">=</span> <span class="n">nickname</span><span class="p">,</span> <span class="n">email</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">email</span><span class="p">)</span>
         <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
         <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
         <span class="c"># make the user follow him/herself</span>
@@ -442,62 +445,64 @@
 <h3>关注以及取消关注的链接<a class="headerlink" href="#id19" title="Permalink to this headline">¶</a></h3>
 <p>接着，我们将会定义关注以及取消关注用户的视图函数(文件 <em>app/views.py</em>):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/follow/&lt;nickname&gt;&#39;</span><span class="p">)</span>
+<span class="nd">@login_required</span>
 <span class="k">def</span> <span class="nf">follow</span><span class="p">(</span><span class="n">nickname</span><span class="p">):</span>
-    <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">nickname</span> <span class="o">=</span> <span class="n">nickname</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">user</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">flash</span><span class="p">(</span><span class="s">&#39;User &#39;</span> <span class="o">+</span> <span class="n">nickname</span> <span class="o">+</span> <span class="s">&#39; not found.&#39;</span><span class="p">)</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">nickname</span><span class="o">=</span><span class="n">nickname</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">user</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s">&#39;User </span><span class="si">%s</span><span class="s"> not found.&#39;</span> <span class="o">%</span> <span class="n">nickname</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s">&#39;index&#39;</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">user</span> <span class="o">==</span> <span class="n">g</span><span class="o">.</span><span class="n">user</span><span class="p">:</span>
         <span class="n">flash</span><span class="p">(</span><span class="s">&#39;You can</span><span class="se">\&#39;</span><span class="s">t follow yourself!&#39;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s">&#39;user&#39;</span><span class="p">,</span> <span class="n">nickname</span> <span class="o">=</span> <span class="n">nickname</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s">&#39;user&#39;</span><span class="p">,</span> <span class="n">nickname</span><span class="o">=</span><span class="n">nickname</span><span class="p">))</span>
     <span class="n">u</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">follow</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">u</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
         <span class="n">flash</span><span class="p">(</span><span class="s">&#39;Cannot follow &#39;</span> <span class="o">+</span> <span class="n">nickname</span> <span class="o">+</span> <span class="s">&#39;.&#39;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s">&#39;user&#39;</span><span class="p">,</span> <span class="n">nickname</span> <span class="o">=</span> <span class="n">nickname</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s">&#39;user&#39;</span><span class="p">,</span> <span class="n">nickname</span><span class="o">=</span><span class="n">nickname</span><span class="p">))</span>
     <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
     <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
     <span class="n">flash</span><span class="p">(</span><span class="s">&#39;You are now following &#39;</span> <span class="o">+</span> <span class="n">nickname</span> <span class="o">+</span> <span class="s">&#39;!&#39;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s">&#39;user&#39;</span><span class="p">,</span> <span class="n">nickname</span> <span class="o">=</span> <span class="n">nickname</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s">&#39;user&#39;</span><span class="p">,</span> <span class="n">nickname</span><span class="o">=</span><span class="n">nickname</span><span class="p">))</span>
 
 <span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/unfollow/&lt;nickname&gt;&#39;</span><span class="p">)</span>
+<span class="nd">@login_required</span>
 <span class="k">def</span> <span class="nf">unfollow</span><span class="p">(</span><span class="n">nickname</span><span class="p">):</span>
-    <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">nickname</span> <span class="o">=</span> <span class="n">nickname</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">user</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">flash</span><span class="p">(</span><span class="s">&#39;User &#39;</span> <span class="o">+</span> <span class="n">nickname</span> <span class="o">+</span> <span class="s">&#39; not found.&#39;</span><span class="p">)</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">nickname</span><span class="o">=</span><span class="n">nickname</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">user</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s">&#39;User </span><span class="si">%s</span><span class="s"> not found.&#39;</span> <span class="o">%</span> <span class="n">nickname</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s">&#39;index&#39;</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">user</span> <span class="o">==</span> <span class="n">g</span><span class="o">.</span><span class="n">user</span><span class="p">:</span>
         <span class="n">flash</span><span class="p">(</span><span class="s">&#39;You can</span><span class="se">\&#39;</span><span class="s">t unfollow yourself!&#39;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s">&#39;user&#39;</span><span class="p">,</span> <span class="n">nickname</span> <span class="o">=</span> <span class="n">nickname</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s">&#39;user&#39;</span><span class="p">,</span> <span class="n">nickname</span><span class="o">=</span><span class="n">nickname</span><span class="p">))</span>
     <span class="n">u</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">unfollow</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">u</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
         <span class="n">flash</span><span class="p">(</span><span class="s">&#39;Cannot unfollow &#39;</span> <span class="o">+</span> <span class="n">nickname</span> <span class="o">+</span> <span class="s">&#39;.&#39;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s">&#39;user&#39;</span><span class="p">,</span> <span class="n">nickname</span> <span class="o">=</span> <span class="n">nickname</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s">&#39;user&#39;</span><span class="p">,</span> <span class="n">nickname</span><span class="o">=</span><span class="n">nickname</span><span class="p">))</span>
     <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
     <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
     <span class="n">flash</span><span class="p">(</span><span class="s">&#39;You have stopped following &#39;</span> <span class="o">+</span> <span class="n">nickname</span> <span class="o">+</span> <span class="s">&#39;.&#39;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s">&#39;user&#39;</span><span class="p">,</span> <span class="n">nickname</span> <span class="o">=</span> <span class="n">nickname</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s">&#39;user&#39;</span><span class="p">,</span> <span class="n">nickname</span><span class="o">=</span><span class="n">nickname</span><span class="p">))</span>
 </pre></div>
 </div>
 <p>这里应该不需要做过多的解释，但是需要注意的是检查周围的错误，为了防止期望之外的错误，试着给用户提供信息并且重定向到合适的位置当错误发生的时候。</p>
 <p>最后需要修改下模版(文件 <em>app/templates/user.html</em>):</p>
-<div class="highlight-python"><pre>&lt;!-- extend base layout --&gt;
-{% extends "base.html" %}
+<div class="highlight-python"><div class="highlight"><pre>&lt;!-- extend base layout --&gt;
+{% extends &quot;base.html&quot; %}
 
 {% block content %}
 &lt;table&gt;
-    &lt;tr valign="top"&gt;
-        &lt;td&gt;&lt;img src="{{user.avatar(128)}}"&gt;&lt;/td&gt;
+    &lt;tr valign=&quot;top&quot;&gt;
+        &lt;td&gt;&lt;img src=&quot;{{user.avatar(128)}}&quot;&gt;&lt;/td&gt;
         &lt;td&gt;
             &lt;h1&gt;User: {{user.nickname}}&lt;/h1&gt;
             {% if user.about_me %}&lt;p&gt;{{user.about_me}}&lt;/p&gt;{% endif %}
             {% if user.last_seen %}&lt;p&gt;&lt;i&gt;Last seen on: {{user.last_seen}}&lt;/i&gt;&lt;/p&gt;{% endif %}
             &lt;p&gt;{{user.followers.count()}} followers |
             {% if user.id == g.user.id %}
-                &lt;a href="{{url_for('edit')}}"&gt;Edit your profile&lt;/a&gt;
+                &lt;a href=&quot;{{url_for(&#39;edit&#39;)}}&quot;&gt;Edit your profile&lt;/a&gt;
             {% elif not g.user.is_following(user) %}
-                &lt;a href="{{url_for('follow', nickname = user.nickname)}}"&gt;Follow&lt;/a&gt;
+                &lt;a href=&quot;{{url_for(&#39;follow&#39;, nickname = user.nickname)}}&quot;&gt;Follow&lt;/a&gt;
             {% else %}
-                &lt;a href="{{url_for('unfollow', nickname = user.nickname)}}"&gt;Unfollow&lt;/a&gt;
+                &lt;a href=&quot;{{url_for(&#39;unfollow&#39;, nickname = user.nickname)}}&quot;&gt;Unfollow&lt;/a&gt;
             {% endif %}
             &lt;/p&gt;
         &lt;/td&gt;
@@ -505,9 +510,10 @@
 &lt;/table&gt;
 &lt;hr&gt;
 {% for post in posts %}
-    {% include 'post.html' %}
+    {% include &#39;post.html&#39; %}
 {% endfor %}
-{% endblock %}</pre>
+{% endblock %}
+</pre></div>
 </div>
 <p>在编辑一行上，我们会显示关注者的用户数目，后面可能会跟随三种可能的链接:</p>
 <ul class="simple">
@@ -533,7 +539,7 @@
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">

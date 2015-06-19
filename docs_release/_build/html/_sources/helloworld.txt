@@ -35,7 +35,7 @@ Hello World
 要求
 -----
 
-如果你有一台能够运行 Python 2.6 或者 Python 2.7 的机器，可能你将会很轻松。该教程中的应用程序能够完美地运行在 Windows, OS X 以及 Linux 上。
+如果你有一台能够运行 Python 的机器，可能你将会很轻松。该教程中的应用程序能够完美地运行在 Windows, OS X 以及 Linux 上。除非另有说明，本系列的文章中提供的代码已经在 Python 2.7 和 3.4 上测试过。
 
 本教程假定你很熟悉操作系统的终端窗口(命令提示符为 Windows 用户)，清楚基本命令行文件管理功能。如果你还不熟悉这些的话，我强烈建议你先学习使用命令行，比如如何创建文件夹等，接着再继续。
 
@@ -50,11 +50,27 @@ Hello World
 
 因此，打开一个终端窗口，选择一个你想要放置应用程序的位置以及创建一个包含它的新的文件夹。让我们把这个应用程序的文件夹称为 **microblog** 。
 
-接下来，下载 `virtualenv.py <https://raw.github.com/pypa/virtualenv/1.9.X/virtualenv.py>`_ 并且把它置于新创建的文件夹中。
+如果你正在使用 Python 3.4，先进入到 **microblog** 目录中接着使用如下的命令创建一个虚拟环境::
+	
+	$ python -m venv flask
+
+需要注意地是在某些系统中你可能要使用 python3 来代替 python。上面的命令行在 *flask* 文件夹中创建一个完整的 Python 环境。
+
+如果你使用 Python 3.4 以下的版本(包括 python 2.7)，你需要在创建虚拟环境之前下载以及安装 `virtualenv.py <https://pypi.python.org/pypi/virtualenv/>`_ 。如果你在使用 Mac OS X，请使用下面的命令行安装::
+	
+	$ sudo easy_install virtualenv
+
+如果你使用 Linux，你需要获取一个包。例如，如果你使用 Ubuntu::
+	
+	$ sudo apt-get install python-virtualenv 
+
+Windows 用户们在安装 virtualenv 上有些麻烦，因此如果你想省事的话，请直接安装 Python 3.4。在 Windows 上安装 virtualenv 最简单地方式就是先安装 pip，安装方式在 `这里 <https://pip.pypa.io/en/latest/installing.html>`。一旦安装好了 pip 的话，下面的命令可以安装 virtualenv::
+
+	$ pip install virtualenv
 
 为了创建一个虚拟环境，请输入如下的命令行 ::
 
-	python virtualenv.py flask
+	$ virtualenv flask
 
 上面的命令行在 *flask* 文件夹中创建一个完整的 Python 环境。
 
@@ -62,44 +78,36 @@ Hello World
 
 如果你是在 Linux, OS X 或者 Cygwin 上，通过一个接一个输入如下的命令行来安装 flask 以及扩展::
 
-	flask/bin/pip install flask==0.9
-	flask/bin/pip install flask-login
-	flask/bin/pip install flask-openid
-	flask/bin/pip install flask-mail
-	flask/bin/pip install sqlalchemy==0.7.9
-	flask/bin/pip install flask-sqlalchemy==0.16
-	flask/bin/pip install sqlalchemy-migrate
-	flask/bin/pip install flask-whooshalchemy==0.54a
-	flask/bin/pip install flask-wtf
-	flask/bin/pip install pytz==2013b
-	flask/bin/pip install flask-babel==0.8
-	flask/bin/pip install flup
+	$ flask/bin/pip install flask
+	$ flask/bin/pip install flask-login
+	$ flask/bin/pip install flask-openid
+	$ flask/bin/pip install flask-mail
+	$ flask/bin/pip install flask-sqlalchemy
+	$ flask/bin/pip install sqlalchemy-migrate
+	$ flask/bin/pip install flask-whooshalchemy
+	$ flask/bin/pip install flask-wtf
+	$ flask/bin/pip install flask-babel
+	$ flask/bin/pip install guess_language
+	$ flask/bin/pip install flipflop
+	$ flask/bin/pip install coverage
 
 如果是在 Windows 上的话，命令行有些不同 ::
 
-	flask\Scripts\pip install flask==0.9
-	flask\Scripts\pip install flask-login
-	flask\Scripts\pip install flask-openid
-	flask\Scripts\pip install sqlalchemy==0.7.9
-	flask\Scripts\pip install flask-sqlalchemy==0.16
-	flask\Scripts\pip install sqlalchemy-migrate
-	flask\Scripts\pip install flask-whooshalchemy==0.54a
-	flask\Scripts\pip install flask-wtf
-	flask\Scripts\pip install pytz==2013b
-	flask\Scripts\pip install flask-babel==0.8
-	flask\Scripts\pip install flup
+	$ flask\Scripts\pip install flask
+	$ flask\Scripts\pip install flask-login
+	$ flask\Scripts\pip install flask-openid
+	$ flask\Scripts\pip install flask-mail
+	$ flask\Scripts\pip install flask-sqlalchemy
+	$ flask\Scripts\pip install sqlalchemy-migrate
+	$ flask\Scripts\pip install flask-whooshalchemy
+	$ flask\Scripts\pip install flask-wtf
+	$ flask\Scripts\pip install flask-babel
+	$ flask\Scripts\pip install guess_language
+	$ flask\Scripts\pip install flipflop
+	$ flask\Scripts\pip install coverage
 
 这些命令行将会下载以及安装我们将会在我们的应用程序中使用的所有的包。
 
-注意的是我们使用的是 Flask 0.9，这不是最新的版本。Falsk 0.10 刚发布不久因此很多扩展暂时没有更新，在扩展包和最新版本的 Flask 之间存在一些不兼容性。
-
-Windows 上的用户需要多做一步。如果你有良好的观察能力的话，你可能注意到，*flask-mail* 不在 Windows安装命令行中。这个扩展在 Windows 安装的不干净，因此我们需要通过一个变通的方式来安装::
-
-	flask\Scripts\pip install --no-deps lamson chardet flask-mail
-
-这里我不会去讨论细节，如果你对此感兴趣的话可以参看 flask-mail 文档。
-
-如果所有的包成功地安装，你可以删除 *virtualenv.py* ，因为我们不再需要它了。
 
 在 Flask 中的 "Hello, World"
 ------------------------------

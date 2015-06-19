@@ -27,8 +27,8 @@
     <link rel="next" title="数据库" href="database.html" />
     <link rel="prev" title="模板" href="templates.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -43,7 +43,7 @@
         <li><a href="index.html">flask mega-tutorial 1.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
@@ -67,13 +67,15 @@
   <h4>Next topic</h4>
   <p class="topless"><a href="database.html"
                         title="next chapter">数据库</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/webforms.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/webforms.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
 
-<div id="searchbox" style="display: none">
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
@@ -104,7 +106,7 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="web">
 <span id="webforms"></span><h1>web 表单<a class="headerlink" href="#web" title="Permalink to this headline">¶</a></h1>
@@ -141,35 +143,37 @@
 <p>我们将要创建一个登录表单，用户用于认证系统。在我们应用程序中支持的登录机制不是标准的用户名/密码类型，我们将使用 <a class="reference external" href="http://openid.net/">OpenID</a>。OpenIDs 的好处就是认证是由 OpenID 的提供者完成的，因此我们不需要验证密码，这会让我们的网站对用户而言更加安全。</p>
 <p>OpenID 登录仅仅需要一个字符串，被称为 OpenID。我们将在表单上提供一个 ‘remember me’ 的选择框，以至于用户可以选择在他们的网页浏览器上种植 cookie ，当他们再次访问的时候，浏览器能够记住他们的登录。</p>
 <p>所以让我们编写第一个表单(文件 <em>app/forms.py</em>):</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">flask.ext.wtf</span> <span class="kn">import</span> <span class="n">Form</span><span class="p">,</span> <span class="n">TextField</span><span class="p">,</span> <span class="n">BooleanField</span>
-<span class="kn">from</span> <span class="nn">flask.ext.wtf</span> <span class="kn">import</span> <span class="n">Required</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">flask.ext.wtf</span> <span class="kn">import</span> <span class="n">Form</span>
+<span class="kn">from</span> <span class="nn">wtforms</span> <span class="kn">import</span> <span class="n">StringField</span><span class="p">,</span> <span class="n">BooleanField</span>
+<span class="kn">from</span> <span class="nn">wtforms.validators</span> <span class="kn">import</span> <span class="n">DataRequired</span>
 
 <span class="k">class</span> <span class="nc">LoginForm</span><span class="p">(</span><span class="n">Form</span><span class="p">):</span>
-    <span class="n">openid</span> <span class="o">=</span> <span class="n">TextField</span><span class="p">(</span><span class="s">&#39;openid&#39;</span><span class="p">,</span> <span class="n">validators</span> <span class="o">=</span> <span class="p">[</span><span class="n">Required</span><span class="p">()])</span>
-    <span class="n">remember_me</span> <span class="o">=</span> <span class="n">BooleanField</span><span class="p">(</span><span class="s">&#39;remember_me&#39;</span><span class="p">,</span> <span class="n">default</span> <span class="o">=</span> <span class="bp">False</span><span class="p">)</span>
+    <span class="n">openid</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="s">&#39;openid&#39;</span><span class="p">,</span> <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">DataRequired</span><span class="p">()])</span>
+    <span class="n">remember_me</span> <span class="o">=</span> <span class="n">BooleanField</span><span class="p">(</span><span class="s">&#39;remember_me&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>我相信这个类不言而明。我们导入 <em>Form</em> 类，接着导入两个我们需要的字段类，<em>TextField</em> 和 <em>BooleanField</em>。</p>
-<p><em>Required</em> 是一个验证器，一个函数，它能够作用于一个域，用于对用户提交的数据进行验证。 <em>Required</em> 验证器只是简单地检查相应域提交的数据是否是空。在 Flask-WTF 中有许多的验证器，我们将会在以后看到它们。</p>
+<p><em>DataRequired</em> 验证器只是简单地检查相应域提交的数据是否是空。在 Flask-WTF 中有许多的验证器，我们将会在以后看到它们。</p>
 </div>
 <div class="section" id="id5">
 <h2>表单模板<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
 <p>我们同样需要一个包含生成表单的 HTML 的模板。好消息是我们刚刚创建的 <em>LoginForm</em> 类知道如何呈现为 HTML 表单字段，所以我们只需要集中精力在布局上。这里就是我们登录的模板(文件 <em>app/templates/login.html</em>):</p>
-<div class="highlight-python"><pre>&lt;!-- extend from base layout --&gt;
-{% extends "base.html" %}
+<div class="highlight-python"><div class="highlight"><pre>&lt;!-- extend from base layout --&gt;
+{% extends &quot;base.html&quot; %}
 
 {% block content %}
 &lt;h1&gt;Sign In&lt;/h1&gt;
-&lt;form action="" method="post" name="login"&gt;
+&lt;form action=&quot;&quot; method=&quot;post&quot; name=&quot;login&quot;&gt;
     {{form.hidden_tag()}}
     &lt;p&gt;
         Please enter your OpenID:&lt;br&gt;
         {{form.openid(size=80)}}&lt;br&gt;
     &lt;/p&gt;
     &lt;p&gt;{{form.remember_me}} Remember Me&lt;/p&gt;
-    &lt;p&gt;&lt;input type="submit" value="Sign In"&gt;&lt;/p&gt;
+    &lt;p&gt;&lt;input type=&quot;submit&quot; value=&quot;Sign In&quot;&gt;&lt;/p&gt;
 &lt;/form&gt;
-{% endblock %}</pre>
+{% endblock %}
+</pre></div>
 </div>
 <p>请注意，此模板中，我们重用了 <em>base.html</em> 模板通过 <em>extends</em> 模板继承声明语句。实际上，我们将在所有我们的模板中做到这一点，以确保所有网页的布局一致性。</p>
 <p>在我们的模板与常规的 HTML 表单之间存在一些有意思的不同处。模板期望一个实例化自我们刚才创建地表单类的表单对象储存成一个模板参数，称为 <em>form</em>。当我们编写渲染这个模板的视图函数的时候，我们将会特别注意传送这个模板参数到模板中。</p>
@@ -183,7 +187,7 @@
 <p>实际上这是十分简单因为我们只需要把一个表单对象传入模板中。这就是我们新的视图函数(文件 <em>app/views.py</em>):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">flash</span><span class="p">,</span> <span class="n">redirect</span>
 <span class="kn">from</span> <span class="nn">app</span> <span class="kn">import</span> <span class="n">app</span>
-<span class="kn">from</span> <span class="nn">forms</span> <span class="kn">import</span> <span class="n">LoginForm</span>
+<span class="kn">from</span> <span class="nn">.forms</span> <span class="kn">import</span> <span class="n">LoginForm</span>
 
 <span class="c"># index view function suppressed for brevity</span>
 
@@ -220,7 +224,7 @@
 <p>如果至少一个字段验证失败的话，它将会返回 <em>False</em>，接着表单会重新呈现给用户，这也将给用户一次机会去修改错误。我们将会看到当验证失败后如何显示错误信息。</p>
 <p>当 <em>validate_on_submit</em> 返回 True，我们的登录视图函数调用了两个新的函数，导入自 Flask。<em>flash</em> 函数是一种快速的方式下呈现给用户的页面上显示一个消息。在我们的例子中，我将会使用它来调试，因为我们目前还不具备用户登录的必备的基础设施，相反我们将会用它来显示提交的数据。<em>flash</em> 函数在生产服务器上也是十分有作用的，用来提供反馈给用户有关的行动。</p>
 <p>闪现的消息将不会自动地出现在我们的页面上，我们的模板需要加入展示消息的内容。我们将添加这些消息到我们的基础模板中，这样所有的模板都能继承这个函数。这是更新后的基础模板(文件 <em>app/templates/base.html</em>):</p>
-<div class="highlight-python"><pre>&lt;html&gt;
+<div class="highlight-python"><div class="highlight"><pre>&lt;html&gt;
   &lt;head&gt;
     {% if title %}
     &lt;title&gt;{{title}} - microblog&lt;/title&gt;
@@ -229,7 +233,7 @@
     {% endif %}
   &lt;/head&gt;
   &lt;body&gt;
-    &lt;div&gt;Microblog: &lt;a href="/index"&gt;Home&lt;/a&gt;&lt;/div&gt;
+    &lt;div&gt;Microblog: &lt;a href=&quot;/index&quot;&gt;Home&lt;/a&gt;&lt;/div&gt;
     &lt;hr&gt;
     {% with messages = get_flashed_messages() %}
     {% if messages %}
@@ -242,7 +246,8 @@
     {% endwith %}
     {% block content %}{% endblock %}
   &lt;/body&gt;
-&lt;/html&gt;</pre>
+&lt;/html&gt;
+</pre></div>
 </div>
 <p>显示闪现消息的技术希望是不言自明的。</p>
 <p>在我们登录视图这里使用的其它新的函数就是 <em>redirect</em>。这个函数告诉网页浏览器引导到一个不同的页面而不是请求的页面。在我们的视图函数中我们用它重定向到前面已经完成的首页上。要注意地是，闪现消息将会显示即使视图函数是以重定向结束。</p>
@@ -254,26 +259,27 @@
 <p>然后，好像我们缺少了一个提示用户表单哪里出错了。幸运的是，<em>Flask-WTF</em> 也能够轻易地做到这一点。</p>
 <p>当字段验证失败的时候， <em>Flask-WTF</em> 会向表单对象中添加描述性的错误信息。这些信息是可以在模板中使用的，因此我们只需要增加一些逻辑来获取它。</p>
 <p>这就是我们含有字段验证信息的登录模板(文件 <em>app/templates/login.html</em>):</p>
-<div class="highlight-python"><pre>&lt;!-- extend base layout --&gt;
-{% extends "base.html" %}
+<div class="highlight-python"><div class="highlight"><pre>&lt;!-- extend base layout --&gt;
+{% extends &quot;base.html&quot; %}
 
 {% block content %}
-&lt;h1&gt;Sign In&lt;/h1&gt;
-&lt;form action="" method="post" name="login"&gt;
-    {{form.hidden_tag()}}
-    &lt;p&gt;
-        Please enter your OpenID:&lt;br&gt;
-        {{form.openid(size=80)}}&lt;br&gt;
-        {% for error in form.errors.openid %}
-        &lt;span style="color: red;"&gt;[{{error}}]&lt;/span&gt;
-        {% endfor %}&lt;br&gt;
-    &lt;/p&gt;
-    &lt;p&gt;{{form.remember_me}} Remember Me&lt;/p&gt;
-    &lt;p&gt;&lt;input type="submit" value="Sign In"&gt;&lt;/p&gt;
-&lt;/form&gt;
-{% endblock %}</pre>
+  &lt;h1&gt;Sign In&lt;/h1&gt;
+  &lt;form action=&quot;&quot; method=&quot;post&quot; name=&quot;login&quot;&gt;
+      {{ form.hidden_tag() }}
+      &lt;p&gt;
+          Please enter your OpenID:&lt;br&gt;
+          {{ form.openid(size=80) }}&lt;br&gt;
+          {% for error in form.openid.errors %}
+            &lt;span style=&quot;color: red;&quot;&gt;[{{ error }}]&lt;/span&gt;
+          {% endfor %}&lt;br&gt;
+      &lt;/p&gt;
+      &lt;p&gt;{{ form.remember_me }} Remember Me&lt;/p&gt;
+      &lt;p&gt;&lt;input type=&quot;submit&quot; value=&quot;Sign In&quot;&gt;&lt;/p&gt;
+  &lt;/form&gt;
+{% endblock %}
+</pre></div>
 </div>
-<p>唯一的变化就是我们增加了一个循环获取验证 <em>openid</em> 字段的信息。通常情况下，任何需要验证的字段都会把错误信息放入 <em>form.errors.field_name</em> 下。在我们的例子中，我们使用 <em>form.errors.openid</em> 。我们以红色的字体颜色显示这些错误信息以引起用户的注意。</p>
+<p>唯一的变化就是我们增加了一个循环获取验证 <em>openid</em> 字段的信息。通常情况下，任何需要验证的字段都会把错误信息放入 <em>form.field_name.errors</em> 下。在我们的例子中，我们使用 <em>form.openid.errors</em> 。我们以红色的字体颜色显示这些错误信息以引起用户的注意。</p>
 </div>
 <div class="section" id="openids">
 <h2>处理 OpenIDs<a class="headerlink" href="#openids" title="Permalink to this headline">¶</a></h2>
@@ -306,40 +312,41 @@
 </div>
 <p>我们从配置中获取 <em>OPENID_PROVIDERS</em>，接着把它作为 <em>render_template</em> 中一个参数传入模板中。</p>
 <p>我敢确信你们已经猜到了，我们还需要多做一步来达到目的。我们现在就来说明如何在登录模板中渲染这些提供商的链接(文件 <em>app/templates/login.html</em>):</p>
-<div class="highlight-python"><pre>&lt;!-- extend base layout --&gt;
-{% extends "base.html" %}
+<div class="highlight-python"><div class="highlight"><pre>&lt;!-- extend base layout --&gt;
+{% extends &quot;base.html&quot; %}
 
 {% block content %}
-&lt;script type="text/javascript"&gt;
+&lt;script type=&quot;text/javascript&quot;&gt;
 function set_openid(openid, pr)
 {
-    u = openid.search('&lt;username&gt;')
+    u = openid.search(&#39;&lt;username&gt;&#39;)
     if (u != -1) {
         // openid requires username
-        user = prompt('Enter your ' + pr + ' username:')
+        user = prompt(&#39;Enter your &#39; + pr + &#39; username:&#39;)
         openid = openid.substr(0, u) + user
     }
-    form = document.forms['login'];
-    form.elements['openid'].value = openid
+    form = document.forms[&#39;login&#39;];
+    form.elements[&#39;openid&#39;].value = openid
 }
 &lt;/script&gt;
 &lt;h1&gt;Sign In&lt;/h1&gt;
-&lt;form action="" method="post" name="login"&gt;
-    {{form.hidden_tag()}}
+&lt;form action=&quot;&quot; method=&quot;post&quot; name=&quot;login&quot;&gt;
+    {{ form.hidden_tag() }}
     &lt;p&gt;
         Please enter your OpenID, or select one of the providers below:&lt;br&gt;
-        {{form.openid(size=80)}}
-        {% for error in form.errors.openid %}
-        &lt;span style="color: red;"&gt;[{{error}}]&lt;/span&gt;
+        {{ form.openid(size=80) }}
+        {% for error in form.openid.errors %}
+          &lt;span style=&quot;color: red;&quot;&gt;[{{error}}]&lt;/span&gt;
         {% endfor %}&lt;br&gt;
         |{% for pr in providers %}
-        &lt;a href="javascript:set_openid('{{pr.url}}', '{{pr.name}}');"&gt;{{pr.name}}&lt;/a&gt; |
+          &lt;a href=&quot;javascript:set_openid(&#39;{{ pr.url }}&#39;, &#39;{{ pr.name }}&#39;);&quot;&gt;{{ pr.name }}&lt;/a&gt; |
         {% endfor %}
     &lt;/p&gt;
-    &lt;p&gt;{{form.remember_me}} Remember Me&lt;/p&gt;
-    &lt;p&gt;&lt;input type="submit" value="Sign In"&gt;&lt;/p&gt;
+    &lt;p&gt;{{ form.remember_me }} Remember Me&lt;/p&gt;
+    &lt;p&gt;&lt;input type=&quot;submit&quot; value=&quot;Sign In&quot;&gt;&lt;/p&gt;
 &lt;/form&gt;
-{% endblock %}</pre>
+{% endblock %}
+</pre></div>
 </div>
 <p>模板变得跟刚才不一样了。一些 OpenIDs 含有用户名，因此对于这些用户，我们必须利用 javascript 的魔力提示用户输入用户名并且组成 OpenIDs。当用户点击一个 OpenIDs 提供商的链接并且(可选)输入用户名，该提供商相应的 OpenID 就被写入到文本域中。</p>
 <p>下面就是点击 Google OpenID 链接后，我们登录界面的一个截图:</p>
@@ -360,7 +367,7 @@ function set_openid(openid, pr)
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">

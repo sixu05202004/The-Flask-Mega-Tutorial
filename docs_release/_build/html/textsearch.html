@@ -27,8 +27,8 @@
     <link rel="next" title="邮件支持" href="email.html" />
     <link rel="prev" title="分页" href="pagination.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -43,13 +43,14 @@
         <li><a href="index.html">flask mega-tutorial 1.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">全文搜索</a><ul>
 <li><a class="reference internal" href="#id2">回顾</a></li>
 <li><a class="reference internal" href="#id3">全文搜索引擎的简介</a></li>
+<li><a class="reference internal" href="#python-3">Python 3 兼容性</a></li>
 <li><a class="reference internal" href="#id4">配置</a></li>
 <li><a class="reference internal" href="#id5">模型修改</a></li>
 <li><a class="reference internal" href="#id6">搜索</a></li>
@@ -71,13 +72,15 @@
   <h4>Next topic</h4>
   <p class="topless"><a href="email.html"
                         title="next chapter">邮件支持</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/textsearch.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/textsearch.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
 
-<div id="searchbox" style="display: none">
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
@@ -108,7 +111,7 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="textsearch">
 <span id="id1"></span><h1>全文搜索<a class="headerlink" href="#textsearch" title="Permalink to this headline">¶</a></h1>
@@ -125,11 +128,22 @@
 <p>因此，相反我们让数据库处理常规数据，我们将创建一个专门的数据库，专注服务于文本搜索。</p>
 <p>现在有一些开源的全文搜索引擎。在我的知识范围内唯一一个用 Python 编写的 Flask 扩展是 <a class="reference external" href="https://bitbucket.org/mchaput/whoosh/wiki/Home">Whoosh</a>。一个纯 Python 的搜索引擎的好处就是在 Python 解释器可用的任何地方能够安装和运行。缺点也是很显然的，性能可能比不上 C 或者 C++ 编写的。我的观点是最理想的解决方式就是开发一个连接不同搜索引擎的 Flask 扩展，以某种方式来处理搜索，就像 Flask-SQLAlchemy 一样。但是目前在 Flask 中暂时没有这类型的扩展。Django 开发者提供了一个很好的扩展，用来支持不同的全文搜索引擎，叫做 <a class="reference external" href="http://haystacksearch.org/">django-haystack</a>。也许不久就会有人写一个类似的 Flask 扩展。</p>
 <p>如果你暂时没有在虚拟环境上安装 Flask-WhooshAlchemy，请安装它。Windows 用户应该运行这个:</p>
-<div class="highlight-python"><pre>flask\Scripts\pip install Flask-WhooshAlchemy</pre>
+<div class="highlight-python"><div class="highlight"><pre>flask\Scripts\pip install Flask-WhooshAlchemy
+</pre></div>
 </div>
 <p>其它用户必须运行这个:</p>
-<div class="highlight-python"><pre>flask/bin/pip install Flask-WhooshAlchemy</pre>
+<div class="highlight-python"><div class="highlight"><pre>flask/bin/pip install Flask-WhooshAlchemy
+</pre></div>
 </div>
+</div>
+<div class="section" id="python-3">
+<h2>Python 3 兼容性<a class="headerlink" href="#python-3" title="Permalink to this headline">¶</a></h2>
+<p>非常不幸地是，Flask-WhooshAlchemy 这个包在 Python 3 中存在问题。并且 Flask-WhooshAlchemy 不会兼容 Python 3。我为这个扩展做了一个分支并且做了一些改变以便其兼容 Python 3，因此你们需要卸载官方的版本并且安装我的分支:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ flask/bin/pip uninstall flask-whooshalchemy
+$ flask/bin/pip install git+git://github.com/miguelgrinberg/flask-whooshalchemy.git
+</pre></div>
+</div>
+<p>令人遗憾地这不是唯一的问题。Whoosh 同样与 Python 3 的兼容存在问题。我在测试中遇到过 <cite>这个问题 &lt;https://bitbucket.org/mchaput/whoosh/issue/395/ascii-codec-error-when-performing-query&gt;</cite>，但是以我的能力目前也无法解决这个问题，只能等待官方的修复。目前来说，Python 3 暂时不能完全地使用这个功能。</p>
 </div>
 <div class="section" id="id4">
 <h2>配置<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
@@ -142,12 +156,18 @@
 <h2>模型修改<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
 <p>因为把 Flask-WhooshAlchemy 整合进 Flask-SQLAlchemy，我们需要在模型的类中指明哪些数据需要建立搜索索引(文件 <em>app/models.py</em>):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">app</span> <span class="kn">import</span> <span class="n">app</span>
-<span class="kn">import</span> <span class="nn">flask.ext.whooshalchemy</span> <span class="kn">as</span> <span class="nn">whooshalchemy</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
+    <span class="n">enable_search</span> <span class="o">=</span> <span class="bp">False</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">enable_search</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="kn">import</span> <span class="nn">flask.ext.whooshalchemy</span> <span class="kn">as</span> <span class="nn">whooshalchemy</span>
 
 <span class="k">class</span> <span class="nc">Post</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
     <span class="n">__searchable__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;body&#39;</span><span class="p">]</span>
 
-    <span class="nb">id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
     <span class="n">body</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">140</span><span class="p">))</span>
     <span class="n">timestamp</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">)</span>
     <span class="n">user_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s">&#39;user.id&#39;</span><span class="p">))</span>
@@ -155,7 +175,8 @@
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s">&#39;&lt;Post </span><span class="si">%r</span><span class="s">&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">body</span><span class="p">)</span>
 
-<span class="n">whooshalchemy</span><span class="o">.</span><span class="n">whoosh_index</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">Post</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">enable_search</span><span class="p">:</span>
+    <span class="n">whooshalchemy</span><span class="o">.</span><span class="n">whoosh_index</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">Post</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>模型有一个新的 <em>__searchable__</em> 字段，这里面包含数据库中的所有能被搜索并且建立索引的字段。在我们的例子中，我们只要索引 blog 的 <em>body</em> 字段。</p>
@@ -213,7 +234,7 @@
 <p>我们准备在导航栏中添加一个搜索表单。把表单放在导航栏中是有好处的，因为应用程序所有页都有搜索表单。</p>
 <p>首先，我们添加一个搜索表单类(文件 <em>app/forms.py</em>):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">SearchForm</span><span class="p">(</span><span class="n">Form</span><span class="p">):</span>
-    <span class="n">search</span> <span class="o">=</span> <span class="n">TextField</span><span class="p">(</span><span class="s">&#39;search&#39;</span><span class="p">,</span> <span class="n">validators</span> <span class="o">=</span> <span class="p">[</span><span class="n">Required</span><span class="p">()])</span>
+    <span class="n">search</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="s">&#39;search&#39;</span><span class="p">,</span> <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">DataRequired</span><span class="p">()])</span>
 </pre></div>
 </div>
 <p>接着我们必须创建一个搜索表单对象并且使得它对所有模版中可用，因为我们将搜索表单放在导航栏中，导航栏是所有页面共有的。最容易的方式就是在 <em>before_request</em> 函数中创建这个表单对象，接着把它放在全局变量 <em>g</em> 中(文件 <em>app/views.py</em>):</p>
@@ -230,14 +251,15 @@
 </pre></div>
 </div>
 <p>我们接着添加表单到模板中(文件 <em>app/templates/base.html</em>):</p>
-<div class="highlight-python"><pre>&lt;div&gt;Microblog:
-    &lt;a href="{{ url_for('index') }}"&gt;Home&lt;/a&gt;
+<div class="highlight-python"><div class="highlight"><pre>&lt;div&gt;Microblog:
+    &lt;a href=&quot;{{ url_for(&#39;index&#39;) }}&quot;&gt;Home&lt;/a&gt;
     {% if g.user.is_authenticated() %}
-    | &lt;a href="{{ url_for('user', nickname = g.user.nickname) }}"&gt;Your Profile&lt;/a&gt;
-    | &lt;form style="display: inline;" action="{{url_for('search')}}" method="post" name="search"&gt;{{g.search_form.hidden_tag()}}{{g.search_form.search(size=20)}}&lt;input type="submit" value="Search"&gt;&lt;/form&gt;
-    | &lt;a href="{{ url_for('logout') }}"&gt;Logout&lt;/a&gt;
+    | &lt;a href=&quot;{{ url_for(&#39;user&#39;, nickname = g.user.nickname) }}&quot;&gt;Your Profile&lt;/a&gt;
+    | &lt;form style=&quot;display: inline;&quot; action=&quot;{{url_for(&#39;search&#39;)}}&quot; method=&quot;post&quot; name=&quot;search&quot;&gt;{{g.search_form.hidden_tag()}}{{g.search_form.search(size=20)}}&lt;input type=&quot;submit&quot; value=&quot;Search&quot;&gt;&lt;/form&gt;
+    | &lt;a href=&quot;{{ url_for(&#39;logout&#39;) }}&quot;&gt;Logout&lt;/a&gt;
     {% endif %}
-&lt;/div&gt;</pre>
+&lt;/div&gt;
+</pre></div>
 </div>
 <p>注意，只有当用户登录后，我们才会显示搜索表单。<em>before_request</em> 函数仅仅当用户登录才会创建一个表单对象，因为我们的程序不会对非认证用户显示任何内容。</p>
 </div>
@@ -271,15 +293,16 @@
 </div>
 <p>搜索结果视图函数把查询传递给 Whoosh，并且把最大的结果数也作为参数传递给 Whoosh。</p>
 <p>最后一部分就是搜索结果的模版(文件 <em>app/templates/search_results.html</em>):</p>
-<div class="highlight-python"><pre>&lt;!-- extend base layout --&gt;
-{% extends "base.html" %}
+<div class="highlight-python"><div class="highlight"><pre>&lt;!-- extend base layout --&gt;
+{% extends &quot;base.html&quot; %}
 
 {% block content %}
-&lt;h1&gt;Search results for "{{query}}":&lt;/h1&gt;
+&lt;h1&gt;Search results for &quot;{{query}}&quot;:&lt;/h1&gt;
 {% for post in results %}
-    {% include 'post.html' %}
+    {% include &#39;post.html&#39; %}
 {% endfor %}
-{% endblock %}</pre>
+{% endblock %}
+</pre></div>
 </div>
 </div>
 <div class="section" id="id13">
@@ -295,7 +318,7 @@
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
