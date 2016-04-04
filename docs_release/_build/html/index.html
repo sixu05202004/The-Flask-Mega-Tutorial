@@ -1,0 +1,338 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>欢迎进入Flask大型教程项目！ &mdash; flask mega-tutorial 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="flask mega-tutorial 1.0 documentation" href="#" />
+    <link rel="next" title="Hello World" href="helloworld.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="helloworld.html" title="Hello World"
+             accesskey="N">next</a> |</li>
+        <li><a href="#">flask mega-tutorial 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Next topic</h4>
+  <p class="topless"><a href="helloworld.html"
+                        title="next chapter">Hello World</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- 首页侧边 -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:200px;height:200px"
+     data-ad-client="ca-pub-3421553373953599"
+     data-ad-slot="3551838308"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="flask">
+<h1>欢迎进入Flask大型教程项目！<a class="headerlink" href="#flask" title="Permalink to this headline">¶</a></h1>
+<p>翻译者注：本系列的原文名为：<a class="reference external" href="http://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world">The Flask Mega-Tutorial</a> ，作者是 <strong>Miguel Grinberg</strong> 。</p>
+<p>本系列是作者平时使用 Flask 微框架编写应用的经验之谈，这里是这一系列中所有已经发布的文章的索引。</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="helloworld.html">Hello World</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="helloworld.html#id1">作者背景</a></li>
+<li class="toctree-l2"><a class="reference internal" href="helloworld.html#id2">应用程序简介</a></li>
+<li class="toctree-l2"><a class="reference internal" href="helloworld.html#id3">要求</a></li>
+<li class="toctree-l2"><a class="reference internal" href="helloworld.html#flask">安装 Flask</a></li>
+<li class="toctree-l2"><a class="reference internal" href="helloworld.html#flask-hello-world">在 Flask 中的 &#8220;Hello, World&#8221;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="helloworld.html#id5">下一步？</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="templates.html">模板</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="templates.html#id2">回顾</a></li>
+<li class="toctree-l2"><a class="reference internal" href="templates.html#id3">为什么我们需要模板</a></li>
+<li class="toctree-l2"><a class="reference internal" href="templates.html#id4">模板从天而降</a></li>
+<li class="toctree-l2"><a class="reference internal" href="templates.html#id5">模板中控制语句</a></li>
+<li class="toctree-l2"><a class="reference internal" href="templates.html#id6">模板中的循环语句</a></li>
+<li class="toctree-l2"><a class="reference internal" href="templates.html#id7">模板继承</a></li>
+<li class="toctree-l2"><a class="reference internal" href="templates.html#id8">结束语</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="webforms.html">web 表单</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="webforms.html#id1">回顾</a></li>
+<li class="toctree-l2"><a class="reference internal" href="webforms.html#id2">配置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="webforms.html#id4">用户登录表单</a></li>
+<li class="toctree-l2"><a class="reference internal" href="webforms.html#id5">表单模板</a></li>
+<li class="toctree-l2"><a class="reference internal" href="webforms.html#id6">表单视图</a></li>
+<li class="toctree-l2"><a class="reference internal" href="webforms.html#id7">接收表单数据</a></li>
+<li class="toctree-l2"><a class="reference internal" href="webforms.html#id8">加强字段验证</a></li>
+<li class="toctree-l2"><a class="reference internal" href="webforms.html#openids">处理 OpenIDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="webforms.html#id9">结束语</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="database.html">数据库</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="database.html#id2">回顾</a></li>
+<li class="toctree-l2"><a class="reference internal" href="database.html#python">从命令行中运行 Python 脚本</a></li>
+<li class="toctree-l2"><a class="reference internal" href="database.html#flask">Flask 中的数据库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="database.html#id4">迁移</a></li>
+<li class="toctree-l2"><a class="reference internal" href="database.html#id5">配置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="database.html#id6">数据库模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="database.html#id7">创建数据库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="database.html#id8">第一次迁移</a></li>
+<li class="toctree-l2"><a class="reference internal" href="database.html#id9">数据库升级和回退</a></li>
+<li class="toctree-l2"><a class="reference internal" href="database.html#id10">数据库关系</a></li>
+<li class="toctree-l2"><a class="reference internal" href="database.html#id11">编程时间</a></li>
+<li class="toctree-l2"><a class="reference internal" href="database.html#id13">结束语</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="userlogin.html">用户登录</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="userlogin.html#id2">回顾</a></li>
+<li class="toctree-l2"><a class="reference internal" href="userlogin.html#id3">配置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="userlogin.html#id4">重构用户模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="userlogin.html#user-loader">user_loader 回调</a></li>
+<li class="toctree-l2"><a class="reference internal" href="userlogin.html#id5">登录视图函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="userlogin.html#flask-openid">Flask-OpenID 登录回调</a></li>
+<li class="toctree-l2"><a class="reference internal" href="userlogin.html#g-user">全局变量 <em>g.user</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="userlogin.html#id7">首页视图</a></li>
+<li class="toctree-l2"><a class="reference internal" href="userlogin.html#id8">登出</a></li>
+<li class="toctree-l2"><a class="reference internal" href="userlogin.html#id9">结束语</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="profile.html">用户信息页和头像</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="profile.html#id2">回顾</a></li>
+<li class="toctree-l2"><a class="reference internal" href="profile.html#id3">用户信息页</a></li>
+<li class="toctree-l2"><a class="reference internal" href="profile.html#id4">头像</a></li>
+<li class="toctree-l2"><a class="reference internal" href="profile.html#id6">在子模板中重用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="profile.html#id7">更多有趣的信息</a></li>
+<li class="toctree-l2"><a class="reference internal" href="profile.html#id8">编辑用户信息</a></li>
+<li class="toctree-l2"><a class="reference internal" href="profile.html#id9">结束语</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">单元测试</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#id2">回顾</a></li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#bug">发现 bug</a></li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#flask">Flask 调试</a></li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#http">定制 HTTP 错误处理器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#id4">通过电子邮件发送错误</a></li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#id5">记录到文件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#id6">修复 bug</a></li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#id7">单元测试框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#id8">结束语</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="followers.html">关注者，联系人和好友</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="followers.html#id2">回顾</a></li>
+<li class="toctree-l2"><a class="reference internal" href="followers.html#id3">‘关注者’ 特色的设计</a></li>
+<li class="toctree-l2"><a class="reference internal" href="followers.html#id4">数据库关系</a></li>
+<li class="toctree-l2"><a class="reference internal" href="followers.html#id8">表示关注者和被关注者</a></li>
+<li class="toctree-l2"><a class="reference internal" href="followers.html#id9">数据模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="followers.html#id10">添加和移除 ‘关注者’</a></li>
+<li class="toctree-l2"><a class="reference internal" href="followers.html#id11">测试</a></li>
+<li class="toctree-l2"><a class="reference internal" href="followers.html#id12">数据库查询</a></li>
+<li class="toctree-l2"><a class="reference internal" href="followers.html#id16">可能的改进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="followers.html#id17">收尾</a></li>
+<li class="toctree-l2"><a class="reference internal" href="followers.html#id20">结束语</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pagination.html">分页</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pagination.html#id2">回顾</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pagination.html#id3">提交博客文章</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pagination.html#blog">显示 blog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pagination.html#id4">分页</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pagination.html#id5">页面导航</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pagination.html#post">实现 Post 子模板</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pagination.html#id6">用户信息页</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pagination.html#id7">结束语</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="textsearch.html">全文搜索</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="textsearch.html#id2">回顾</a></li>
+<li class="toctree-l2"><a class="reference internal" href="textsearch.html#id3">全文搜索引擎的简介</a></li>
+<li class="toctree-l2"><a class="reference internal" href="textsearch.html#python-3">Python 3 兼容性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="textsearch.html#id4">配置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="textsearch.html#id5">模型修改</a></li>
+<li class="toctree-l2"><a class="reference internal" href="textsearch.html#id6">搜索</a></li>
+<li class="toctree-l2"><a class="reference internal" href="textsearch.html#id8">整合全文搜索到应用程序</a></li>
+<li class="toctree-l2"><a class="reference internal" href="textsearch.html#id12">搜索结果页</a></li>
+<li class="toctree-l2"><a class="reference internal" href="textsearch.html#id13">结束语</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="email.html">邮件支持</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="email.html#id2">回顾</a></li>
+<li class="toctree-l2"><a class="reference internal" href="email.html#flask-mail">安装 Flask-Mail</a></li>
+<li class="toctree-l2"><a class="reference internal" href="email.html#id3">配置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="email.html#id4">让我们发送邮件！</a></li>
+<li class="toctree-l2"><a class="reference internal" href="email.html#id5">简单的邮件框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="email.html#id6">关注提醒</a></li>
+<li class="toctree-l2"><a class="reference internal" href="email.html#id7">这就足够了吗？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="email.html#python">在 Python 中异步调用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="email.html#id9">结束语</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="facelift.html">换装</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="facelift.html#id2">简介</a></li>
+<li class="toctree-l2"><a class="reference internal" href="facelift.html#id3">我们该怎么做？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="facelift.html#bootstrap">Bootstrap 简介</a></li>
+<li class="toctree-l2"><a class="reference internal" href="facelift.html#bootstrap-microblog">用 Bootstrap 装点 <em>microblog</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="facelift.html#id15">结束语</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dateandtime.html">日期和时间</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dateandtime.html#id2">善意提醒</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dateandtime.html#id3">时间戳的问题</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dateandtime.html#id4">用户特定的时间戳</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dateandtime.html#moment-js">介绍 moment.js</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dateandtime.html#id7">整合 moment.js</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dateandtime.html#id8">结束语</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="i18n.html">国际化和本地化</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="i18n.html#id2">配置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="i18n.html#id3">标记翻译文本</a></li>
+<li class="toctree-l2"><a class="reference internal" href="i18n.html#id4">提取文本翻译</a></li>
+<li class="toctree-l2"><a class="reference internal" href="i18n.html#id6">生成一个语言目录</a></li>
+<li class="toctree-l2"><a class="reference internal" href="i18n.html#id7">更新翻译</a></li>
+<li class="toctree-l2"><a class="reference internal" href="i18n.html#moment-js">翻译 <em>moment.js</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="i18n.html#id9">惰性求值</a></li>
+<li class="toctree-l2"><a class="reference internal" href="i18n.html#id10">快捷方式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="i18n.html#id11">结束语</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ajax.html">Ajax</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ajax.html#vs">客户端 VS 服务器端</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ajax.html#id4">翻译用户生成内容</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ajax.html#blog">确定 blog 语言</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ajax.html#id5">显示 “翻译” 链接</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ajax.html#id6">翻译服务</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ajax.html#id7">使用 Microsoft Translator 服务</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ajax.html#id11">让我们翻译一些文本</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ajax.html#id12">服务器上的 Ajax</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ajax.html#id13">客户端上的 Ajax</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ajax.html#id15">结束语</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="debugging.html">调试，测试以及优化</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="debugging.html#bug">Bug</a></li>
+<li class="toctree-l2"><a class="reference internal" href="debugging.html#id2">现场调试问题</a></li>
+<li class="toctree-l2"><a class="reference internal" href="debugging.html#python">使用 Python 调试器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="debugging.html#id4">回归测试</a></li>
+<li class="toctree-l2"><a class="reference internal" href="debugging.html#id5">修复</a></li>
+<li class="toctree-l2"><a class="reference internal" href="debugging.html#id7">测试覆盖率</a></li>
+<li class="toctree-l2"><a class="reference internal" href="debugging.html#id8">性能调优</a></li>
+<li class="toctree-l2"><a class="reference internal" href="debugging.html#id9">数据库性能</a></li>
+<li class="toctree-l2"><a class="reference internal" href="debugging.html#id10">结束语</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="helloworld.html" title="Hello World"
+             >next</a> |</li>
+        <li><a href="#">flask mega-tutorial 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+<div class="footer">
+    <p>
+ © Copyright Translate by by D.D 2013. Created using
+<a href="http://sphinx.pocoo.org/">Sphinx</a>
+1.2. 
+</p>
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?9adc7a1c86496c8e2bc61c4f8fc92d30";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+<p><a href="http://www.miitbeian.gov.cn/">京ICP备14002119号-1</a></p>
+<hr/>
+
+
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- pythondoc 首页下方 -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:970px;height:90px"
+     data-ad-client="ca-pub-3421553373953599"
+     data-ad-slot="6985889234"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+
+</div>
+
+
+
+
+  </body>
+</html>

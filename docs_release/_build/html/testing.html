@@ -1,0 +1,465 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>单元测试 &mdash; flask mega-tutorial 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="flask mega-tutorial 1.0 documentation" href="index.html" />
+    <link rel="next" title="关注者，联系人和好友" href="followers.html" />
+    <link rel="prev" title="用户信息页和头像" href="profile.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="followers.html" title="关注者，联系人和好友"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="profile.html" title="用户信息页和头像"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">flask mega-tutorial 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">单元测试</a><ul>
+<li><a class="reference internal" href="#id2">回顾</a></li>
+<li><a class="reference internal" href="#bug">发现 bug</a></li>
+<li><a class="reference internal" href="#flask">Flask 调试</a></li>
+<li><a class="reference internal" href="#http">定制 HTTP 错误处理器</a></li>
+<li><a class="reference internal" href="#id4">通过电子邮件发送错误</a></li>
+<li><a class="reference internal" href="#id5">记录到文件</a></li>
+<li><a class="reference internal" href="#id6">修复 bug</a></li>
+<li><a class="reference internal" href="#id7">单元测试框架</a></li>
+<li><a class="reference internal" href="#id8">结束语</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="profile.html"
+                        title="previous chapter">用户信息页和头像</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="followers.html"
+                        title="next chapter">关注者，联系人和好友</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/testing.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- 首页侧边 -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:200px;height:200px"
+     data-ad-client="ca-pub-3421553373953599"
+     data-ad-slot="3551838308"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="testing">
+<span id="id1"></span><h1>单元测试<a class="headerlink" href="#testing" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id2">
+<h2>回顾<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>在上一章中我们集中在一步一步为我们的应用程序的添加功能。到目前为止，我们有一个数据库功能的应用程序，它能够注册用户，允许用户登录以及登出，查看以及编辑他们的用户信息。</p>
+<p>在本章中，我们不打算添加新的特性。相反，我们将要寻找方式来保证我们编写的代码的健壮性，我们也创建了一个测试框架用来帮助我们避免将来的失败和回归测试。</p>
+</div>
+<div class="section" id="bug">
+<h2>发现 bug<a class="headerlink" href="#bug" title="Permalink to this headline">¶</a></h2>
+<p>我记得在上一章结尾的时候，我特意提出了应用程序存在 bug。让我来描述下 bug 是什么，接着看看当不按预期工作的时候(bug 出现的时候)，我们的应用程序会发生什么。</p>
+<p>应用程序中的 bug 就是没有有效的让我们用户的昵称保持唯一性。应用程序自动选择用户的初始昵称。如果 OpenID 提供商提供一个用户的昵称的话我们会使用这个昵称。如果没有提供话，应用程序会选择邮箱的用户名部分作为昵称。如果两个用户有着同样的昵称的话，第二个用户是不能够被注册的。更加糟糕的是，在编辑用户信息的时候，我们允许用户修改昵称，但是没有去限制昵称名称冲突。</p>
+<p>我们将会在分析 bug 发生时候应用程序的的行为后修正这些问题。</p>
+</div>
+<div class="section" id="flask">
+<h2>Flask 调试<a class="headerlink" href="#flask" title="Permalink to this headline">¶</a></h2>
+<p>让我们来看看当我们触发一个 bug 的时候会发生些什么。</p>
+<p>先让我们创建一个新的数据库。在 Linux:</p>
+<div class="highlight-python"><div class="highlight"><pre>rm app.db
+./db_create.py
+</pre></div>
+</div>
+<p>或者在 Windows 上:</p>
+<div class="highlight-python"><div class="highlight"><pre>del app.db
+flask/Scripts/python db_create.py
+</pre></div>
+</div>
+<p>为了重现这个 bug，你需要两个 OpenID 账号，理想地是不同的提供商，从而使得它们的 cookies 不会太复杂。遵照这些步骤创建一个重复的昵称：</p>
+<blockquote>
+<div><ul class="simple">
+<li>登录你的第一个账号</li>
+<li>进入到编辑用户信息页并且把昵称改为&#8217;dup&#8217;</li>
+<li>登出</li>
+<li>登录第二个账号</li>
+<li>进入到编辑用户信息页并且把昵称改为&#8217;dup&#8217;</li>
+</ul>
+</div></blockquote>
+<p>糟糕！我们已经得到了来自 SQLAlchem​​y 的一个异常。错误的信息写着:</p>
+<div class="highlight-python"><div class="highlight"><pre>sqlalchemy.exc.IntegrityError
+IntegrityError: (IntegrityError) column nickname is not unique u&#39;UPDATE user SET nickname=?, about_me=? WHERE user.id = ?&#39; (u&#39;dup&#39;, u&#39;&#39;, 2)
+</pre></div>
+</div>
+<p>紧跟着错误后面的是错误的 <a class="reference external" href="http://en.wikipedia.org/wiki/Stack_trace">堆栈跟踪</a>，这是一个相当不错的东西，在这里你可以去任何一帧并且检查源代码或者甚至在浏览器正确地上计算表达式。</p>
+<p>错误是相当地明显的，我们试着在数据库中插入重复的昵称。数据库模型对 <em>nickname</em> 字段有着 <em>unique</em> 限制，因此这不是一个合法的操作。</p>
+<p>除了实际的错误，我们面前还有另外一个问题。如果一个用户不幸在我们的应用程序中遇到一个错误(这个或者其它的引起的异常)他或者她将会得到错误消息和堆栈跟踪，然而他们只是用户不是开发者。尽管这其实是一个很梦幻般的功能当我们开发的时候，但是这也是我们绝对不希望我们的用户能够看到的东西。</p>
+<p>这段时间内我们的应用程序以调试模式运行着。调试模式是在应用程序运行的时候通过在 <em>run</em> 方法中传入参数 <em>debug = True</em>。</p>
+<p>当我们在开发的应用程序的时候这个功能很方便，但是我们必须在生产环境上确保这个功能被禁用。让我们创建另外一个调试模式禁用的启动脚本(文件 <em>runp.py</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c">#!flask/bin/python</span>
+<span class="kn">from</span> <span class="nn">app</span> <span class="kn">import</span> <span class="n">app</span>
+<span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">debug</span> <span class="o">=</span> <span class="bp">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>现在重启应用程序:</p>
+<div class="highlight-python"><div class="highlight"><pre>./runp.py
+</pre></div>
+</div>
+<p>接着重新尝试修改第二个账号的昵称为 ‘dup’。</p>
+<p>这个时候我们不会得到一个前面出现的错误。相反，我们会得到一个 HTTP 错误 500，这是服务器内部错误。尽管还是返回一个错误，但至少不暴露我们的应用程序的任何细节给陌生人。当调试关闭，500 错误页是由 Flask 产生的并且发生了未处理的异常。</p>
+<p>虽然情况有些好转，我们现在有两个新的问题。第一个是外观上的：默认的 500 错误页很丑陋。第二个小问题相当重要。我们可能不会知道什么时候用户会在我们的程序中会遇到一个失败因为现在调试被禁用。幸好有两种简单的方式解决这两个问题。</p>
+</div>
+<div class="section" id="http">
+<h2>定制 HTTP 错误处理器<a class="headerlink" href="#http" title="Permalink to this headline">¶</a></h2>
+<p>Flask 为应用程序提供了一种安装自己的错误页的机制。作为例子，让我们自定义 HTTP 404 以及 500 错误页，这是最常见的两个。定义其它错误的方式是一样的。</p>
+<p>为了声明一个定制的错误处理器，需要使用装饰器 <em>errorhandler</em> (文件 <em>app/views.py</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@app.errorhandler</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">internal_error</span><span class="p">(</span><span class="n">error</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s">&#39;404.html&#39;</span><span class="p">),</span> <span class="mi">404</span>
+
+<span class="nd">@app.errorhandler</span><span class="p">(</span><span class="mi">500</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">internal_error</span><span class="p">(</span><span class="n">error</span><span class="p">):</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s">&#39;500.html&#39;</span><span class="p">),</span> <span class="mi">500</span>
+</pre></div>
+</div>
+<p>上面的不需要多做解释，代码很清楚，唯一值得感兴趣就是在错误 500 处理器中的 <em>rollback</em> 声明。这是很有必要的因为这个函数是被作为异常的结果被调用。如果异常是被一个数据库错误触发，数据库的会话会处于一个不正常的状态，因此我们必须把会话回滚到正常工作状态在渲染 500 错误页模板之前。</p>
+<p>这是 404 错误的模板:</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;!-- extend base layout --&gt;
+{% extends &quot;base.html&quot; %}
+
+{% block content %}
+&lt;h1&gt;File Not Found&lt;/h1&gt;
+&lt;p&gt;&lt;a href=&quot;{{url_for(&#39;index&#39;)}}&quot;&gt;Back&lt;/a&gt;&lt;/p&gt;
+{% endblock %}
+</pre></div>
+</div>
+<p>这是 500 错误的一个模板:</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;!-- extend base layout --&gt;
+{% extends &quot;base.html&quot; %}
+
+{% block content %}
+&lt;h1&gt;An unexpected error has occurred&lt;/h1&gt;
+&lt;p&gt;The administrator has been notified. Sorry for the inconvenience!&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;{{url_for(&#39;index&#39;)}}&quot;&gt;Back&lt;/a&gt;&lt;/p&gt;
+{% endblock %}
+</pre></div>
+</div>
+<p>注意的是在上面两个模板中我们继续使用我们 <em>base.html</em> 布局，这是为了让错误页面和应用程序的外观是统一的。</p>
+</div>
+<div class="section" id="id4">
+<h2>通过电子邮件发送错误<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<p>为了解决我们第二个问题，我们将会配置两种应用程序错误报告机制。第一个就是当错误发生的时候发送电子邮件。</p>
+<p>在开始之前我们先在应用程序中配置邮件服务器以及管理员邮箱地址(文件 <em>config.py</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># mail server settings</span>
+<span class="n">MAIL_SERVER</span> <span class="o">=</span> <span class="s">&#39;localhost&#39;</span>
+<span class="n">MAIL_PORT</span> <span class="o">=</span> <span class="mi">25</span>
+<span class="n">MAIL_USERNAME</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="n">MAIL_PASSWORD</span> <span class="o">=</span> <span class="bp">None</span>
+
+<span class="c"># administrator list</span>
+<span class="n">ADMINS</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;you@example.com&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Flask 使用 Python <em>logging</em> 模块，因此当发生异常的时候发送邮件是十分简单(文件 <em>app/__init__.py</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">config</span> <span class="kn">import</span> <span class="n">basedir</span><span class="p">,</span> <span class="n">ADMINS</span><span class="p">,</span> <span class="n">MAIL_SERVER</span><span class="p">,</span> <span class="n">MAIL_PORT</span><span class="p">,</span> <span class="n">MAIL_USERNAME</span><span class="p">,</span> <span class="n">MAIL_PASSWORD</span>
+
+<span class="k">if</span> <span class="ow">not</span> <span class="n">app</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">logging</span>
+    <span class="kn">from</span> <span class="nn">logging.handlers</span> <span class="kn">import</span> <span class="n">SMTPHandler</span>
+    <span class="n">credentials</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="n">MAIL_USERNAME</span> <span class="ow">or</span> <span class="n">MAIL_PASSWORD</span><span class="p">:</span>
+        <span class="n">credentials</span> <span class="o">=</span> <span class="p">(</span><span class="n">MAIL_USERNAME</span><span class="p">,</span> <span class="n">MAIL_PASSWORD</span><span class="p">)</span>
+    <span class="n">mail_handler</span> <span class="o">=</span> <span class="n">SMTPHandler</span><span class="p">((</span><span class="n">MAIL_SERVER</span><span class="p">,</span> <span class="n">MAIL_PORT</span><span class="p">),</span> <span class="s">&#39;no-reply@&#39;</span> <span class="o">+</span> <span class="n">MAIL_SERVER</span><span class="p">,</span> <span class="n">ADMINS</span><span class="p">,</span> <span class="s">&#39;microblog failure&#39;</span><span class="p">,</span> <span class="n">credentials</span><span class="p">)</span>
+    <span class="n">mail_handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">mail_handler</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>在一个没有邮件服务器的开发机器上测试上述代码是相当容易的，多亏了 Python 的 SMTP 调试服务器。仅需要打开一个新的命令行窗口(Windows 用户打开命令提示符)接着运行如下内容打开一个伪造的邮箱服务器:</p>
+<div class="highlight-python"><div class="highlight"><pre>python -m smtpd -n -c DebuggingServer localhost:25
+</pre></div>
+</div>
+<p>当邮箱服务器运行后，应用程序发送的邮件将会被接收到并且显示在命令行窗口上。</p>
+</div>
+<div class="section" id="id5">
+<h2>记录到文件<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<p>通过邮件接收错误是不错的，但是有时候这并不够。有些失败并不是结束于异常而且也不是主要问题，然而我们可能想要在日志中追踪它们以便做一些调试。</p>
+<p>出于这个原因，我们还要为应用程序保持一个日志文件。</p>
+<p>启用日志记录类似于电子邮件发送错误(文件 <em>app/__init__.py</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">if</span> <span class="ow">not</span> <span class="n">app</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">logging</span>
+    <span class="kn">from</span> <span class="nn">logging.handlers</span> <span class="kn">import</span> <span class="n">RotatingFileHandler</span>
+    <span class="n">file_handler</span> <span class="o">=</span> <span class="n">RotatingFileHandler</span><span class="p">(</span><span class="s">&#39;tmp/microblog.log&#39;</span><span class="p">,</span> <span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="mi">1</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="n">file_handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%(asctime)s</span><span class="s"> </span><span class="si">%(levelname)s</span><span class="s">: </span><span class="si">%(message)s</span><span class="s"> [in </span><span class="si">%(pathname)s</span><span class="s">:</span><span class="si">%(lineno)d</span><span class="s">]&#39;</span><span class="p">))</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+    <span class="n">file_handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">file_handler</span><span class="p">)</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;microblog startup&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>日志文件将会在 <em>tmp</em> 目录，名称为 <em>microblog.log</em>。我们使用了 <em>RotatingFileHandler</em> 以至于生成的日志的大小是有限制的。在这个例子中，我们的日志文件的大小限制在 1 兆，我们将保留最后 10 个日志文件作为备份。</p>
+<p><em>logging.Formatter</em> 类能够定制化日志信息的格式。由于这些信息记录到一个文件中，我们希望它们提供尽可能多的信息，所以我们写一个时间戳，日志记录级别和消息起源于以及日志消息和堆栈跟踪的文件和行号。</p>
+<p>为了使得日志更有作用，我们降低了应用程序日志以及文件日志处理器的级别，这样给我们机会写入有用的信息到日志并不是必须错误发生的时候。从这以后，每次你以非调试模式启动有用程序，日志将会记录事件。</p>
+<p>虽然我们不会在这个时候有很多记录器的需求，调试的一个处于联机状态并在使用中的网页服务器是非常困难的。消息记录到一个文件，是一个非常有用的工具，在诊断和定位问题，所以我们现在都准备好，我们需要使用此功能。</p>
+</div>
+<div class="section" id="id6">
+<h2>修复 bug<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<p>让我们解决 <em>nickname</em> 重复的问题。</p>
+<p>像之前讨论的，目前存在两个地方没有处理重复。第一个就是在 <em>after_login</em> 函数。当一个用户成功地登录进系统这个函数就会被调用，这里我们需要创建一个新的 User 实例。这里就是受影响的代码块(文件 <em>app/views.py</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">if</span> <span class="n">user</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="n">nickname</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">nickname</span>
+    <span class="k">if</span> <span class="n">nickname</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">nickname</span> <span class="o">==</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
+        <span class="n">nickname</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">email</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;@&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">nickname</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">make_unique_nickname</span><span class="p">(</span><span class="n">nickname</span><span class="p">)</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">nickname</span> <span class="o">=</span> <span class="n">nickname</span><span class="p">,</span> <span class="n">email</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">email</span><span class="p">)</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>解决问题的方式就是让 User 类为我们选择一个唯一的名字。这就是新的 <em>make_unique_nickname</em> 方法所做的(文件 <em>app/models.py</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre>class User(db.Model):
+# ...
+@staticmethod
+def make_unique_nickname(nickname):
+    if User.query.filter_by(nickname = nickname).first() == None:
+        return nickname
+    version = 2
+    while True:
+        new_nickname = nickname + str(version)
+        if User.query.filter_by(nickname = new_nickname).first() == None:
+            break
+        version += 1
+    return new_nickname
+# ...
+</pre></div>
+</div>
+<p>这种方法简单地增加一个计数器为请求的昵称，直到找到一个唯一的名称。例如，如果用户名 “miguel”已经存在，这个方法将会建议使用 “miguel2”，如果这个还是存在，将会建议使用 &#8220;miguel3&#8221;，依次下去直至找到唯一的用户名。需要注意的是我们把这个方法作为一个静态方法，因为这种操作并不适用于任何特定的类的实例。</p>
+<p>第二个存在重复昵称问题的地方就是编辑用户信息的视图函数。这个稍微有些难处理，因为这是用户自己选择的昵称。正确的做法就是不接受一个重复的昵称，让用户重新输入一个。我们将通过添加一个昵称表单字段定制化的验证来解决这个问题。如果用户输入一个不合法的昵称，字段的验证将会失败，用户将会返回到编辑用户信息页。为了添加验证，我们只需覆盖表单的 <em>validate</em> 方法(文件 <em>app/forms.py</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">app.models</span> <span class="kn">import</span> <span class="n">User</span>
+
+<span class="k">class</span> <span class="nc">EditForm</span><span class="p">(</span><span class="n">Form</span><span class="p">):</span>
+    <span class="n">nickname</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="s">&#39;nickname&#39;</span><span class="p">,</span> <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">DataRequired</span><span class="p">()])</span>
+    <span class="n">about_me</span> <span class="o">=</span> <span class="n">TextAreaField</span><span class="p">(</span><span class="s">&#39;about_me&#39;</span><span class="p">,</span> <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">Length</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">140</span><span class="p">)])</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">original_nickname</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">Form</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">original_nickname</span> <span class="o">=</span> <span class="n">original_nickname</span>
+
+    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">Form</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">False</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nickname</span><span class="o">.</span><span class="n">data</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_nickname</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">True</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">nickname</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nickname</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">user</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nickname</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;This nickname is already in use. Please choose another one.&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">False</span>
+        <span class="k">return</span> <span class="bp">True</span>
+</pre></div>
+</div>
+<p>表单的初始化新增了一个参数 <em>original_nickname</em>。<em>validate</em> 方法使用它来决定昵称什么时候更改过。如果没有发生更改就接受它。如果已经发生更改的话，确保昵称在数据库是唯一的。</p>
+<p>在视图函数中传入这个参数:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/edit&#39;</span><span class="p">,</span> <span class="n">methods</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;GET&#39;</span><span class="p">,</span> <span class="s">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">edit</span><span class="p">():</span>
+    <span class="n">form</span> <span class="o">=</span> <span class="n">EditForm</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">nickname</span><span class="p">)</span>
+    <span class="c"># ...</span>
+</pre></div>
+</div>
+<p>为了完成这个修改，我们必须在表单模板中使得字段错误信息会显示(文件 <em>app/templates/edit.html</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;td&gt;Your nickname:&lt;/td&gt;
+&lt;td&gt;
+    {{form.nickname(size = 24)}}
+    {% for error in form.errors.nickname %}
+    &lt;br&gt;&lt;span style=&quot;color: red;&quot;&gt;[{{error}}]&lt;/span&gt;
+    {% endfor %}
+&lt;/td&gt;
+</pre></div>
+</div>
+<p>现在问题是修复了，重复将会被禁止。。。除非是都没有。我们仍然存在潜在的问题，当两个或者更多的线程或者处理同时访问数据库的时候，但是这将会是以后的话题。</p>
+</div>
+<div class="section" id="id7">
+<h2>单元测试框架<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<p>在结束本章的话题之前，让我们来讨论一点自动化测试。</p>
+<p>随着应用程序的规模变得越大就越难保证代码的修改不会影响到现有的功能。</p>
+<p>传统的方式&#8211;回归测试是一个很好的主意。你编写测试检验应用程序所有不同的功能。每一个测试集中在一个关注点上验证结果是不是期望的。定期执行测试确保应用程序按预期的工作。当测试覆盖很大的时候，通过运行测试你就有自信确保修改点和新增点不会影响应用程序。</p>
+<p>我们使用 Python 的 <em>unittest</em> 模块将会构建一个简单的测试框架(文件 <em>tests.py</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c">#!flask/bin/python</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+
+<span class="kn">from</span> <span class="nn">config</span> <span class="kn">import</span> <span class="n">basedir</span>
+<span class="kn">from</span> <span class="nn">app</span> <span class="kn">import</span> <span class="n">app</span><span class="p">,</span> <span class="n">db</span>
+<span class="kn">from</span> <span class="nn">app.models</span> <span class="kn">import</span> <span class="n">User</span>
+
+<span class="k">class</span> <span class="nc">TestCase</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;TESTING&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;WTF_CSRF_ENABLED&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;SQLALCHEMY_DATABASE_URI&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;sqlite:///&#39;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">basedir</span><span class="p">,</span> <span class="s">&#39;test.db&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">test_client</span><span class="p">()</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">create_all</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">tearDown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">drop_all</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">test_avatar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">nickname</span><span class="o">=</span><span class="s">&#39;john&#39;</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="s">&#39;john@example.com&#39;</span><span class="p">)</span>
+        <span class="n">avatar</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">avatar</span><span class="p">(</span><span class="mi">128</span><span class="p">)</span>
+        <span class="n">expected</span> <span class="o">=</span> <span class="s">&#39;http://www.gravatar.com/avatar/d4c74594d841139328695756648b6bd6&#39;</span>
+        <span class="k">assert</span> <span class="n">avatar</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">expected</span><span class="p">)]</span> <span class="o">==</span> <span class="n">expected</span>
+
+    <span class="k">def</span> <span class="nf">test_make_unique_nickname</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">nickname</span><span class="o">=</span><span class="s">&#39;john&#39;</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="s">&#39;john@example.com&#39;</span><span class="p">)</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="n">nickname</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">make_unique_nickname</span><span class="p">(</span><span class="s">&#39;john&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">nickname</span> <span class="o">!=</span> <span class="s">&#39;john&#39;</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">nickname</span><span class="o">=</span><span class="n">nickname</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="s">&#39;susan@example.com&#39;</span><span class="p">)</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="n">nickname2</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">make_unique_nickname</span><span class="p">(</span><span class="s">&#39;john&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">nickname2</span> <span class="o">!=</span> <span class="s">&#39;john&#39;</span>
+        <span class="k">assert</span> <span class="n">nickname2</span> <span class="o">!=</span> <span class="n">nickname</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>讨论 <em>unittest</em> 模块是在本文的范围之外的。<em>TestCase</em> 类中含有我们的测试。<em>setUp</em> 和 <em>tearDown</em> 方法是特别的，它们分别在测试之前以及测试之后运行。</p>
+<p>在上面代码中 <em>setUp</em> 和 <em>tearDown</em> 方法十分普通。在 <em>setUp</em> 中做了一些配置，在 <em>tearDown</em> 中重置数据库内容。</p>
+<p>测试实现成了方法。一个测试支持运行应用程序的多个函数，并且有已知的结果以及应该断言结果是否不同于预期的。</p>
+<p>目前为止在测试框架中有两个测试。第一个就是验证 Gravatar 的头像 URL生成是否正确。注意测试中期待的结果是硬编码，验证 <em>User</em> 类的返回的头像 URL。</p>
+<p>第二个就是我们前面编写的 <em>make_unique_nickname</em> 方法，同样是在 <em>User</em> 类中。</p>
+<p>为了运行测试套件你只要运行 <em>tests.py</em> 脚本:</p>
+<div class="highlight-python"><div class="highlight"><pre>python tests.py
+</pre></div>
+</div>
+<p>如果没有什么错误的话，你将会在控制台中得到测试报告。</p>
+</div>
+<div class="section" id="id8">
+<h2>结束语<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<p>如果你想要节省时间的话，你可以下载 <a class="reference external" href="https://github.com/miguelgrinberg/microblog/archive/v0.7.zip">microblog-0.7.zip</a>。</p>
+<p>我希望能在下一章继续见到各位！</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="followers.html" title="关注者，联系人和好友"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="profile.html" title="用户信息页和头像"
+             >previous</a> |</li>
+        <li><a href="index.html">flask mega-tutorial 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+<div class="footer">
+    <p>
+ © Copyright Translate by by D.D 2013. Created using
+<a href="http://sphinx.pocoo.org/">Sphinx</a>
+1.2. 
+</p>
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?9adc7a1c86496c8e2bc61c4f8fc92d30";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+<p><a href="http://www.miitbeian.gov.cn/">京ICP备14002119号-1</a></p>
+<hr/>
+
+
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- pythondoc 首页下方 -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:970px;height:90px"
+     data-ad-client="ca-pub-3421553373953599"
+     data-ad-slot="6985889234"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+
+</div>
+
+
+
+
+  </body>
+</html>
