@@ -142,7 +142,7 @@ Windows 用户们在安装 virtualenv 上有些麻烦，因此如果你想省事
 	@app.route('/')
 	@app.route('/index')
 	def index():
-    	return "Hello, World!"
+	    return "Hello, World!"
 
 其实这个视图是非常简单，它只是返回一个字符串，在客户端的网页浏览器上显示。两个 *route* 装饰器创建了从网址 */* 以及 */index* 到这个函数的映射。
 

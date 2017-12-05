@@ -30,6 +30,21 @@
 Flask-OpenID 扩展需要一个存储文件的临时文件夹的路径。对此，我们提供了一个 *tmp* 文件夹的路径。
 
 
+Python 3 兼容性
+-----------------------
+
+遗憾地是 Flask-OpenID 1.2.1（目前正式版）在 Python 3 有些兼容性问题。可以通过如下的命令检查版本::
+
+    $ flask/bin/pip freeze
+
+如果使用的版本高于 1.2.1 的话，就不存在兼容性问题。如果你正在使用 1.2.1 的话，必须从 GitHub 上安装开发版本::
+
+    $ flask/bin/pip uninstall flask-openid
+    $ flask/bin/pip install git+git://github.com/mitsuhiko/flask-openid.git
+
+注意需要先安装了 *git* 。
+
+
 重构用户模型
 -------------------
 
@@ -38,17 +53,20 @@ Flask-Login 扩展需要在我们的 *User* 类中实现一些特定的方法。
 下面就是我们为  Flask-Login 实现的 *User* 类(文件 *app/models.py*)::
 
     class User(db.Model):
-        id = db.Column(db.Integer, primary_key = True)
-        nickname = db.Column(db.String(64), unique = True)
-        email = db.Column(db.String(120), unique = True)
-        posts = db.relationship('Post', backref = 'author', lazy = 'dynamic')
+        id = db.Column(db.Integer, primary_key=True)
+        nickname = db.Column(db.String(64), index=True, unique=True)
+        email = db.Column(db.String(120), index=True, unique=True)
+        posts = db.relationship('Post', backref='author', lazy='dynamic')
 
+        @property
         def is_authenticated(self):
             return True
 
+        @property
         def is_active(self):
             return True
 
+        @property
         def is_anonymous(self):
             return False
 
@@ -61,11 +79,12 @@ Flask-Login 扩展需要在我们的 *User* 类中实现一些特定的方法。
         def __repr__(self):
             return '<User %r>' % (self.nickname)
 
+
 *is_authenticated* 方法有一个具有迷惑性的名称。一般而言，这个方法应该只返回 *True*，除非表示用户的对象因为某些原因不允许被认证。
 
 *is_active* 方法应该返回 *True*，除非是用户是无效的，比如因为他们的账号是被禁止。
 
-*is_anonymous* 方法应该返回 *True*，除非是伪造的用户不允许登录系统。
+*is_anonymous* 方法应该返回 *True*，如果是匿名的用户不允许登录系统。
 
 最后，*get_id* 方法应该返回一个用户唯一的标识符，以 unicode 格式。我们使用数据库生成的唯一的 id。需要注意地是在 Python 2 和 3 之间由于 unicode 处理的方式的不同我们提供了相应的方式。
 

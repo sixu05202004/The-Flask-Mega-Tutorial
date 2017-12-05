@@ -9,17 +9,18 @@
 
 如果你依照 :ref:`helloworld` 这一章的话，你应当有一个完全工作的简单的 web 应用程序，它有着如下的文件结构::
 
-	microblog\
-      	flask\
-        	<virtual environment files>
-      	app\
-        	static\
-        	templates\
-        	__init__.py
-        	views.py
-      	tmp\
-      	run.py
+	    microblog\
+	      flask\
+	        <virtual environment files>
+	      app\
+	        static\
+	        templates\
+	        __init__.py
+	        views.py
+	      tmp\
+	      run.py
 
+	      
 你可以执行 *run.py* 来运行应用程序，接着在你的网页浏览器上打开 *http://localhost:5000* 网址。
 
 在 Python 中生成 HTML 并不好玩，实际上是相当繁琐的，因为你必须自行做好 HTML 转义以保持应用程序的安全。由于这个原因，Flask 自动为你配置好 Jinja2 模版。我们将会在这一章中介绍一些模板基本概念以及基本用法。

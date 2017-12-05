@@ -153,15 +153,17 @@ SQLALCHEMY_MIGRATE_REPO 是文件夹，我们将会把 SQLAlchemy-migrate 数据
     from app import db
     from config import SQLALCHEMY_DATABASE_URI
     from config import SQLALCHEMY_MIGRATE_REPO
-    migration = SQLALCHEMY_MIGRATE_REPO + '/versions/%03d_migration.py' % (api.db_version(SQLALCHEMY_DATABASE_URI, SQLALCHEMY_MIGRATE_REPO) + 1)
+    v = api.db_version(SQLALCHEMY_DATABASE_URI, SQLALCHEMY_MIGRATE_REPO)
+    migration = SQLALCHEMY_MIGRATE_REPO + ('/versions/%03d_migration.py' % (v+1))
     tmp_module = imp.new_module('old_model')
     old_model = api.create_model(SQLALCHEMY_DATABASE_URI, SQLALCHEMY_MIGRATE_REPO)
-    exec old_model in tmp_module.__dict__
+    exec(old_model, tmp_module.__dict__)
     script = api.make_update_script_for_model(SQLALCHEMY_DATABASE_URI, SQLALCHEMY_MIGRATE_REPO, tmp_module.meta, db.metadata)
     open(migration, "wt").write(script)
     api.upgrade(SQLALCHEMY_DATABASE_URI, SQLALCHEMY_MIGRATE_REPO)
-    print 'New migration saved as ' + migration
-    print 'Current database version: ' + str(api.db_version(SQLALCHEMY_DATABASE_URI, SQLALCHEMY_MIGRATE_REPO))
+    v = api.db_version(SQLALCHEMY_DATABASE_URI, SQLALCHEMY_MIGRATE_REPO)
+    print('New migration saved as ' + migration)
+    print('Current database version: ' + str(v))
 
 脚本看起来很复杂，其实际上做的并不多。SQLAlchemy-migrate 迁移的方式就是比较数据库(在本例中从 *app.db* 中获取)与我们模型的结构(从文件 *app/models.py* 获取)。两者间的不同将会被记录成一个迁移脚本存放在迁移仓库中。迁移脚本知道如何去迁移或撤销它，所以它始终是可能用于升级或降级一个数据库。
 
@@ -195,7 +197,8 @@ SQLALCHEMY_MIGRATE_REPO 是文件夹，我们将会把 SQLAlchemy-migrate 数据
     from config import SQLALCHEMY_DATABASE_URI
     from config import SQLALCHEMY_MIGRATE_REPO
     api.upgrade(SQLALCHEMY_DATABASE_URI, SQLALCHEMY_MIGRATE_REPO)
-    print 'Current database version: ' + str(api.db_version(SQLALCHEMY_DATABASE_URI, SQLALCHEMY_MIGRATE_REPO))
+    v = api.db_version(SQLALCHEMY_DATABASE_URI, SQLALCHEMY_MIGRATE_REPO)
+    print('Current database version: ' + str(v))
 
 当你运行上述脚本的时候，数据库将会升级到最新版本。
 
@@ -207,7 +210,8 @@ SQLALCHEMY_MIGRATE_REPO 是文件夹，我们将会把 SQLAlchemy-migrate 数据
     from config import SQLALCHEMY_MIGRATE_REPO
     v = api.db_version(SQLALCHEMY_DATABASE_URI, SQLALCHEMY_MIGRATE_REPO)
     api.downgrade(SQLALCHEMY_DATABASE_URI, SQLALCHEMY_MIGRATE_REPO, v - 1)
-    print 'Current database version: ' + str(api.db_version(SQLALCHEMY_DATABASE_URI, SQLALCHEMY_MIGRATE_REPO))
+    v = api.db_version(SQLALCHEMY_DATABASE_URI, SQLALCHEMY_MIGRATE_REPO)
+    print('Current database version: ' + str(v))
 
 这个脚本会回退数据库一个版本。你可以运行多次来回退多个版本。
 
@@ -304,10 +308,10 @@ SQLALCHEMY_MIGRATE_REPO 是文件夹，我们将会把 SQLAlchemy-migrate 数据
 现在我们可以查询用户::
 
     >>> users = models.User.query.all()
-    >>> print users
+    >>> users
     [<User u'john'>, <User u'susan'>]
     >>> for u in users:
-    ...     print u.id,u.nickname
+    ...     print(u.id,u.nickname)
     ...
     1 john
     2 susan
@@ -318,7 +322,7 @@ SQLALCHEMY_MIGRATE_REPO 是文件夹，我们将会把 SQLAlchemy-migrate 数据
 这是另外一种查询。如果你知道用户的 *id* ，我们能够找到这个用户的数据像下面这样::
 
     >>> u = models.User.query.get(1)
-    >>> print u
+    >>> u
     <User u'john'>
     >>>
 
@@ -338,27 +342,27 @@ SQLALCHEMY_MIGRATE_REPO 是文件夹，我们将会把 SQLAlchemy-migrate 数据
 
     # get all posts from a user
     >>> u = models.User.query.get(1)
-    >>> print u
+    >>> u
     <User u'john'>
     >>> posts = u.posts.all()
-    >>> print posts
+    >>> posts
     [<Post u'my first post!'>]
 
     # obtain author of each post
     >>> for p in posts:
-    ...     print p.id,p.author.nickname,p.body
+    ...     print(p.id,p.author.nickname,p.body)
     ...
     1 john my first post!
 
     # a user that has no posts
     >>> u = models.User.query.get(2)
-    >>> print u
+    >>> u
     <User u'susan'>
-    >>> print u.posts.all()
+    >>> u.posts.all()
     []
 
     # get all users in reverse alphabetical order
-    >>> print models.User.query.order_by('nickname desc').all()
+    >>> models.User.query.order_by('nickname desc').all()
     [<User u'susan'>, <User u'john'>]
     >>>
 
