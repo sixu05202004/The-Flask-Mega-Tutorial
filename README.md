@@ -1,6 +1,1 @@
-The-Flask-Mega-Tutorial
-=======================
-
-	Flask 入门的教程，本系列是作者平时使用 Flask 微框架编写应用的经验之谈，这里是这一系列中所有已经发布的文章的索引。
-
-* docs 文件夹为原始版中文翻译；
+# The Flask Mega-Tutorial
