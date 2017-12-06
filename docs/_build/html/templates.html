@@ -1,34 +1,33 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>模板 &mdash; flask mega-tutorial 1.0 documentation</title>
-    
+    <title>模板 &#8212; flask mega-tutorial 1.1 documentation</title>
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.0',
+        VERSION:     '1.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="flask mega-tutorial 1.0 documentation" href="index.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="web 表单" href="webforms.html" />
     <link rel="prev" title="Hello World" href="helloworld.html" /> 
   </head>
   <body>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -40,10 +39,10 @@
         <li class="right" >
           <a href="helloworld.html" title="Hello World"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">flask mega-tutorial 1.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">flask mega-tutorial 1.1 documentation</a> &#187;</li> 
       </ul>
     </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
@@ -65,23 +64,22 @@
   <h4>Next topic</h4>
   <p class="topless"><a href="webforms.html"
                         title="next chapter">web 表单</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/templates.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/templates.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
 
-<div id="searchbox" style="display: none">
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
 
@@ -92,23 +90,23 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="templates">
 <span id="id1"></span><h1>模板<a class="headerlink" href="#templates" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id2">
 <h2>回顾<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
-<p>如果你依照 <a class="reference internal" href="helloworld.html#helloworld"><em>Hello World</em></a> 这一章的话，你应当有一个完全工作的简单的 web 应用程序，它有着如下的文件结构:</p>
-<div class="highlight-python"><div class="highlight"><pre>microblog\
-flask\
-        &lt;virtual environment files&gt;
-app\
-        static\
-        templates\
-        __init__.py
-        views.py
-tmp\
-run.py
+<p>如果你依照 <a class="reference internal" href="helloworld.html#helloworld"><span class="std std-ref">Hello World</span></a> 这一章的话，你应当有一个完全工作的简单的 web 应用程序，它有着如下的文件结构:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">microblog</span>\
+  <span class="n">flask</span>\
+    <span class="o">&lt;</span><span class="n">virtual</span> <span class="n">environment</span> <span class="n">files</span><span class="o">&gt;</span>
+  <span class="n">app</span>\
+    <span class="n">static</span>\
+    <span class="n">templates</span>\
+    <span class="fm">__init__</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">views</span><span class="o">.</span><span class="n">py</span>
+  <span class="n">tmp</span>\
+  <span class="n">run</span><span class="o">.</span><span class="n">py</span>
 </pre></div>
 </div>
 <p>你可以执行 <em>run.py</em> 来运行应用程序，接着在你的网页浏览器上打开 <em>http://localhost:5000</em> 网址。</p>
@@ -120,22 +118,22 @@ run.py
 <p>让我们来考虑下我们该如何扩充我们这个小的应用程序。</p>
 <p>我们希望我们的微博应用程序的主页上有一个欢迎登录用户的标题，这是这种类型的应用程序的一个“标配”。忽略本应用程序暂未有用户的事实，我会在后面的章节引入用户的概念。</p>
 <p>输出一个漂亮的大标题的一个容易的选择就是改变我们的视图功能，输出 HTML，也许像这个样子:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">app</span> <span class="kn">import</span> <span class="n">app</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">app</span> <span class="k">import</span> <span class="n">app</span>
 
-<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/&#39;</span><span class="p">)</span>
-<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/index&#39;</span><span class="p">)</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/index&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">index</span><span class="p">():</span>
-    <span class="n">user</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&#39;nickname&#39;</span><span class="p">:</span> <span class="s">&#39;Miguel&#39;</span> <span class="p">}</span> <span class="c"># fake user</span>
-    <span class="k">return</span> <span class="s">&#39;&#39;&#39;</span>
-<span class="s">&lt;html&gt;</span>
-<span class="s">  &lt;head&gt;</span>
-<span class="s">    &lt;title&gt;Home Page&lt;/title&gt;</span>
-<span class="s">  &lt;/head&gt;</span>
-<span class="s">  &lt;body&gt;</span>
-<span class="s">    &lt;h1&gt;Hello, &#39;&#39;&#39;</span> <span class="o">+</span> <span class="n">user</span><span class="p">[</span><span class="s">&#39;nickname&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;&#39;&#39;&lt;/h1&gt;</span>
-<span class="s">  &lt;/body&gt;</span>
-<span class="s">&lt;/html&gt;</span>
-<span class="s">&#39;&#39;&#39;</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;nickname&#39;</span><span class="p">:</span> <span class="s1">&#39;Miguel&#39;</span> <span class="p">}</span> <span class="c1"># fake user</span>
+    <span class="k">return</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">&lt;html&gt;</span>
+<span class="s1">  &lt;head&gt;</span>
+<span class="s1">    &lt;title&gt;Home Page&lt;/title&gt;</span>
+<span class="s1">  &lt;/head&gt;</span>
+<span class="s1">  &lt;body&gt;</span>
+<span class="s1">    &lt;h1&gt;Hello, &#39;&#39;&#39;</span> <span class="o">+</span> <span class="n">user</span><span class="p">[</span><span class="s1">&#39;nickname&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;&lt;/h1&gt;</span>
+<span class="s1">  &lt;/body&gt;</span>
+<span class="s1">&lt;/html&gt;</span>
+<span class="s1">&#39;&#39;&#39;</span>
 </pre></div>
 </div>
 <p>运行看看网页浏览器上的显示情况。</p>
@@ -146,7 +144,7 @@ run.py
 <h2>模板从天而降<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
 <p>如果你能够保持你的应用程序与网页的布局或者界面逻辑上是分开的，这样不是显得更加容易组织？难道你不觉得是这样吗？你甚至可以聘请一个网页设计师来设计一个杀手级的网页而你专注于 Python 编码。模板可以帮助实现这种分离。</p>
 <p>让我们编写第一个我们的模板(文件 <em>app/templates/index.html</em>):</p>
-<div class="highlight-python"><div class="highlight"><pre>&lt;html&gt;
+<div class="highlight-default"><div class="highlight"><pre><span></span>&lt;html&gt;
   &lt;head&gt;
     &lt;title&gt;{{title}} - microblog&lt;/title&gt;
   &lt;/head&gt;
@@ -156,28 +154,28 @@ run.py
 &lt;/html&gt;
 </pre></div>
 </div>
-<p>正如你在上面看到，我们只是写了一个大部分标准的HTML页面，唯一的区别是有一些动态内容的在 <em>{{ ... }}</em> 中。</p>
+<p>正如你在上面看到，我们只是写了一个大部分标准的HTML页面，唯一的区别是有一些动态内容的在 <em>{{ … }}</em> 中。</p>
 <p>现在看看怎样在我们的视图函数(文件 <em>app/views.py</em>)中使用这些模板:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">render_template</span>
-<span class="kn">from</span> <span class="nn">app</span> <span class="kn">import</span> <span class="n">app</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="k">import</span> <span class="n">render_template</span>
+<span class="kn">from</span> <span class="nn">app</span> <span class="k">import</span> <span class="n">app</span>
 
-<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/&#39;</span><span class="p">)</span>
-<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/index&#39;</span><span class="p">)</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/index&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">index</span><span class="p">():</span>
-    <span class="n">user</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&#39;nickname&#39;</span><span class="p">:</span> <span class="s">&#39;Miguel&#39;</span> <span class="p">}</span> <span class="c"># fake user</span>
-    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s">&quot;index.html&quot;</span><span class="p">,</span>
-        <span class="n">title</span> <span class="o">=</span> <span class="s">&#39;Home&#39;</span><span class="p">,</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;nickname&#39;</span><span class="p">:</span> <span class="s1">&#39;Miguel&#39;</span> <span class="p">}</span> <span class="c1"># fake user</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;index.html&quot;</span><span class="p">,</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Home&#39;</span><span class="p">,</span>
         <span class="n">user</span> <span class="o">=</span> <span class="n">user</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>试着运行下应用程序看看模板是如何工作的。一旦在你的网页浏览器上呈现该网页，你可以浏览下 HTML 源代码，与原始的模板内容对比下差别。</p>
 <p>为了渲染模板，我们必须从 Flask 框架中导入一个名为 <em>render_template</em> 的新函数。此函数需要传入模板名以及一些模板变量列表，返回一个所有变量被替换的渲染的模板。</p>
-<p>在内部，<em>render_template</em> 调用了 <a class="reference external" href="http://jinja.pocoo.org/">Jinja2</a> 模板引擎，Jinja2 模板引擎是 Flask 框架的一部分。Jinja2 会把模板参数提供的相应的值替换了 <em>{{...}}</em> 块。</p>
+<p>在内部，<em>render_template</em> 调用了 <a class="reference external" href="http://jinja.pocoo.org/">Jinja2</a> 模板引擎，Jinja2 模板引擎是 Flask 框架的一部分。Jinja2 会把模板参数提供的相应的值替换了 <em>{{…}}</em> 块。</p>
 </div>
 <div class="section" id="id5">
 <h2>模板中控制语句<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
-<p>Jinja2 模板同样支持控制语句，像在 <em>{%...%}</em> 块中。让我们在我们的模板中添加一个 if 声明(文件 <em>app/templates/index.html</em>):</p>
-<div class="highlight-python"><div class="highlight"><pre>&lt;html&gt;
+<p>Jinja2 模板同样支持控制语句，像在 <em>{%…%}</em> 块中。让我们在我们的模板中添加一个 if 声明(文件 <em>app/templates/index.html</em>):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>&lt;html&gt;
   &lt;head&gt;
     {% if title %}
     &lt;title&gt;{{title}} - microblog&lt;/title&gt;
@@ -197,20 +195,20 @@ run.py
 <h2>模板中的循环语句<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
 <p>在我们 <em>microblog</em> 应用程序中，登录的用户想要在首页展示他的或者她的联系人列表中用户最近的文章，因此让我们看看如何才能做到。</p>
 <p>首先我们先创建一些用户以及他们的文章用来展示(文件 <em>app/views.py</em>):</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">index</span><span class="p">():</span>
-    <span class="n">user</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&#39;nickname&#39;</span><span class="p">:</span> <span class="s">&#39;Miguel&#39;</span> <span class="p">}</span> <span class="c"># fake user</span>
-    <span class="n">posts</span> <span class="o">=</span> <span class="p">[</span> <span class="c"># fake array of posts</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">index</span><span class="p">():</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;nickname&#39;</span><span class="p">:</span> <span class="s1">&#39;Miguel&#39;</span> <span class="p">}</span> <span class="c1"># fake user</span>
+    <span class="n">posts</span> <span class="o">=</span> <span class="p">[</span> <span class="c1"># fake array of posts</span>
         <span class="p">{</span>
-            <span class="s">&#39;author&#39;</span><span class="p">:</span> <span class="p">{</span> <span class="s">&#39;nickname&#39;</span><span class="p">:</span> <span class="s">&#39;John&#39;</span> <span class="p">},</span>
-            <span class="s">&#39;body&#39;</span><span class="p">:</span> <span class="s">&#39;Beautiful day in Portland!&#39;</span>
+            <span class="s1">&#39;author&#39;</span><span class="p">:</span> <span class="p">{</span> <span class="s1">&#39;nickname&#39;</span><span class="p">:</span> <span class="s1">&#39;John&#39;</span> <span class="p">},</span>
+            <span class="s1">&#39;body&#39;</span><span class="p">:</span> <span class="s1">&#39;Beautiful day in Portland!&#39;</span>
         <span class="p">},</span>
         <span class="p">{</span>
-            <span class="s">&#39;author&#39;</span><span class="p">:</span> <span class="p">{</span> <span class="s">&#39;nickname&#39;</span><span class="p">:</span> <span class="s">&#39;Susan&#39;</span> <span class="p">},</span>
-            <span class="s">&#39;body&#39;</span><span class="p">:</span> <span class="s">&#39;The Avengers movie was so cool!&#39;</span>
+            <span class="s1">&#39;author&#39;</span><span class="p">:</span> <span class="p">{</span> <span class="s1">&#39;nickname&#39;</span><span class="p">:</span> <span class="s1">&#39;Susan&#39;</span> <span class="p">},</span>
+            <span class="s1">&#39;body&#39;</span><span class="p">:</span> <span class="s1">&#39;The Avengers movie was so cool!&#39;</span>
         <span class="p">}</span>
     <span class="p">]</span>
-    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s">&quot;index.html&quot;</span><span class="p">,</span>
-        <span class="n">title</span> <span class="o">=</span> <span class="s">&#39;Home&#39;</span><span class="p">,</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;index.html&quot;</span><span class="p">,</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Home&#39;</span><span class="p">,</span>
         <span class="n">user</span> <span class="o">=</span> <span class="n">user</span><span class="p">,</span>
         <span class="n">posts</span> <span class="o">=</span> <span class="n">posts</span><span class="p">)</span>
 </pre></div>
@@ -218,7 +216,7 @@ run.py
 <p>为了表示用户的文章，我们使用了列表，其中每一个元素包含 <em>author</em> 和 <em>body</em> 字段。当我们使用真正的数据库的时候，我们会保留这些字段的名称，因此我们在设计以及测试模板的时候尽管使用的是假冒的对象，但不必担心迁移到数据库上更新模板。</p>
 <p>在模板这一方面，我们必须解决一个新问题。列表中可能有许多元素，多少篇文章被展示将取决于视图函数。模板不会假设有多少文章，因此它必须准备渲染视图传送的文章数量。</p>
 <p>因此让我们来看看怎么使用 <em>for</em> 来做到这一点(文件 <em>app/templates/index.html</em>):</p>
-<div class="highlight-python"><div class="highlight"><pre>&lt;html&gt;
+<div class="highlight-default"><div class="highlight"><pre><span></span>&lt;html&gt;
   &lt;head&gt;
     {% if title %}
     &lt;title&gt;{{title}} - microblog&lt;/title&gt;
@@ -244,25 +242,25 @@ run.py
 <p>我们可以在 <em>index.html</em> 模板中添加一个导航栏，但是随着应用的扩展，越来越多的模板需要这个导航栏，我们需要在每一个模板中复制这个导航栏。然而你必须要保证每一个导航栏都要同步，如果你有大量的模板，这需要花费很大的力气。</p>
 <p>相反，我们可以利用 Jinja2 的模板继承的特点，这允许我们把所有模板公共的部分移除出页面的布局，接着把它们放在一个基础模板中，所有使用它的模板可以导入该基础模板。</p>
 <p>所以让我们定义一个基础模板，该模板包含导航栏以及上面谈论的标题(文件 <em>app/templates/base.html</em>):</p>
-<div class="highlight-python"><div class="highlight"><pre>&lt;html&gt;
-  &lt;head&gt;
-    {% if title %}
-    &lt;title&gt;{{title}} - microblog&lt;/title&gt;
-    {% else %}
-    &lt;title&gt;microblog&lt;/title&gt;
-    {% endif %}
-  &lt;/head&gt;
-  &lt;body&gt;
-    &lt;div&gt;Microblog: &lt;a href=&quot;/index&quot;&gt;Home&lt;/a&gt;&lt;/div&gt;
-    &lt;hr&gt;
-    {% block content %}{% endblock %}
-  &lt;/body&gt;
-&lt;/html&gt;
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">html</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">head</span><span class="o">&gt;</span>
+    <span class="p">{</span><span class="o">%</span> <span class="k">if</span> <span class="n">title</span> <span class="o">%</span><span class="p">}</span>
+    <span class="o">&lt;</span><span class="n">title</span><span class="o">&gt;</span><span class="p">{{</span><span class="n">title</span><span class="p">}}</span> <span class="o">-</span> <span class="n">microblog</span><span class="o">&lt;/</span><span class="n">title</span><span class="o">&gt;</span>
+    <span class="p">{</span><span class="o">%</span> <span class="k">else</span> <span class="o">%</span><span class="p">}</span>
+    <span class="o">&lt;</span><span class="n">title</span><span class="o">&gt;</span><span class="n">microblog</span><span class="o">&lt;/</span><span class="n">title</span><span class="o">&gt;</span>
+    <span class="p">{</span><span class="o">%</span> <span class="n">endif</span> <span class="o">%</span><span class="p">}</span>
+  <span class="o">&lt;/</span><span class="n">head</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">body</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">div</span><span class="o">&gt;</span><span class="n">Microblog</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">a</span> <span class="n">href</span><span class="o">=</span><span class="s2">&quot;/index&quot;</span><span class="o">&gt;</span><span class="n">Home</span><span class="o">&lt;/</span><span class="n">a</span><span class="o">&gt;&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">hr</span><span class="o">&gt;</span>
+    <span class="p">{</span><span class="o">%</span> <span class="n">block</span> <span class="n">content</span> <span class="o">%</span><span class="p">}{</span><span class="o">%</span> <span class="n">endblock</span> <span class="o">%</span><span class="p">}</span>
+  <span class="o">&lt;/</span><span class="n">body</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">html</span><span class="o">&gt;</span>
 </pre></div>
 </div>
 <p>在这个模板中，我们使用 <em>block</em> 控制语句来定义派生模板可以插入的地方。块被赋予唯一的名字。</p>
 <p>接着现在剩下的就是修改我们的 <em>index.html</em> 模板继承自 <em>base.html</em> (文件 <em>app/templates/index.html</em>):</p>
-<div class="highlight-python"><div class="highlight"><pre>{% extends &quot;base.html&quot; %}
+<div class="highlight-default"><div class="highlight"><pre><span></span>{% extends &quot;base.html&quot; %}
 {% block content %}
 &lt;h1&gt;Hi, {{user.nickname}}!&lt;/h1&gt;
 {% for post in posts %}
@@ -286,7 +284,7 @@ run.py
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -298,7 +296,7 @@ run.py
         <li class="right" >
           <a href="helloworld.html" title="Hello World"
              >previous</a> |</li>
-        <li><a href="index.html">flask mega-tutorial 1.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">flask mega-tutorial 1.1 documentation</a> &#187;</li> 
       </ul>
     </div>
 <div class="footer">

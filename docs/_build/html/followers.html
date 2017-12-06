@@ -1,34 +1,33 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>关注者，联系人和好友 &mdash; flask mega-tutorial 1.0 documentation</title>
-    
+    <title>关注者，联系人和好友 &#8212; flask mega-tutorial 1.1 documentation</title>
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.0',
+        VERSION:     '1.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="flask mega-tutorial 1.0 documentation" href="index.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="分页" href="pagination.html" />
     <link rel="prev" title="单元测试" href="testing.html" /> 
   </head>
   <body>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -40,10 +39,10 @@
         <li class="right" >
           <a href="testing.html" title="单元测试"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">flask mega-tutorial 1.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">flask mega-tutorial 1.1 documentation</a> &#187;</li> 
       </ul>
     </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
@@ -83,23 +82,22 @@
   <h4>Next topic</h4>
   <p class="topless"><a href="pagination.html"
                         title="next chapter">分页</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/followers.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/followers.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
 
-<div id="searchbox" style="display: none">
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
 
@@ -110,7 +108,7 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="followers">
 <span id="id1"></span><h1>关注者，联系人和好友<a class="headerlink" href="#followers" title="Permalink to this headline">¶</a></h1>
@@ -173,33 +171,32 @@
 <div class="section" id="id9">
 <h2>数据模型<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
 <p>我们数据库的改变不是很大。我们首先开始添加 <em>followers</em> 表(文件 <em>app/models.py</em>):</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">followers</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Table</span><span class="p">(</span><span class="s">&#39;followers&#39;</span><span class="p">,</span>
-    <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="s">&#39;follower_id&#39;</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s">&#39;user.id&#39;</span><span class="p">)),</span>
-    <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="s">&#39;followed_id&#39;</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s">&#39;user.id&#39;</span><span class="p">))</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">followers</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Table</span><span class="p">(</span><span class="s1">&#39;followers&#39;</span><span class="p">,</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="s1">&#39;follower_id&#39;</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;user.id&#39;</span><span class="p">)),</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="s1">&#39;followed_id&#39;</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;user.id&#39;</span><span class="p">))</span>
 <span class="p">)</span>
 </pre></div>
 </div>
 <p>这是对上面图表上的关系表的直接翻译。注意我们并没有像对 <em>users</em> 和 <em>posts</em> 一样把它声明为一个模式。因为这是一个辅助表，我们使用 flask-sqlalchemy 中的低级的 APIs 来创建没有使用关联模式。</p>
 <p>接着我们在 <em>users</em> 表中定义一个多对多的关系:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
-    <span class="nb">id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
-    <span class="n">nickname</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">64</span><span class="p">),</span> <span class="n">unique</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
-    <span class="n">email</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">120</span><span class="p">),</span> <span class="n">index</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">unique</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
-    <span class="n">role</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">SmallInteger</span><span class="p">,</span> <span class="n">default</span> <span class="o">=</span> <span class="n">ROLE_USER</span><span class="p">)</span>
-    <span class="n">posts</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span><span class="s">&#39;Post&#39;</span><span class="p">,</span> <span class="n">backref</span> <span class="o">=</span> <span class="s">&#39;author&#39;</span><span class="p">,</span> <span class="n">lazy</span> <span class="o">=</span> <span class="s">&#39;dynamic&#39;</span><span class="p">)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">nickname</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">64</span><span class="p">),</span> <span class="n">unique</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">email</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">120</span><span class="p">),</span> <span class="n">index</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">unique</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">posts</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span><span class="s1">&#39;Post&#39;</span><span class="p">,</span> <span class="n">backref</span> <span class="o">=</span> <span class="s1">&#39;author&#39;</span><span class="p">,</span> <span class="n">lazy</span> <span class="o">=</span> <span class="s1">&#39;dynamic&#39;</span><span class="p">)</span>
     <span class="n">about_me</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">140</span><span class="p">))</span>
     <span class="n">last_seen</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">)</span>
-    <span class="n">followed</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span><span class="s">&#39;User&#39;</span><span class="p">,</span>
+    <span class="n">followed</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span><span class="s1">&#39;User&#39;</span><span class="p">,</span>
         <span class="n">secondary</span> <span class="o">=</span> <span class="n">followers</span><span class="p">,</span>
         <span class="n">primaryjoin</span> <span class="o">=</span> <span class="p">(</span><span class="n">followers</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">follower_id</span> <span class="o">==</span> <span class="nb">id</span><span class="p">),</span>
         <span class="n">secondaryjoin</span> <span class="o">=</span> <span class="p">(</span><span class="n">followers</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">followed_id</span> <span class="o">==</span> <span class="nb">id</span><span class="p">),</span>
-        <span class="n">backref</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">backref</span><span class="p">(</span><span class="s">&#39;followers&#39;</span><span class="p">,</span> <span class="n">lazy</span> <span class="o">=</span> <span class="s">&#39;dynamic&#39;</span><span class="p">),</span>
-        <span class="n">lazy</span> <span class="o">=</span> <span class="s">&#39;dynamic&#39;</span><span class="p">)</span>
+        <span class="n">backref</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">backref</span><span class="p">(</span><span class="s1">&#39;followers&#39;</span><span class="p">,</span> <span class="n">lazy</span> <span class="o">=</span> <span class="s1">&#39;dynamic&#39;</span><span class="p">),</span>
+        <span class="n">lazy</span> <span class="o">=</span> <span class="s1">&#39;dynamic&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>关系的设置不是很简单，需要一些解释。像我们在前面章节设置一对多关系一样，我们使用了 <em>db.relationship</em> 函数来定义关系。我们将连接 <em>User</em> 实例到其它 <em>User</em> 实例，换一种通俗的话来说，在这种关系下连接的一对用户，左边的用户是关注着右边的用户。因为我们定义左边的用户为 <em>followed</em>，当我们从左边用户查询这种关系的时候，我们将会得到被关注用户的列表。让我们一个一个来解释下 <em>db.relationship()</em> 中的所有参数：</p>
 <ul class="simple">
-<li><em>&#8216;User&#8217;</em> 是这种关系中的右边的表(实体)(左边的表/实体是父类)。因为定义一个自我指向的关系，我们在两边使用同样的类。</li>
+<li><em>‘User’</em> 是这种关系中的右边的表(实体)(左边的表/实体是父类)。因为定义一个自我指向的关系，我们在两边使用同样的类。</li>
 <li><em>secondary</em> 指明了用于这种关系的辅助表。</li>
 <li><em>primaryjoin</em> 表示辅助表中连接左边实体(发起关注的用户)的条件。注意因为 <em>followers</em> 表不是一个模式，获得字段名的语法有些怪异。</li>
 <li><em>secondaryjoin</em> 表示辅助表中连接右边实体(被关注的用户)的条件。</li>
@@ -208,7 +205,7 @@
 </ul>
 <p>如果上面的解释很难理解的话，没有关系。我们会在后面使用这些查询，一切就会明了。</p>
 <p>因为我们对数据库做出了修改，现在我们必须生成一个新的迁移脚本:</p>
-<div class="highlight-python"><div class="highlight"><pre>./db_migrate.py
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">db_migrate</span><span class="o">.</span><span class="n">py</span>
 </pre></div>
 </div>
 </div>
@@ -216,8 +213,8 @@
 <h2>添加和移除 ‘关注者’<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h2>
 <p>为了使得代码具有可重用性，我们将会在 <em>User</em> 模型中实现 <em>follow</em> 和 <em>unfollow</em> 函数，而不是在视图函数中。这种方式不仅可以让这个功能应用于真实的应用也能在单元测试中测试。原则上，从视图函数中移除应用程序的逻辑到数据模型中是一种好的方式。你们必须要保证视图函数尽可能简单，因为它能难被自动化测试。</p>
 <p>下面是添加了添加和移除 ‘关注者’ 功能的 <em>User</em> 模型(文件 <em>app/models.py</em>):</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
-    <span class="c">#...</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="c1">#...</span>
     <span class="k">def</span> <span class="nf">follow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_following</span><span class="p">(</span><span class="n">user</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">followed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
@@ -239,35 +236,35 @@
 <div class="section" id="id11">
 <h2>测试<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h2>
 <p>让我们编写单元测试框架来检验目前我们已经写好的代码(文件 <em>tests.py</em>):</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">TestCase</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
-    <span class="c">#...</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">TestCase</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="c1">#...</span>
     <span class="k">def</span> <span class="nf">test_follow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">u1</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">nickname</span> <span class="o">=</span> <span class="s">&#39;john&#39;</span><span class="p">,</span> <span class="n">email</span> <span class="o">=</span> <span class="s">&#39;john@example.com&#39;</span><span class="p">)</span>
-        <span class="n">u2</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">nickname</span> <span class="o">=</span> <span class="s">&#39;susan&#39;</span><span class="p">,</span> <span class="n">email</span> <span class="o">=</span> <span class="s">&#39;susan@example.com&#39;</span><span class="p">)</span>
+        <span class="n">u1</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">nickname</span> <span class="o">=</span> <span class="s1">&#39;john&#39;</span><span class="p">,</span> <span class="n">email</span> <span class="o">=</span> <span class="s1">&#39;john@example.com&#39;</span><span class="p">)</span>
+        <span class="n">u2</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">nickname</span> <span class="o">=</span> <span class="s1">&#39;susan&#39;</span><span class="p">,</span> <span class="n">email</span> <span class="o">=</span> <span class="s1">&#39;susan@example.com&#39;</span><span class="p">)</span>
         <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">u1</span><span class="p">)</span>
         <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">u2</span><span class="p">)</span>
         <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
-        <span class="k">assert</span> <span class="n">u1</span><span class="o">.</span><span class="n">unfollow</span><span class="p">(</span><span class="n">u2</span><span class="p">)</span> <span class="o">==</span> <span class="bp">None</span>
+        <span class="k">assert</span> <span class="n">u1</span><span class="o">.</span><span class="n">unfollow</span><span class="p">(</span><span class="n">u2</span><span class="p">)</span> <span class="o">==</span> <span class="kc">None</span>
         <span class="n">u</span> <span class="o">=</span> <span class="n">u1</span><span class="o">.</span><span class="n">follow</span><span class="p">(</span><span class="n">u2</span><span class="p">)</span>
         <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
         <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
-        <span class="k">assert</span> <span class="n">u1</span><span class="o">.</span><span class="n">follow</span><span class="p">(</span><span class="n">u2</span><span class="p">)</span> <span class="o">==</span> <span class="bp">None</span>
+        <span class="k">assert</span> <span class="n">u1</span><span class="o">.</span><span class="n">follow</span><span class="p">(</span><span class="n">u2</span><span class="p">)</span> <span class="o">==</span> <span class="kc">None</span>
         <span class="k">assert</span> <span class="n">u1</span><span class="o">.</span><span class="n">is_following</span><span class="p">(</span><span class="n">u2</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">u1</span><span class="o">.</span><span class="n">followed</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span>
-        <span class="k">assert</span> <span class="n">u1</span><span class="o">.</span><span class="n">followed</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">nickname</span> <span class="o">==</span> <span class="s">&#39;susan&#39;</span>
+        <span class="k">assert</span> <span class="n">u1</span><span class="o">.</span><span class="n">followed</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">nickname</span> <span class="o">==</span> <span class="s1">&#39;susan&#39;</span>
         <span class="k">assert</span> <span class="n">u2</span><span class="o">.</span><span class="n">followers</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span>
-        <span class="k">assert</span> <span class="n">u2</span><span class="o">.</span><span class="n">followers</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">nickname</span> <span class="o">==</span> <span class="s">&#39;john&#39;</span>
+        <span class="k">assert</span> <span class="n">u2</span><span class="o">.</span><span class="n">followers</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">nickname</span> <span class="o">==</span> <span class="s1">&#39;john&#39;</span>
         <span class="n">u</span> <span class="o">=</span> <span class="n">u1</span><span class="o">.</span><span class="n">unfollow</span><span class="p">(</span><span class="n">u2</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">u</span> <span class="o">!=</span> <span class="bp">None</span>
+        <span class="k">assert</span> <span class="n">u</span> <span class="o">!=</span> <span class="kc">None</span>
         <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
         <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
-        <span class="k">assert</span> <span class="n">u1</span><span class="o">.</span><span class="n">is_following</span><span class="p">(</span><span class="n">u2</span><span class="p">)</span> <span class="o">==</span> <span class="bp">False</span>
+        <span class="k">assert</span> <span class="n">u1</span><span class="o">.</span><span class="n">is_following</span><span class="p">(</span><span class="n">u2</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span>
         <span class="k">assert</span> <span class="n">u1</span><span class="o">.</span><span class="n">followed</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span>
         <span class="k">assert</span> <span class="n">u2</span><span class="o">.</span><span class="n">followers</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span>
 </pre></div>
 </div>
 <p>通过执行下面的命令来运行这个测试:</p>
-<div class="highlight-python"><div class="highlight"><pre>./tests.py
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">tests</span><span class="o">.</span><span class="n">py</span>
 </pre></div>
 </div>
 </div>
@@ -279,8 +276,8 @@
 <p>这种收集以及排序的工作需要在其它的地方完成，我们只要使用结果就行。这类的工作其实就是关系型数据库擅长。数据库有索引，因此允许以一种高效地方式去查询以及排序。</p>
 <p>所以我们真正想要的是要拿出一个单一的数据库查询，表示我们想要得到什么样的信息，然后我们让数据库弄清楚什么是最有效的方式来为我们获取数据。</p>
 <p>下面这种查询可以实现上述的要求，这个单行的代码又被我们添加到 <em>User</em> 模型(文件 <em>app/models.py</em>):</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
-    <span class="c">#...</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="c1">#...</span>
     <span class="k">def</span> <span class="nf">followed_posts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">Post</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">followers</span><span class="p">,</span> <span class="p">(</span><span class="n">followers</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">followed_id</span> <span class="o">==</span> <span class="n">Post</span><span class="o">.</span><span class="n">user_id</span><span class="p">))</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">followers</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">follower_id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">Post</span><span class="o">.</span><span class="n">timestamp</span><span class="o">.</span><span class="n">desc</span><span class="p">())</span>
 </pre></div>
@@ -297,7 +294,7 @@
 <img alt="_images/4.jpg" src="_images/4.jpg" />
 <p>这里再次申明为了使得例子显得简单，我们忽略了一些字段。</p>
 <p>下面是我们的查询的连接部分的，独立于其余的查询:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">Post</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">followers</span><span class="p">,</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Post</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">followers</span><span class="p">,</span>
     <span class="p">(</span><span class="n">followers</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">followed_id</span> <span class="o">==</span> <span class="n">Post</span><span class="o">.</span><span class="n">user_id</span><span class="p">))</span>
 </pre></div>
 </div>
@@ -313,7 +310,7 @@
 <h3>过滤<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h3>
 <p>连接操作给我们被某人关注的用户的 blog 的列表，但是没有指出谁是关注者。我们仅仅对这个列表的子集感兴趣，我们只需要被某一特定用户关注的用户的 blog 列表。</p>
 <p>因此我们过滤这个表格，查询的过滤操作是:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="nb">filter</span><span class="p">(</span><span class="n">followers</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">follower_id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">filter</span><span class="p">(</span><span class="n">followers</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">follower_id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>注意查询是在我们目标用户的内容中执行，因为这是 <em>User</em> 类的一个方法，<em>self.id</em> 就是我们感兴趣的用户的 id。因此在我们的例子中，如果我们感兴趣的用户的 id 是 <em>id=1</em>，那么我们会得到另一个临时表:</p>
@@ -323,55 +320,55 @@
 <div class="section" id="id15">
 <h3>排序<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h3>
 <p>最后一步就是根据我们的规则对结果进行排序。排序操作如下:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">order_by</span><span class="p">(</span><span class="n">Post</span><span class="o">.</span><span class="n">timestamp</span><span class="o">.</span><span class="n">desc</span><span class="p">())</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">order_by</span><span class="p">(</span><span class="n">Post</span><span class="o">.</span><span class="n">timestamp</span><span class="o">.</span><span class="n">desc</span><span class="p">())</span>
 </pre></div>
 </div>
 <p>在这里，我们要说的结果应该按照 timestamp 字段按降序排列，这样的第一个结果将是最近的 blog。</p>
 <p>这里还有一个小问题需要我们改善我们的查询操作。当用户阅读他们关注者的 blog 的时候，他们可能也想看到自己的 blog。因此最好把用户自己的 blog 也包含进查询结果中。</p>
 <p>其实这不需要做任何改变。我们只需要把自己添加为自己的关注者。</p>
 <p>为了结束我们长时间的查询操作的讨论，让我们为我们查询写些单元测试(文件 <em>tests.py</em>):</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c">#...</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
-<span class="kn">from</span> <span class="nn">app.models</span> <span class="kn">import</span> <span class="n">User</span><span class="p">,</span> <span class="n">Post</span>
-<span class="c">#...</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1">#...</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">from</span> <span class="nn">app.models</span> <span class="k">import</span> <span class="n">User</span><span class="p">,</span> <span class="n">Post</span>
+<span class="c1">#...</span>
 <span class="k">class</span> <span class="nc">TestCase</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
-    <span class="c">#...</span>
+    <span class="c1">#...</span>
     <span class="k">def</span> <span class="nf">test_follow_posts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="c"># make four users</span>
-        <span class="n">u1</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">nickname</span> <span class="o">=</span> <span class="s">&#39;john&#39;</span><span class="p">,</span> <span class="n">email</span> <span class="o">=</span> <span class="s">&#39;john@example.com&#39;</span><span class="p">)</span>
-        <span class="n">u2</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">nickname</span> <span class="o">=</span> <span class="s">&#39;susan&#39;</span><span class="p">,</span> <span class="n">email</span> <span class="o">=</span> <span class="s">&#39;susan@example.com&#39;</span><span class="p">)</span>
-        <span class="n">u3</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">nickname</span> <span class="o">=</span> <span class="s">&#39;mary&#39;</span><span class="p">,</span> <span class="n">email</span> <span class="o">=</span> <span class="s">&#39;mary@example.com&#39;</span><span class="p">)</span>
-        <span class="n">u4</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">nickname</span> <span class="o">=</span> <span class="s">&#39;david&#39;</span><span class="p">,</span> <span class="n">email</span> <span class="o">=</span> <span class="s">&#39;david@example.com&#39;</span><span class="p">)</span>
+        <span class="c1"># make four users</span>
+        <span class="n">u1</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">nickname</span> <span class="o">=</span> <span class="s1">&#39;john&#39;</span><span class="p">,</span> <span class="n">email</span> <span class="o">=</span> <span class="s1">&#39;john@example.com&#39;</span><span class="p">)</span>
+        <span class="n">u2</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">nickname</span> <span class="o">=</span> <span class="s1">&#39;susan&#39;</span><span class="p">,</span> <span class="n">email</span> <span class="o">=</span> <span class="s1">&#39;susan@example.com&#39;</span><span class="p">)</span>
+        <span class="n">u3</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">nickname</span> <span class="o">=</span> <span class="s1">&#39;mary&#39;</span><span class="p">,</span> <span class="n">email</span> <span class="o">=</span> <span class="s1">&#39;mary@example.com&#39;</span><span class="p">)</span>
+        <span class="n">u4</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">nickname</span> <span class="o">=</span> <span class="s1">&#39;david&#39;</span><span class="p">,</span> <span class="n">email</span> <span class="o">=</span> <span class="s1">&#39;david@example.com&#39;</span><span class="p">)</span>
         <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">u1</span><span class="p">)</span>
         <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">u2</span><span class="p">)</span>
         <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">u3</span><span class="p">)</span>
         <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">u4</span><span class="p">)</span>
-        <span class="c"># make four posts</span>
+        <span class="c1"># make four posts</span>
         <span class="n">utcnow</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span>
-        <span class="n">p1</span> <span class="o">=</span> <span class="n">Post</span><span class="p">(</span><span class="n">body</span> <span class="o">=</span> <span class="s">&quot;post from john&quot;</span><span class="p">,</span> <span class="n">author</span> <span class="o">=</span> <span class="n">u1</span><span class="p">,</span> <span class="n">timestamp</span> <span class="o">=</span> <span class="n">utcnow</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span> <span class="o">=</span> <span class="mi">1</span><span class="p">))</span>
-        <span class="n">p2</span> <span class="o">=</span> <span class="n">Post</span><span class="p">(</span><span class="n">body</span> <span class="o">=</span> <span class="s">&quot;post from susan&quot;</span><span class="p">,</span> <span class="n">author</span> <span class="o">=</span> <span class="n">u2</span><span class="p">,</span> <span class="n">timestamp</span> <span class="o">=</span> <span class="n">utcnow</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span> <span class="o">=</span> <span class="mi">2</span><span class="p">))</span>
-        <span class="n">p3</span> <span class="o">=</span> <span class="n">Post</span><span class="p">(</span><span class="n">body</span> <span class="o">=</span> <span class="s">&quot;post from mary&quot;</span><span class="p">,</span> <span class="n">author</span> <span class="o">=</span> <span class="n">u3</span><span class="p">,</span> <span class="n">timestamp</span> <span class="o">=</span> <span class="n">utcnow</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span> <span class="o">=</span> <span class="mi">3</span><span class="p">))</span>
-        <span class="n">p4</span> <span class="o">=</span> <span class="n">Post</span><span class="p">(</span><span class="n">body</span> <span class="o">=</span> <span class="s">&quot;post from david&quot;</span><span class="p">,</span> <span class="n">author</span> <span class="o">=</span> <span class="n">u4</span><span class="p">,</span> <span class="n">timestamp</span> <span class="o">=</span> <span class="n">utcnow</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span> <span class="o">=</span> <span class="mi">4</span><span class="p">))</span>
+        <span class="n">p1</span> <span class="o">=</span> <span class="n">Post</span><span class="p">(</span><span class="n">body</span> <span class="o">=</span> <span class="s2">&quot;post from john&quot;</span><span class="p">,</span> <span class="n">author</span> <span class="o">=</span> <span class="n">u1</span><span class="p">,</span> <span class="n">timestamp</span> <span class="o">=</span> <span class="n">utcnow</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span> <span class="o">=</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">p2</span> <span class="o">=</span> <span class="n">Post</span><span class="p">(</span><span class="n">body</span> <span class="o">=</span> <span class="s2">&quot;post from susan&quot;</span><span class="p">,</span> <span class="n">author</span> <span class="o">=</span> <span class="n">u2</span><span class="p">,</span> <span class="n">timestamp</span> <span class="o">=</span> <span class="n">utcnow</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span> <span class="o">=</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="n">p3</span> <span class="o">=</span> <span class="n">Post</span><span class="p">(</span><span class="n">body</span> <span class="o">=</span> <span class="s2">&quot;post from mary&quot;</span><span class="p">,</span> <span class="n">author</span> <span class="o">=</span> <span class="n">u3</span><span class="p">,</span> <span class="n">timestamp</span> <span class="o">=</span> <span class="n">utcnow</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span> <span class="o">=</span> <span class="mi">3</span><span class="p">))</span>
+        <span class="n">p4</span> <span class="o">=</span> <span class="n">Post</span><span class="p">(</span><span class="n">body</span> <span class="o">=</span> <span class="s2">&quot;post from david&quot;</span><span class="p">,</span> <span class="n">author</span> <span class="o">=</span> <span class="n">u4</span><span class="p">,</span> <span class="n">timestamp</span> <span class="o">=</span> <span class="n">utcnow</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span> <span class="o">=</span> <span class="mi">4</span><span class="p">))</span>
         <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">p1</span><span class="p">)</span>
         <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">p2</span><span class="p">)</span>
         <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">p3</span><span class="p">)</span>
         <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">p4</span><span class="p">)</span>
         <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
-        <span class="c"># setup the followers</span>
-        <span class="n">u1</span><span class="o">.</span><span class="n">follow</span><span class="p">(</span><span class="n">u1</span><span class="p">)</span> <span class="c"># john follows himself</span>
-        <span class="n">u1</span><span class="o">.</span><span class="n">follow</span><span class="p">(</span><span class="n">u2</span><span class="p">)</span> <span class="c"># john follows susan</span>
-        <span class="n">u1</span><span class="o">.</span><span class="n">follow</span><span class="p">(</span><span class="n">u4</span><span class="p">)</span> <span class="c"># john follows david</span>
-        <span class="n">u2</span><span class="o">.</span><span class="n">follow</span><span class="p">(</span><span class="n">u2</span><span class="p">)</span> <span class="c"># susan follows herself</span>
-        <span class="n">u2</span><span class="o">.</span><span class="n">follow</span><span class="p">(</span><span class="n">u3</span><span class="p">)</span> <span class="c"># susan follows mary</span>
-        <span class="n">u3</span><span class="o">.</span><span class="n">follow</span><span class="p">(</span><span class="n">u3</span><span class="p">)</span> <span class="c"># mary follows herself</span>
-        <span class="n">u3</span><span class="o">.</span><span class="n">follow</span><span class="p">(</span><span class="n">u4</span><span class="p">)</span> <span class="c"># mary follows david</span>
-        <span class="n">u4</span><span class="o">.</span><span class="n">follow</span><span class="p">(</span><span class="n">u4</span><span class="p">)</span> <span class="c"># david follows himself</span>
+        <span class="c1"># setup the followers</span>
+        <span class="n">u1</span><span class="o">.</span><span class="n">follow</span><span class="p">(</span><span class="n">u1</span><span class="p">)</span> <span class="c1"># john follows himself</span>
+        <span class="n">u1</span><span class="o">.</span><span class="n">follow</span><span class="p">(</span><span class="n">u2</span><span class="p">)</span> <span class="c1"># john follows susan</span>
+        <span class="n">u1</span><span class="o">.</span><span class="n">follow</span><span class="p">(</span><span class="n">u4</span><span class="p">)</span> <span class="c1"># john follows david</span>
+        <span class="n">u2</span><span class="o">.</span><span class="n">follow</span><span class="p">(</span><span class="n">u2</span><span class="p">)</span> <span class="c1"># susan follows herself</span>
+        <span class="n">u2</span><span class="o">.</span><span class="n">follow</span><span class="p">(</span><span class="n">u3</span><span class="p">)</span> <span class="c1"># susan follows mary</span>
+        <span class="n">u3</span><span class="o">.</span><span class="n">follow</span><span class="p">(</span><span class="n">u3</span><span class="p">)</span> <span class="c1"># mary follows herself</span>
+        <span class="n">u3</span><span class="o">.</span><span class="n">follow</span><span class="p">(</span><span class="n">u4</span><span class="p">)</span> <span class="c1"># mary follows david</span>
+        <span class="n">u4</span><span class="o">.</span><span class="n">follow</span><span class="p">(</span><span class="n">u4</span><span class="p">)</span> <span class="c1"># david follows himself</span>
         <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">u1</span><span class="p">)</span>
         <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">u2</span><span class="p">)</span>
         <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">u3</span><span class="p">)</span>
         <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">u4</span><span class="p">)</span>
         <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
-        <span class="c"># check the followed posts of each user</span>
+        <span class="c1"># check the followed posts of each user</span>
         <span class="n">f1</span> <span class="o">=</span> <span class="n">u1</span><span class="o">.</span><span class="n">followed_posts</span><span class="p">()</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
         <span class="n">f2</span> <span class="o">=</span> <span class="n">u2</span><span class="o">.</span><span class="n">followed_posts</span><span class="p">()</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
         <span class="n">f3</span> <span class="o">=</span> <span class="n">u3</span><span class="o">.</span><span class="n">followed_posts</span><span class="p">()</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
@@ -404,75 +401,77 @@
 <h3>成为自己的关注者<a class="headerlink" href="#id18" title="Permalink to this headline">¶</a></h3>
 <p>我们已经决定用户可以关注所有的用户，因此我们可以关注自己。</p>
 <p>我们决定在 <em>after_login</em> 中处理 OpenID 的时候就设置自己成为自己的关注者(文件 <em>app/views.py</em>):</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="nd">@oid.after_login</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nd">@oid</span><span class="o">.</span><span class="n">after_login</span>
 <span class="k">def</span> <span class="nf">after_login</span><span class="p">(</span><span class="n">resp</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">resp</span><span class="o">.</span><span class="n">email</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">resp</span><span class="o">.</span><span class="n">email</span> <span class="o">==</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
-        <span class="n">flash</span><span class="p">(</span><span class="s">&#39;Invalid login. Please try again.&#39;</span><span class="p">)</span>
-        <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s">&#39;login&#39;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">resp</span><span class="o">.</span><span class="n">email</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">resp</span><span class="o">.</span><span class="n">email</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;Invalid login. Please try again.&#39;</span><span class="p">)</span>
+        <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;login&#39;</span><span class="p">))</span>
     <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">email</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">email</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">user</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">user</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">nickname</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">nickname</span>
-        <span class="k">if</span> <span class="n">nickname</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">nickname</span> <span class="o">==</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
-            <span class="n">nickname</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">email</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;@&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">nickname</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">nickname</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">nickname</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">email</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;@&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">nickname</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">make_unique_nickname</span><span class="p">(</span><span class="n">nickname</span><span class="p">)</span>
-        <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">nickname</span> <span class="o">=</span> <span class="n">nickname</span><span class="p">,</span> <span class="n">email</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">email</span><span class="p">,</span> <span class="n">role</span> <span class="o">=</span> <span class="n">ROLE_USER</span><span class="p">)</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">nickname</span> <span class="o">=</span> <span class="n">nickname</span><span class="p">,</span> <span class="n">email</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">email</span><span class="p">)</span>
         <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
         <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
-        <span class="c"># make the user follow him/herself</span>
+        <span class="c1"># make the user follow him/herself</span>
         <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">follow</span><span class="p">(</span><span class="n">user</span><span class="p">))</span>
         <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
-    <span class="n">remember_me</span> <span class="o">=</span> <span class="bp">False</span>
-    <span class="k">if</span> <span class="s">&#39;remember_me&#39;</span> <span class="ow">in</span> <span class="n">session</span><span class="p">:</span>
-        <span class="n">remember_me</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s">&#39;remember_me&#39;</span><span class="p">]</span>
-        <span class="n">session</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;remember_me&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+    <span class="n">remember_me</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="s1">&#39;remember_me&#39;</span> <span class="ow">in</span> <span class="n">session</span><span class="p">:</span>
+        <span class="n">remember_me</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;remember_me&#39;</span><span class="p">]</span>
+        <span class="n">session</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;remember_me&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="n">login_user</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">remember</span> <span class="o">=</span> <span class="n">remember_me</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;next&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">url_for</span><span class="p">(</span><span class="s">&#39;index&#39;</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;next&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="id19">
 <h3>关注以及取消关注的链接<a class="headerlink" href="#id19" title="Permalink to this headline">¶</a></h3>
 <p>接着，我们将会定义关注以及取消关注用户的视图函数(文件 <em>app/views.py</em>):</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/follow/&lt;nickname&gt;&#39;</span><span class="p">)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/follow/&lt;nickname&gt;&#39;</span><span class="p">)</span>
+<span class="nd">@login_required</span>
 <span class="k">def</span> <span class="nf">follow</span><span class="p">(</span><span class="n">nickname</span><span class="p">):</span>
-    <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">nickname</span> <span class="o">=</span> <span class="n">nickname</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">user</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">flash</span><span class="p">(</span><span class="s">&#39;User &#39;</span> <span class="o">+</span> <span class="n">nickname</span> <span class="o">+</span> <span class="s">&#39; not found.&#39;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s">&#39;index&#39;</span><span class="p">))</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">nickname</span><span class="o">=</span><span class="n">nickname</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">user</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;User </span><span class="si">%s</span><span class="s1"> not found.&#39;</span> <span class="o">%</span> <span class="n">nickname</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">user</span> <span class="o">==</span> <span class="n">g</span><span class="o">.</span><span class="n">user</span><span class="p">:</span>
-        <span class="n">flash</span><span class="p">(</span><span class="s">&#39;You can</span><span class="se">\&#39;</span><span class="s">t follow yourself!&#39;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s">&#39;user&#39;</span><span class="p">,</span> <span class="n">nickname</span> <span class="o">=</span> <span class="n">nickname</span><span class="p">))</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;You can</span><span class="se">\&#39;</span><span class="s1">t follow yourself!&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="n">nickname</span><span class="o">=</span><span class="n">nickname</span><span class="p">))</span>
     <span class="n">u</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">follow</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">u</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">flash</span><span class="p">(</span><span class="s">&#39;Cannot follow &#39;</span> <span class="o">+</span> <span class="n">nickname</span> <span class="o">+</span> <span class="s">&#39;.&#39;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s">&#39;user&#39;</span><span class="p">,</span> <span class="n">nickname</span> <span class="o">=</span> <span class="n">nickname</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">u</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;Cannot follow &#39;</span> <span class="o">+</span> <span class="n">nickname</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="n">nickname</span><span class="o">=</span><span class="n">nickname</span><span class="p">))</span>
     <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
     <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
-    <span class="n">flash</span><span class="p">(</span><span class="s">&#39;You are now following &#39;</span> <span class="o">+</span> <span class="n">nickname</span> <span class="o">+</span> <span class="s">&#39;!&#39;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s">&#39;user&#39;</span><span class="p">,</span> <span class="n">nickname</span> <span class="o">=</span> <span class="n">nickname</span><span class="p">))</span>
+    <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;You are now following &#39;</span> <span class="o">+</span> <span class="n">nickname</span> <span class="o">+</span> <span class="s1">&#39;!&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="n">nickname</span><span class="o">=</span><span class="n">nickname</span><span class="p">))</span>
 
-<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/unfollow/&lt;nickname&gt;&#39;</span><span class="p">)</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/unfollow/&lt;nickname&gt;&#39;</span><span class="p">)</span>
+<span class="nd">@login_required</span>
 <span class="k">def</span> <span class="nf">unfollow</span><span class="p">(</span><span class="n">nickname</span><span class="p">):</span>
-    <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">nickname</span> <span class="o">=</span> <span class="n">nickname</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">user</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">flash</span><span class="p">(</span><span class="s">&#39;User &#39;</span> <span class="o">+</span> <span class="n">nickname</span> <span class="o">+</span> <span class="s">&#39; not found.&#39;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s">&#39;index&#39;</span><span class="p">))</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">nickname</span><span class="o">=</span><span class="n">nickname</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">user</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;User </span><span class="si">%s</span><span class="s1"> not found.&#39;</span> <span class="o">%</span> <span class="n">nickname</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">user</span> <span class="o">==</span> <span class="n">g</span><span class="o">.</span><span class="n">user</span><span class="p">:</span>
-        <span class="n">flash</span><span class="p">(</span><span class="s">&#39;You can</span><span class="se">\&#39;</span><span class="s">t unfollow yourself!&#39;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s">&#39;user&#39;</span><span class="p">,</span> <span class="n">nickname</span> <span class="o">=</span> <span class="n">nickname</span><span class="p">))</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;You can</span><span class="se">\&#39;</span><span class="s1">t unfollow yourself!&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="n">nickname</span><span class="o">=</span><span class="n">nickname</span><span class="p">))</span>
     <span class="n">u</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">unfollow</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">u</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">flash</span><span class="p">(</span><span class="s">&#39;Cannot unfollow &#39;</span> <span class="o">+</span> <span class="n">nickname</span> <span class="o">+</span> <span class="s">&#39;.&#39;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s">&#39;user&#39;</span><span class="p">,</span> <span class="n">nickname</span> <span class="o">=</span> <span class="n">nickname</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">u</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;Cannot unfollow &#39;</span> <span class="o">+</span> <span class="n">nickname</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="n">nickname</span><span class="o">=</span><span class="n">nickname</span><span class="p">))</span>
     <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
     <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
-    <span class="n">flash</span><span class="p">(</span><span class="s">&#39;You have stopped following &#39;</span> <span class="o">+</span> <span class="n">nickname</span> <span class="o">+</span> <span class="s">&#39;.&#39;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s">&#39;user&#39;</span><span class="p">,</span> <span class="n">nickname</span> <span class="o">=</span> <span class="n">nickname</span><span class="p">))</span>
+    <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;You have stopped following &#39;</span> <span class="o">+</span> <span class="n">nickname</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="n">nickname</span><span class="o">=</span><span class="n">nickname</span><span class="p">))</span>
 </pre></div>
 </div>
 <p>这里应该不需要做过多的解释，但是需要注意的是检查周围的错误，为了防止期望之外的错误，试着给用户提供信息并且重定向到合适的位置当错误发生的时候。</p>
 <p>最后需要修改下模版(文件 <em>app/templates/user.html</em>):</p>
-<div class="highlight-python"><div class="highlight"><pre>&lt;!-- extend base layout --&gt;
+<div class="highlight-default"><div class="highlight"><pre><span></span>&lt;!-- extend base layout --&gt;
 {% extends &quot;base.html&quot; %}
 
 {% block content %}
@@ -526,7 +525,7 @@
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -538,7 +537,7 @@
         <li class="right" >
           <a href="testing.html" title="单元测试"
              >previous</a> |</li>
-        <li><a href="index.html">flask mega-tutorial 1.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">flask mega-tutorial 1.1 documentation</a> &#187;</li> 
       </ul>
     </div>
 <div class="footer">

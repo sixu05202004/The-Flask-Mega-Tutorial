@@ -1,34 +1,33 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>web 表单 &mdash; flask mega-tutorial 1.0 documentation</title>
-    
+    <title>web 表单 &#8212; flask mega-tutorial 1.1 documentation</title>
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.0',
+        VERSION:     '1.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="flask mega-tutorial 1.0 documentation" href="index.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="数据库" href="database.html" />
     <link rel="prev" title="模板" href="templates.html" /> 
   </head>
   <body>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -40,10 +39,10 @@
         <li class="right" >
           <a href="templates.html" title="模板"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">flask mega-tutorial 1.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">flask mega-tutorial 1.1 documentation</a> &#187;</li> 
       </ul>
     </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
@@ -67,23 +66,22 @@
   <h4>Next topic</h4>
   <p class="topless"><a href="database.html"
                         title="next chapter">数据库</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/webforms.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/webforms.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
 
-<div id="searchbox" style="display: none">
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
 
@@ -94,14 +92,14 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="web">
 <span id="webforms"></span><h1>web 表单<a class="headerlink" href="#web" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id1">
 <h2>回顾<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <p>在上一章节中，我们定义了一个简单的模板，使用占位符来虚拟了暂未实现的部分，比如用户以及文章等。</p>
-<p>在本章我们将要讲述应用程序的特性之一&#8211;表单，我们将会详细讨论如何使用 web 表单。</p>
+<p>在本章我们将要讲述应用程序的特性之一–表单，我们将会详细讨论如何使用 web 表单。</p>
 <p>Web 表单是在任何一个 web 应用程序中最基本的一部分。我们将使用表单允许用户写文章，以及登录到应用程序中。</p>
 <p>我们接下来讲述的正是我们上一章离开的地方，所以你可能要确保应用程序 <em>microblog</em> 正确地安装和工作。</p>
 </div>
@@ -109,19 +107,19 @@
 <h2>配置<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
 <p>为了能够处理 web 表单，我们将使用 <a class="reference external" href="http://packages.python.org/Flask-WTF">Flask-WTF</a> ，该扩展封装了 <a class="reference external" href="http://wtforms.simplecodes.com/docs/dev">WTForms</a> 并且恰当地集成进 Flask 中。</p>
 <p>许多 Flask 扩展需要大量的配置，因此我们将要在 <em>microblog</em> 文件夹的根目录下创建一个配置文件以至于容易被编辑。这就是我们将要开始的(文件 <em>config.py</em>):</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">CSRF_ENABLED</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="n">SECRET_KEY</span> <span class="o">=</span> <span class="s">&#39;you-will-never-guess&#39;</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">CSRF_ENABLED</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">SECRET_KEY</span> <span class="o">=</span> <span class="s1">&#39;you-will-never-guess&#39;</span>
 </pre></div>
 </div>
 <p>十分简单吧，我们的 Flaks-WTF 扩展只需要两个配置。 <em>CSRF_ENABLED</em> 配置是为了激活 <a class="reference external" href="http://en.wikipedia.org/wiki/Cross-site_request_forgery">跨站点请求伪造</a> 保护。在大多数情况下，你需要激活该配置使得你的应用程序更安全些。</p>
 <p><em>SECRET_KEY</em> 配置仅仅当 CSRF 激活的时候才需要，它是用来建立一个加密的令牌，用于验证一个表单。当你编写自己的应用程序的时候，请务必设置很难被猜测到密钥。</p>
 <p>既然我们有了配置文件，我们需要告诉 Flask 去读取以及使用它。我们可以在 Flask 应用程序对象被创建后去做，方式如下(文件 <em>app/__init__.py</em>):</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="k">import</span> <span class="n">Flask</span>
 
-<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
-<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">from_object</span><span class="p">(</span><span class="s">&#39;config&#39;</span><span class="p">)</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">from_object</span><span class="p">(</span><span class="s1">&#39;config&#39;</span><span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">app</span> <span class="kn">import</span> <span class="n">views</span>
+<span class="kn">from</span> <span class="nn">app</span> <span class="k">import</span> <span class="n">views</span>
 </pre></div>
 </div>
 </div>
@@ -131,21 +129,22 @@
 <p>我们将要创建一个登录表单，用户用于认证系统。在我们应用程序中支持的登录机制不是标准的用户名/密码类型，我们将使用 <a class="reference external" href="http://openid.net/">OpenID</a>。OpenIDs 的好处就是认证是由 OpenID 的提供者完成的，因此我们不需要验证密码，这会让我们的网站对用户而言更加安全。</p>
 <p>OpenID 登录仅仅需要一个字符串，被称为 OpenID。我们将在表单上提供一个 ‘remember me’ 的选择框，以至于用户可以选择在他们的网页浏览器上种植 cookie ，当他们再次访问的时候，浏览器能够记住他们的登录。</p>
 <p>所以让我们编写第一个表单(文件 <em>app/forms.py</em>):</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">flask.ext.wtf</span> <span class="kn">import</span> <span class="n">Form</span><span class="p">,</span> <span class="n">TextField</span><span class="p">,</span> <span class="n">BooleanField</span>
-<span class="kn">from</span> <span class="nn">flask.ext.wtf</span> <span class="kn">import</span> <span class="n">Required</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flask.ext.wtf</span> <span class="k">import</span> <span class="n">Form</span>
+<span class="kn">from</span> <span class="nn">wtforms</span> <span class="k">import</span> <span class="n">StringField</span><span class="p">,</span> <span class="n">BooleanField</span>
+<span class="kn">from</span> <span class="nn">wtforms.validators</span> <span class="k">import</span> <span class="n">DataRequired</span>
 
 <span class="k">class</span> <span class="nc">LoginForm</span><span class="p">(</span><span class="n">Form</span><span class="p">):</span>
-    <span class="n">openid</span> <span class="o">=</span> <span class="n">TextField</span><span class="p">(</span><span class="s">&#39;openid&#39;</span><span class="p">,</span> <span class="n">validators</span> <span class="o">=</span> <span class="p">[</span><span class="n">Required</span><span class="p">()])</span>
-    <span class="n">remember_me</span> <span class="o">=</span> <span class="n">BooleanField</span><span class="p">(</span><span class="s">&#39;remember_me&#39;</span><span class="p">,</span> <span class="n">default</span> <span class="o">=</span> <span class="bp">False</span><span class="p">)</span>
+    <span class="n">openid</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="s1">&#39;openid&#39;</span><span class="p">,</span> <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">DataRequired</span><span class="p">()])</span>
+    <span class="n">remember_me</span> <span class="o">=</span> <span class="n">BooleanField</span><span class="p">(</span><span class="s1">&#39;remember_me&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>我相信这个类不言而明。我们导入 <em>Form</em> 类，接着导入两个我们需要的字段类，<em>TextField</em> 和 <em>BooleanField</em>。</p>
-<p><em>Required</em> 是一个验证器，一个函数，它能够作用于一个域，用于对用户提交的数据进行验证。 <em>Required</em> 验证器只是简单地检查相应域提交的数据是否是空。在 Flask-WTF 中有许多的验证器，我们将会在以后看到它们。</p>
+<p><em>DataRequired</em> 验证器只是简单地检查相应域提交的数据是否是空。在 Flask-WTF 中有许多的验证器，我们将会在以后看到它们。</p>
 </div>
 <div class="section" id="id5">
 <h2>表单模板<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
 <p>我们同样需要一个包含生成表单的 HTML 的模板。好消息是我们刚刚创建的 <em>LoginForm</em> 类知道如何呈现为 HTML 表单字段，所以我们只需要集中精力在布局上。这里就是我们登录的模板(文件 <em>app/templates/login.html</em>):</p>
-<div class="highlight-python"><div class="highlight"><pre>&lt;!-- extend from base layout --&gt;
+<div class="highlight-default"><div class="highlight"><pre><span></span>&lt;!-- extend from base layout --&gt;
 {% extends &quot;base.html&quot; %}
 
 {% block content %}
@@ -172,17 +171,17 @@
 <h2>表单视图<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
 <p>在我们看到我们表单前的最后一步就是编写渲染模板的视图函数的代码。</p>
 <p>实际上这是十分简单因为我们只需要把一个表单对象传入模板中。这就是我们新的视图函数(文件 <em>app/views.py</em>):</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">flash</span><span class="p">,</span> <span class="n">redirect</span>
-<span class="kn">from</span> <span class="nn">app</span> <span class="kn">import</span> <span class="n">app</span>
-<span class="kn">from</span> <span class="nn">forms</span> <span class="kn">import</span> <span class="n">LoginForm</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="k">import</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">flash</span><span class="p">,</span> <span class="n">redirect</span>
+<span class="kn">from</span> <span class="nn">app</span> <span class="k">import</span> <span class="n">app</span>
+<span class="kn">from</span> <span class="nn">.forms</span> <span class="k">import</span> <span class="n">LoginForm</span>
 
-<span class="c"># index view function suppressed for brevity</span>
+<span class="c1"># index view function suppressed for brevity</span>
 
-<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/login&#39;</span><span class="p">,</span> <span class="n">methods</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;GET&#39;</span><span class="p">,</span> <span class="s">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/login&#39;</span><span class="p">,</span> <span class="n">methods</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">login</span><span class="p">():</span>
     <span class="n">form</span> <span class="o">=</span> <span class="n">LoginForm</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s">&#39;login.html&#39;</span><span class="p">,</span>
-        <span class="n">title</span> <span class="o">=</span> <span class="s">&#39;Sign In&#39;</span><span class="p">,</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;login.html&#39;</span><span class="p">,</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Sign In&#39;</span><span class="p">,</span>
         <span class="n">form</span> <span class="o">=</span> <span class="n">form</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -195,14 +194,14 @@
 <div class="section" id="id7">
 <h2>接收表单数据<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
 <p>Flask-WTF 使得工作变得简单的另外一点就是处理提交的数据。这里是我们登录视图函数更新的版本，它验证并且存储表单数据 (文件 <em>app/views.py</em>):</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/login&#39;</span><span class="p">,</span> <span class="n">methods</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;GET&#39;</span><span class="p">,</span> <span class="s">&#39;POST&#39;</span><span class="p">])</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/login&#39;</span><span class="p">,</span> <span class="n">methods</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">login</span><span class="p">():</span>
     <span class="n">form</span> <span class="o">=</span> <span class="n">LoginForm</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">validate_on_submit</span><span class="p">():</span>
-        <span class="n">flash</span><span class="p">(</span><span class="s">&#39;Login requested for OpenID=&quot;&#39;</span> <span class="o">+</span> <span class="n">form</span><span class="o">.</span><span class="n">openid</span><span class="o">.</span><span class="n">data</span> <span class="o">+</span> <span class="s">&#39;&quot;, remember_me=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">form</span><span class="o">.</span><span class="n">remember_me</span><span class="o">.</span><span class="n">data</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s">&#39;/index&#39;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s">&#39;login.html&#39;</span><span class="p">,</span>
-        <span class="n">title</span> <span class="o">=</span> <span class="s">&#39;Sign In&#39;</span><span class="p">,</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;Login requested for OpenID=&quot;&#39;</span> <span class="o">+</span> <span class="n">form</span><span class="o">.</span><span class="n">openid</span><span class="o">.</span><span class="n">data</span> <span class="o">+</span> <span class="s1">&#39;&quot;, remember_me=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">form</span><span class="o">.</span><span class="n">remember_me</span><span class="o">.</span><span class="n">data</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;/index&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;login.html&#39;</span><span class="p">,</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Sign In&#39;</span><span class="p">,</span>
         <span class="n">form</span> <span class="o">=</span> <span class="n">form</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -211,29 +210,29 @@
 <p>如果至少一个字段验证失败的话，它将会返回 <em>False</em>，接着表单会重新呈现给用户，这也将给用户一次机会去修改错误。我们将会看到当验证失败后如何显示错误信息。</p>
 <p>当 <em>validate_on_submit</em> 返回 True，我们的登录视图函数调用了两个新的函数，导入自 Flask。<em>flash</em> 函数是一种快速的方式下呈现给用户的页面上显示一个消息。在我们的例子中，我将会使用它来调试，因为我们目前还不具备用户登录的必备的基础设施，相反我们将会用它来显示提交的数据。<em>flash</em> 函数在生产服务器上也是十分有作用的，用来提供反馈给用户有关的行动。</p>
 <p>闪现的消息将不会自动地出现在我们的页面上，我们的模板需要加入展示消息的内容。我们将添加这些消息到我们的基础模板中，这样所有的模板都能继承这个函数。这是更新后的基础模板(文件 <em>app/templates/base.html</em>):</p>
-<div class="highlight-python"><div class="highlight"><pre>&lt;html&gt;
-  &lt;head&gt;
-    {% if title %}
-    &lt;title&gt;{{title}} - microblog&lt;/title&gt;
-    {% else %}
-    &lt;title&gt;microblog&lt;/title&gt;
-    {% endif %}
-  &lt;/head&gt;
-  &lt;body&gt;
-    &lt;div&gt;Microblog: &lt;a href=&quot;/index&quot;&gt;Home&lt;/a&gt;&lt;/div&gt;
-    &lt;hr&gt;
-    {% with messages = get_flashed_messages() %}
-    {% if messages %}
-    &lt;ul&gt;
-    {% for message in messages %}
-        &lt;li&gt;{{ message }} &lt;/li&gt;
-    {% endfor %}
-    &lt;/ul&gt;
-    {% endif %}
-    {% endwith %}
-    {% block content %}{% endblock %}
-  &lt;/body&gt;
-&lt;/html&gt;
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">html</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">head</span><span class="o">&gt;</span>
+    <span class="p">{</span><span class="o">%</span> <span class="k">if</span> <span class="n">title</span> <span class="o">%</span><span class="p">}</span>
+    <span class="o">&lt;</span><span class="n">title</span><span class="o">&gt;</span><span class="p">{{</span><span class="n">title</span><span class="p">}}</span> <span class="o">-</span> <span class="n">microblog</span><span class="o">&lt;/</span><span class="n">title</span><span class="o">&gt;</span>
+    <span class="p">{</span><span class="o">%</span> <span class="k">else</span> <span class="o">%</span><span class="p">}</span>
+    <span class="o">&lt;</span><span class="n">title</span><span class="o">&gt;</span><span class="n">microblog</span><span class="o">&lt;/</span><span class="n">title</span><span class="o">&gt;</span>
+    <span class="p">{</span><span class="o">%</span> <span class="n">endif</span> <span class="o">%</span><span class="p">}</span>
+  <span class="o">&lt;/</span><span class="n">head</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">body</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">div</span><span class="o">&gt;</span><span class="n">Microblog</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">a</span> <span class="n">href</span><span class="o">=</span><span class="s2">&quot;/index&quot;</span><span class="o">&gt;</span><span class="n">Home</span><span class="o">&lt;/</span><span class="n">a</span><span class="o">&gt;&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">hr</span><span class="o">&gt;</span>
+    <span class="p">{</span><span class="o">%</span> <span class="k">with</span> <span class="n">messages</span> <span class="o">=</span> <span class="n">get_flashed_messages</span><span class="p">()</span> <span class="o">%</span><span class="p">}</span>
+    <span class="p">{</span><span class="o">%</span> <span class="k">if</span> <span class="n">messages</span> <span class="o">%</span><span class="p">}</span>
+    <span class="o">&lt;</span><span class="n">ul</span><span class="o">&gt;</span>
+    <span class="p">{</span><span class="o">%</span> <span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">messages</span> <span class="o">%</span><span class="p">}</span>
+        <span class="o">&lt;</span><span class="n">li</span><span class="o">&gt;</span><span class="p">{{</span> <span class="n">message</span> <span class="p">}}</span> <span class="o">&lt;/</span><span class="n">li</span><span class="o">&gt;</span>
+    <span class="p">{</span><span class="o">%</span> <span class="n">endfor</span> <span class="o">%</span><span class="p">}</span>
+    <span class="o">&lt;/</span><span class="n">ul</span><span class="o">&gt;</span>
+    <span class="p">{</span><span class="o">%</span> <span class="n">endif</span> <span class="o">%</span><span class="p">}</span>
+    <span class="p">{</span><span class="o">%</span> <span class="n">endwith</span> <span class="o">%</span><span class="p">}</span>
+    <span class="p">{</span><span class="o">%</span> <span class="n">block</span> <span class="n">content</span> <span class="o">%</span><span class="p">}{</span><span class="o">%</span> <span class="n">endblock</span> <span class="o">%</span><span class="p">}</span>
+  <span class="o">&lt;/</span><span class="n">body</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">html</span><span class="o">&gt;</span>
 </pre></div>
 </div>
 <p>显示闪现消息的技术希望是不言自明的。</p>
@@ -246,60 +245,60 @@
 <p>然后，好像我们缺少了一个提示用户表单哪里出错了。幸运的是，<em>Flask-WTF</em> 也能够轻易地做到这一点。</p>
 <p>当字段验证失败的时候， <em>Flask-WTF</em> 会向表单对象中添加描述性的错误信息。这些信息是可以在模板中使用的，因此我们只需要增加一些逻辑来获取它。</p>
 <p>这就是我们含有字段验证信息的登录模板(文件 <em>app/templates/login.html</em>):</p>
-<div class="highlight-python"><div class="highlight"><pre>&lt;!-- extend base layout --&gt;
+<div class="highlight-default"><div class="highlight"><pre><span></span>&lt;!-- extend base layout --&gt;
 {% extends &quot;base.html&quot; %}
 
 {% block content %}
-&lt;h1&gt;Sign In&lt;/h1&gt;
-&lt;form action=&quot;&quot; method=&quot;post&quot; name=&quot;login&quot;&gt;
-    {{form.hidden_tag()}}
-    &lt;p&gt;
-        Please enter your OpenID:&lt;br&gt;
-        {{form.openid(size=80)}}&lt;br&gt;
-        {% for error in form.errors.openid %}
-        &lt;span style=&quot;color: red;&quot;&gt;[{{error}}]&lt;/span&gt;
-        {% endfor %}&lt;br&gt;
-    &lt;/p&gt;
-    &lt;p&gt;{{form.remember_me}} Remember Me&lt;/p&gt;
-    &lt;p&gt;&lt;input type=&quot;submit&quot; value=&quot;Sign In&quot;&gt;&lt;/p&gt;
-&lt;/form&gt;
+  &lt;h1&gt;Sign In&lt;/h1&gt;
+  &lt;form action=&quot;&quot; method=&quot;post&quot; name=&quot;login&quot;&gt;
+      {{ form.hidden_tag() }}
+      &lt;p&gt;
+          Please enter your OpenID:&lt;br&gt;
+          {{ form.openid(size=80) }}&lt;br&gt;
+          {% for error in form.openid.errors %}
+            &lt;span style=&quot;color: red;&quot;&gt;[{{ error }}]&lt;/span&gt;
+          {% endfor %}&lt;br&gt;
+      &lt;/p&gt;
+      &lt;p&gt;{{ form.remember_me }} Remember Me&lt;/p&gt;
+      &lt;p&gt;&lt;input type=&quot;submit&quot; value=&quot;Sign In&quot;&gt;&lt;/p&gt;
+  &lt;/form&gt;
 {% endblock %}
 </pre></div>
 </div>
-<p>唯一的变化就是我们增加了一个循环获取验证 <em>openid</em> 字段的信息。通常情况下，任何需要验证的字段都会把错误信息放入 <em>form.errors.field_name</em> 下。在我们的例子中，我们使用 <em>form.errors.openid</em> 。我们以红色的字体颜色显示这些错误信息以引起用户的注意。</p>
+<p>唯一的变化就是我们增加了一个循环获取验证 <em>openid</em> 字段的信息。通常情况下，任何需要验证的字段都会把错误信息放入 <em>form.field_name.errors</em> 下。在我们的例子中，我们使用 <em>form.openid.errors</em> 。我们以红色的字体颜色显示这些错误信息以引起用户的注意。</p>
 </div>
 <div class="section" id="openids">
 <h2>处理 OpenIDs<a class="headerlink" href="#openids" title="Permalink to this headline">¶</a></h2>
 <p>事实上，很多用户并不知道他们已经有一些 <em>OpenIDs</em>。一些大的互联网服务提供商支持 OpenID 认证自己的会员这并不是众所周知的。比如，如果你有一个 Google 的账号，你也就有了一个它们的 OpenID。</p>
 <p>为了让用户更方便地使用这些常用的 OpenID 登录到我们的网站，我们把它们的链接转成短名称，用户不必手动地输入这些 OpenID。</p>
 <p>我首先开始定义一个 OpenID 提供者的列表。我们可以把它们写入我们的配置文件中(文件 <em>config</em> ):</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">CSRF_ENABLED</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="n">SECRET_KEY</span> <span class="o">=</span> <span class="s">&#39;you-will-never-guess&#39;</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">CSRF_ENABLED</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">SECRET_KEY</span> <span class="o">=</span> <span class="s1">&#39;you-will-never-guess&#39;</span>
 
 <span class="n">OPENID_PROVIDERS</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">{</span> <span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="s">&#39;Google&#39;</span><span class="p">,</span> <span class="s">&#39;url&#39;</span><span class="p">:</span> <span class="s">&#39;https://www.google.com/accounts/o8/id&#39;</span> <span class="p">},</span>
-    <span class="p">{</span> <span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="s">&#39;Yahoo&#39;</span><span class="p">,</span> <span class="s">&#39;url&#39;</span><span class="p">:</span> <span class="s">&#39;https://me.yahoo.com&#39;</span> <span class="p">},</span>
-    <span class="p">{</span> <span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="s">&#39;AOL&#39;</span><span class="p">,</span> <span class="s">&#39;url&#39;</span><span class="p">:</span> <span class="s">&#39;http://openid.aol.com/&lt;username&gt;&#39;</span> <span class="p">},</span>
-    <span class="p">{</span> <span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="s">&#39;Flickr&#39;</span><span class="p">,</span> <span class="s">&#39;url&#39;</span><span class="p">:</span> <span class="s">&#39;http://www.flickr.com/&lt;username&gt;&#39;</span> <span class="p">},</span>
-    <span class="p">{</span> <span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="s">&#39;MyOpenID&#39;</span><span class="p">,</span> <span class="s">&#39;url&#39;</span><span class="p">:</span> <span class="s">&#39;https://www.myopenid.com&#39;</span> <span class="p">}]</span>
+    <span class="p">{</span> <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Google&#39;</span><span class="p">,</span> <span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="s1">&#39;https://www.google.com/accounts/o8/id&#39;</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Yahoo&#39;</span><span class="p">,</span> <span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="s1">&#39;https://me.yahoo.com&#39;</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;AOL&#39;</span><span class="p">,</span> <span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="s1">&#39;http://openid.aol.com/&lt;username&gt;&#39;</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Flickr&#39;</span><span class="p">,</span> <span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="s1">&#39;http://www.flickr.com/&lt;username&gt;&#39;</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;MyOpenID&#39;</span><span class="p">,</span> <span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="s1">&#39;https://www.myopenid.com&#39;</span> <span class="p">}]</span>
 </pre></div>
 </div>
 <p>现在让我们看看如何在我们登录视图函数中使用它们:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/login&#39;</span><span class="p">,</span> <span class="n">methods</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;GET&#39;</span><span class="p">,</span> <span class="s">&#39;POST&#39;</span><span class="p">])</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/login&#39;</span><span class="p">,</span> <span class="n">methods</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">login</span><span class="p">():</span>
     <span class="n">form</span> <span class="o">=</span> <span class="n">LoginForm</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">validate_on_submit</span><span class="p">():</span>
-        <span class="n">flash</span><span class="p">(</span><span class="s">&#39;Login requested for OpenID=&quot;&#39;</span> <span class="o">+</span> <span class="n">form</span><span class="o">.</span><span class="n">openid</span><span class="o">.</span><span class="n">data</span> <span class="o">+</span> <span class="s">&#39;&quot;, remember_me=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">form</span><span class="o">.</span><span class="n">remember_me</span><span class="o">.</span><span class="n">data</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s">&#39;/index&#39;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s">&#39;login.html&#39;</span><span class="p">,</span>
-        <span class="n">title</span> <span class="o">=</span> <span class="s">&#39;Sign In&#39;</span><span class="p">,</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;Login requested for OpenID=&quot;&#39;</span> <span class="o">+</span> <span class="n">form</span><span class="o">.</span><span class="n">openid</span><span class="o">.</span><span class="n">data</span> <span class="o">+</span> <span class="s1">&#39;&quot;, remember_me=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">form</span><span class="o">.</span><span class="n">remember_me</span><span class="o">.</span><span class="n">data</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;/index&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;login.html&#39;</span><span class="p">,</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Sign In&#39;</span><span class="p">,</span>
         <span class="n">form</span> <span class="o">=</span> <span class="n">form</span><span class="p">,</span>
-        <span class="n">providers</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;OPENID_PROVIDERS&#39;</span><span class="p">])</span>
+        <span class="n">providers</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;OPENID_PROVIDERS&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>我们从配置中获取 <em>OPENID_PROVIDERS</em>，接着把它作为 <em>render_template</em> 中一个参数传入模板中。</p>
 <p>我敢确信你们已经猜到了，我们还需要多做一步来达到目的。我们现在就来说明如何在登录模板中渲染这些提供商的链接(文件 <em>app/templates/login.html</em>):</p>
-<div class="highlight-python"><div class="highlight"><pre>&lt;!-- extend base layout --&gt;
+<div class="highlight-default"><div class="highlight"><pre><span></span>&lt;!-- extend base layout --&gt;
 {% extends &quot;base.html&quot; %}
 
 {% block content %}
@@ -318,18 +317,18 @@ function set_openid(openid, pr)
 &lt;/script&gt;
 &lt;h1&gt;Sign In&lt;/h1&gt;
 &lt;form action=&quot;&quot; method=&quot;post&quot; name=&quot;login&quot;&gt;
-    {{form.hidden_tag()}}
+    {{ form.hidden_tag() }}
     &lt;p&gt;
         Please enter your OpenID, or select one of the providers below:&lt;br&gt;
-        {{form.openid(size=80)}}
-        {% for error in form.errors.openid %}
-        &lt;span style=&quot;color: red;&quot;&gt;[{{error}}]&lt;/span&gt;
+        {{ form.openid(size=80) }}
+        {% for error in form.openid.errors %}
+          &lt;span style=&quot;color: red;&quot;&gt;[{{error}}]&lt;/span&gt;
         {% endfor %}&lt;br&gt;
         |{% for pr in providers %}
-        &lt;a href=&quot;javascript:set_openid(&#39;{{pr.url}}&#39;, &#39;{{pr.name}}&#39;);&quot;&gt;{{pr.name}}&lt;/a&gt; |
+          &lt;a href=&quot;javascript:set_openid(&#39;{{ pr.url }}&#39;, &#39;{{ pr.name }}&#39;);&quot;&gt;{{ pr.name }}&lt;/a&gt; |
         {% endfor %}
     &lt;/p&gt;
-    &lt;p&gt;{{form.remember_me}} Remember Me&lt;/p&gt;
+    &lt;p&gt;{{ form.remember_me }} Remember Me&lt;/p&gt;
     &lt;p&gt;&lt;input type=&quot;submit&quot; value=&quot;Sign In&quot;&gt;&lt;/p&gt;
 &lt;/form&gt;
 {% endblock %}
@@ -354,7 +353,7 @@ function set_openid(openid, pr)
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -366,7 +365,7 @@ function set_openid(openid, pr)
         <li class="right" >
           <a href="templates.html" title="模板"
              >previous</a> |</li>
-        <li><a href="index.html">flask mega-tutorial 1.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">flask mega-tutorial 1.1 documentation</a> &#187;</li> 
       </ul>
     </div>
 <div class="footer">
